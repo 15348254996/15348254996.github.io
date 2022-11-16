@@ -16,16 +16,16 @@
   
     <meta name="keywords" content="unity, 网络游戏" />
   
-  <meta name="description" content="Unity网络游戏开发第三部分 第五章 深入了解TCP5.1 TCP的连接、传输和终止我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。 要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。 先来看三次握手： 主角： 主机一和主机二 过程：主机一向主机二发送请求连接的报文，由于网络环境差">
+  <meta name="description" content="Unity网络游戏开发第三部分">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity网络游戏开发(3)">
 <meta property="og:url" content="http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="Unity网络游戏开发第三部分 第五章 深入了解TCP5.1 TCP的连接、传输和终止我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。 要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。 先来看三次握手： 主角： 主机一和主机二 过程：主机一向主机二发送请求连接的报文，由于网络环境差">
+<meta property="og:description" content="Unity网络游戏开发第三部分">
 <meta property="og:locale">
 <meta property="og:image" content="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png">
 <meta property="article:published_time" content="2022-11-16T07:38:12.000Z">
-<meta property="article:modified_time" content="2022-11-16T07:41:39.245Z">
+<meta property="article:modified_time" content="2022-11-16T07:49:05.728Z">
 <meta property="article:author" content="cy">
 <meta property="article:tag" content="网络游戏">
 <meta property="article:tag" content="unity">
@@ -160,13 +160,15 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1668584499245"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1668584945728"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
             <div itemprop="articleBody"><p>Unity网络游戏开发第三部分</p>
+<span id="more"></span>
+
 <h2 id="第五章-深入了解TCP"><a href="#第五章-深入了解TCP" class="headerlink" title="第五章 深入了解TCP"></a>第五章 深入了解TCP</h2><h3 id="5-1-TCP的连接、传输和终止"><a href="#5-1-TCP的连接、传输和终止" class="headerlink" title="5.1 TCP的连接、传输和终止"></a>5.1 TCP的连接、传输和终止</h3><p>我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。</p>
 <p>要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。</p>
 <p>先来看<strong>三次握手</strong>：</p>
@@ -195,7 +197,7 @@
 <h3 id="6-2-帧同步"><a href="#6-2-帧同步" class="headerlink" title="6.2 帧同步"></a>6.2 帧同步</h3><p>在游戏中同步的是玩家的操作指令，操作指令包含当前的帧索引。一般的流程是客户端上传操作到服务器， 服务器收到后并不计算游戏行为， 而是转发到所有客户端。帧同步其实是指令同步的一种。</p>
 <h4 id="6-2-1-指令同步"><a href="#6-2-1-指令同步" class="headerlink" title="6.2.1 指令同步"></a>6.2.1 指令同步</h4><p>玩家只同步指令信息，相同的输入 + 相同的时机 &#x3D; 相同的输出。</p>
 <h4 id="6-2-2-同步帧"><a href="#6-2-2-同步帧" class="headerlink" title="6.2.2 同步帧"></a>6.2.2 同步帧</h4><p>帧同步的帧与unity中的帧是两个概念，在unity中我们说Update函数每一帧调用一次，我们也说Update调用的快慢取决于使用的设备，那如果某个设备Update慢点就没法保证相同的时机了，这些偏差会导致整个游戏不同的客户端差距巨大，所以我们会另外引入一个叫同步帧的概念。帧同步的特性导致客户端的逻辑实现和表现实现必须完全分离。Unity中的一些方法接口(如 Invoke， Update、动画系统等)是不可靠的，所有要自己实现一套物理引擎、数学库，做到逻辑和表现分离。 这样即使Unity的渲染是不同步的，但是逻辑跑出来是同步的。</p>
-<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png" alt="image-20221107214257560"></p>
+<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png"></p>
 </div>
         </div>
         
@@ -263,9 +265,7 @@
             const twitterBase   = "https://twitter.com/intent/tweet?";
             const hostUrl       = "http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/";
             const title         = "「Unity网络游戏开发(3)」";
-            const excerpt       = `Unity网络游戏开发第三部分
-第五章 深入了解TCP5.1 TCP的连接、传输和终止我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。
-要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流...`;
+            const excerpt       = `Unity网络游戏开发第三部分`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -287,7 +287,7 @@
                     <a class="tag-none-link" href="/tags/unity/" rel="tag">unity</a>, <a class="tag-none-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" rel="tag">网络游戏</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-11-16T07:41:39.245Z" itemprop="dateModified">最后编辑：2022-11-16</time>
+                    <time datetime="2022-11-16T07:49:05.728Z" itemprop="dateModified">最后编辑：2022-11-16</time>
                 </div>
             </div>
         </footer>
