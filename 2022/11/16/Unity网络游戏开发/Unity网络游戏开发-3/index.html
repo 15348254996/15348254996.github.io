@@ -149,7 +149,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~3.17K
+                        ~3.16K
                     
                     字
                 </li>
@@ -168,7 +168,6 @@
             <hr />
             <div itemprop="articleBody"><p>Unity网络游戏开发第三部分</p>
 <span id="more"></span>
-
 <h2 id="第五章-深入了解TCP"><a href="#第五章-深入了解TCP" class="headerlink" title="第五章 深入了解TCP"></a>第五章 深入了解TCP</h2><h3 id="5-1-TCP的连接、传输和终止"><a href="#5-1-TCP的连接、传输和终止" class="headerlink" title="5.1 TCP的连接、传输和终止"></a>5.1 TCP的连接、传输和终止</h3><p>我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。</p>
 <p>要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。</p>
 <p>先来看<strong>三次握手</strong>：</p>
@@ -180,13 +179,10 @@
 <p>主机一向主机二请求断开连接，代表着主机一并没有数据往主机二发了，但是不代表主机二没有数据往主机一发了，所以主机一你先别急，等主机二发完了，向主机一再发送请求断开连接，主机一再处理完主机二发来的剩余信息后才发送确认信息，然后主机一释放连接，主机二也释放连接。</p>
 <h3 id="5-2-常用的TCP参数"><a href="#5-2-常用的TCP参数" class="headerlink" title="5.2 常用的TCP参数"></a>5.2 常用的TCP参数</h3><p>Socket相当于TCP与UDP提供的接口，所以我们可以通过Socket获取或修改TCP的很多参数 ，这有利于我们构造更为实用的框架。</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//操作系统读缓冲区大小</span></span><br><span class="line">socket.ReceiveBufferSize = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//操作系统写缓冲区大小，可以设置大点防止发送不完整带来的问题</span></span><br><span class="line">socket.SendBufferSize = <span class="number">81920</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启用Nagle算法，即连续发送小数据会攒够一定大数据在一起发送，true为不启用</span></span><br><span class="line"><span class="comment">//对实时性要求高的游戏设置为true</span></span><br><span class="line">socket.NoDelay = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//最多可经过的路由器数，也就是IP数据报的生存时间，主要是为了防止IP数据包在网络环境中陷入无限循环和收发</span></span><br><span class="line">socket.Ttl = <span class="number">64</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启动端口复用，当服务器需要重启时，经常会碰到端口尚未完全关闭的情况。</span></span><br><span class="line"><span class="comment">//这时如果不设置端口复用，则无法完成绑定，因为端口还处于被别的套接口绑定的状态之中。</span></span><br><span class="line"><span class="comment">//存在一定安全隐患，主动关闭方可能会收到上一次连接的数据包，可能会导致奇怪的现象</span></span><br><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//其中 LingerOption包含两个参数</span></span><br><span class="line"><span class="comment">//LingerState.Enabled代表是否启动LingerState</span></span><br><span class="line"><span class="comment">//LingerState.LingerTime,指定超时时间，在超时时间内会尝试发送数据</span></span><br><span class="line"><span class="comment">//如果发送时间超过了超时时间，操作系统还是会强制关闭链接。如果LingerTime设置为0，则会不断尝试发送，直至发送完毕才会关闭连接。</span></span><br><span class="line"><span class="comment">//主要是用于服务端在接收到断开连接后，先发送完缓冲区的数据再断开连接</span></span><br><span class="line">socket.LingerState.Enabled = <span class="literal">true</span>;</span><br><span class="line">socket.LingerState = <span class="keyword">new</span> LingerOption(<span class="literal">true</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
 <h3 id="5-3-Close的恰当的时机"><a href="#5-3-Close的恰当的时机" class="headerlink" title="5.3 Close的恰当的时机"></a>5.3 Close的恰当的时机</h3><p>在TCP参数中的LingerState能够尽量发完操作系统缓冲区的信息，但是不要忘了我们之前写的发送方法，我们在发送前会将消息放入自己设置的缓冲区，这些数据在关闭的时候就会丢失。</p>
 <p>解决方法是设置一个bool值判断是否正在Closing，主动关闭的一方如果还有要发送的消息就将isClosing设置为true，关闭前就判断isClosing为true就不能关闭，如果为false就能发送。</p>
 <h3 id="5-4-心跳机制"><a href="#5-4-心跳机制" class="headerlink" title="5.4 心跳机制"></a>5.4 心跳机制</h3><p>如果玩游戏一半，网线被噶了，那就没机会发送FIN信号了，如果不处理的话，服务端就一直占着系统资源，TCP有一个检测机制，如果在指定的时间没有数据传送就会发送一个信号，对端如果收到信号就会返回确认信号，如果一段时间没有收到回应就会重试几次，如果都没有，会认为网络不通关闭Socket。</p>
-<p>启用方法：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.KeepAlive,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-
+<p>启用方法：<br><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.KeepAlive,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure></p>
 <p>但是TCP提供的方法不太适用于游戏，因为网游强调一个高实时性。</p>
 <p>所以一般会自己实现心跳机制，客户端会定时向服务端发出PING消息，服务端收到回应PONG消息，若是很久没收到就说明连接不通，释放资源。</p>
 <h2 id="第六章-帧同步和状态同步"><a href="#第六章-帧同步和状态同步" class="headerlink" title="第六章 帧同步和状态同步"></a>第六章 帧同步和状态同步</h2><h3 id="6-1-状态同步"><a href="#6-1-状态同步" class="headerlink" title="6.1 状态同步"></a>6.1 状态同步</h3><p>状态同步指的是同步状态信息，比如角色需要做出的动作，角色的位置坐标、旋转发送给服务端，服务端再做广播。这种同步方式会将核心的逻辑判断交给服务端，否则就会导致延迟过高。举个例子：</p>
@@ -195,9 +191,9 @@
 <h4 id="6-1-2-预测算法"><a href="#6-1-2-预测算法" class="headerlink" title="6.1.2 预测算法"></a>6.1.2 预测算法</h4><p>在某些有规律可循的条件下比如坦克的匀速运动，或者匀加速运动，我们可以预测坦克接下来的位置，我们就让坦克提前走到预测的位置去，但是这也会引发一个问题，就是玩家控制的东西一般来说没啥规律，所以如果玩家再运行途中停了下来，就会看到一个神奇的现象，一个往前开的坦克又默默的退了回来，而且预测算法也比较复杂。</p>
 <p>两种算法各有优势，具体情况具体分析。</p>
 <h3 id="6-2-帧同步"><a href="#6-2-帧同步" class="headerlink" title="6.2 帧同步"></a>6.2 帧同步</h3><p>在游戏中同步的是玩家的操作指令，操作指令包含当前的帧索引。一般的流程是客户端上传操作到服务器， 服务器收到后并不计算游戏行为， 而是转发到所有客户端。帧同步其实是指令同步的一种。</p>
-<h4 id="6-2-1-指令同步"><a href="#6-2-1-指令同步" class="headerlink" title="6.2.1 指令同步"></a>6.2.1 指令同步</h4><p>玩家只同步指令信息，相同的输入 + 相同的时机 &#x3D; 相同的输出。</p>
+<h4 id="6-2-1-指令同步"><a href="#6-2-1-指令同步" class="headerlink" title="6.2.1 指令同步"></a>6.2.1 指令同步</h4><p>玩家只同步指令信息，相同的输入 + 相同的时机 = 相同的输出。</p>
 <h4 id="6-2-2-同步帧"><a href="#6-2-2-同步帧" class="headerlink" title="6.2.2 同步帧"></a>6.2.2 同步帧</h4><p>帧同步的帧与unity中的帧是两个概念，在unity中我们说Update函数每一帧调用一次，我们也说Update调用的快慢取决于使用的设备，那如果某个设备Update慢点就没法保证相同的时机了，这些偏差会导致整个游戏不同的客户端差距巨大，所以我们会另外引入一个叫同步帧的概念。帧同步的特性导致客户端的逻辑实现和表现实现必须完全分离。Unity中的一些方法接口(如 Invoke， Update、动画系统等)是不可靠的，所有要自己实现一套物理引擎、数学库，做到逻辑和表现分离。 这样即使Unity的渲染是不同步的，但是逻辑跑出来是同步的。</p>
-<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png"></p>
+<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png" alt=""></p>
 </div>
         </div>
         
@@ -532,5 +528,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

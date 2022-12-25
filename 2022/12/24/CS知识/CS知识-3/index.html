@@ -163,29 +163,20 @@
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：属性、成员和字段的区别，接口相关知识</p>
-<span id="more"></span>
+            <div itemprop="articleBody"><p>本节主要内容：属性、成员和字段的区别，接口相关知识<br><span id="more"></span></p>
 <h2 id="1-属性、成员和字段的区别"><a href="#1-属性、成员和字段的区别" class="headerlink" title="1.属性、成员和字段的区别"></a>1.属性、成员和字段的区别</h2><p>字段一般在类内部使用，所以一般是private属性。</p>
 <p>属性一般是供外部访问，所以一般是public属性。</p>
 <p>成员则是包括属性，字段，方法，事件等。</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">B</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> b;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> d;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> a &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> c &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()                        <span class="comment">//方法，成员</span></span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;我也是成员&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
 <h2 id="2-接口"><a href="#2-接口" class="headerlink" title="2.接口"></a>2.接口</h2><p>接口与其叫接口不如叫约束，他规定了一个东西<strong>是什么</strong>，而派生类则定义了<strong>怎么做</strong></p>
 <p>接口中可以声明属性（是属性，不是成员，也不是字段），方法和事件，接口只负责声明，定义由派生类实现。</p>
 <p>接口的实现有两种方式，分别是隐式实现和显式实现</p>
 <h3 id="1-隐式实现"><a href="#1-隐式实现" class="headerlink" title="1.隐式实现"></a>1.隐式实现</h3><p>接口的大部分实现都是靠隐式实现</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()</span>     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;隐式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
 <h3 id="2-显示实现"><a href="#2-显示实现" class="headerlink" title="2.显示实现"></a>2.显示实现</h3><p>显式实现是为了解决实现多个接口时有可能出现的重名问题。</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IB</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span>,<span class="title">IB</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="keyword">void</span> IA.show()     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;显式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">void</span> IB.show()</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;B显式实现&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
 <p>为了解决重名的问题，需要使用到向上转型</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> f = <span class="keyword">new</span> A();</span><br><span class="line">    (f <span class="keyword">as</span> IA).show();</span><br><span class="line">    (f <span class="keyword">as</span> IB).show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3 id="3-接口其他细节"><a href="#3-接口其他细节" class="headerlink" title="3.接口其他细节"></a>3.接口其他细节</h3><ul>
 <li>实现接口的任何类型或结构都必须实现器所有的成员</li>
 <li>接口类似于只有抽象成员的抽象基类。 实现接口的任何类或结构都必须实现其所有成员。</li>
@@ -528,5 +519,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

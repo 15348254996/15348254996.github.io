@@ -165,7 +165,6 @@
             <hr />
             <div itemprop="articleBody"><p>本节主要内容：反射相关知识</p>
 <span id="more"></span>
-
 <h2 id="1-反射"><a href="#1-反射" class="headerlink" title="1.反射"></a>1.反射</h2><p>反射指的是System.Reflection的这个命名空间，官方对这个命名空间的作用介绍是：包含通过检查托管代码中程序集、模块、成员、参数和其他实体的元数据来检索其相关信息的类型。 这些类型还可用于操作加载类型的实例，例如挂钩事件或调用方法。其实这就是反射的基本作用。</p>
 <h3 id="用途："><a href="#用途：" class="headerlink" title="用途："></a>用途：</h3><ul>
 <li>它允许在运行时查看特性（attribute）信息。</li>
@@ -184,14 +183,12 @@
 <li>1、性能问题：使用反射基本上是一种解释操作，用于字段和方法接入时要远慢于直接代码。因此反射机制主要应用在对灵活性和拓展性要求很高的系统框架上，普通程序不建议使用。</li>
 <li>2、使用反射会模糊程序内部逻辑；程序员希望在源代码中看到程序的逻辑，反射却绕过了源代码的技术，因而会带来维护的问题，反射代码比相应的直接代码更复杂。</li>
 </ul>
-<p>（来自菜鸟教程：<a target="_blank" rel="noopener" href="https://www.runoob.com/csharp/csharp-reflection.html%EF%BC%89">https://www.runoob.com/csharp/csharp-reflection.html）</a></p>
+<p>（来自菜鸟教程：<a target="_blank" rel="noopener" href="https://www.runoob.com/csharp/csharp-reflection.html）">https://www.runoob.com/csharp/csharp-reflection.html）</a></p>
 <p>其实简单理解一下主要核心就是使用Type类（这个类派生自MemberInfo，而Member Info所属命名空间为System.Reflection）的API。</p>
 <h3 id="反射的使用"><a href="#反射的使用" class="headerlink" title="反射的使用"></a>反射的使用</h3><p>要使用Type类的api，那首先就要获取到某个东西的Type类型。这里用一个类来举例。</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">MyNamespace</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">A</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">int</span> b &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">non</span>()</span></span><br><span class="line">        &#123;</span><br><span class="line">        </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">Mainclass</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> Atype = <span class="keyword">typeof</span>(A);</span><br><span class="line">            Type btype = A.b.GetType();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>可以用typeof或用你想获取类型的东西调用它内部的GetType()，我在看文献的时候其实看到过另外一种方法：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Type t = Type.GetType(<span class="string">&quot;System.String&quot;</span>);</span><br></pre></td></tr></table></figure>
-
 <p>但是我测试的时候会报出异常，不知道为什么，所以就不用了，毕竟前两个完全足够了。</p>
 <h4 id="Type类的属性"><a href="#Type类的属性" class="headerlink" title="Type类的属性"></a>Type类的属性</h4><ul>
 <li><p>Name数据类型名</p>
@@ -567,5 +564,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

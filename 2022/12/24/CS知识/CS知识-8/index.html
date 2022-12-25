@@ -168,7 +168,6 @@
             <hr />
             <div itemprop="articleBody"><p>本节主要内容：垃圾回收机制和相关重要算法</p>
 <span id="more"></span>
-
 <p>本章内容大量参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/nele/p/5673215.html">https://www.cnblogs.com/nele/p/5673215.html</a></p>
 <h2 id="1-GC（垃圾回收机制）"><a href="#1-GC（垃圾回收机制）" class="headerlink" title="1.GC（垃圾回收机制）"></a>1.GC（垃圾回收机制）</h2><p>当我们进行C++的开发的时候，我们有时需要使用new关键词在堆上手动开辟空间，同时也会用到delete来进行空间的释放，在C里面则是使用malloc和free关键词，但是当我们使用C#时我们大部分时候并不需要去管理堆上的内存，就好像系统帮我们完成了开辟和回收。</p>
 <p>其实C#作为一门托管型语言，托管代码在clr中运行，clr会自动惊醒垃圾回收等服务，所以我们才可以放心的随便创建引用值而不用担心内存遗漏。接下来简单介绍以下GC的机制。</p>
@@ -177,7 +176,7 @@
 <p>2.然后找出不能回收的对象</p>
 <p>3.最后堆中没有打标记的对象都是可以被回收的</p>
 <p>4.此时堆中对象不连续，移动这些对象，使他们重新从基地址开始连续</p>
-<p><img src="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png"></p>
+<p><img src="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png" alt=""></p>
 <p>经过这四步处理后，可以继续采用前面的堆内存分配方法，即仅用一个指针记录堆分配的起始地址就可以。</p>
 <p>主要处理步骤：将线程挂起→确定不能回收的对象→对象回收→堆压缩→指针修复。</p>
 <p>此处有两个问题：</p>
@@ -193,7 +192,7 @@
 <p>3.新创建的对象之间关联程度通常较强。堆分配的对象是连续的，关联度较强有利于提高CPU cache的命中率</p>
 <p>于是我们把堆分为了3代，分别是Gen0、Gen1、Gen2</p>
 <p>如果Gen 0 heap内存达到阀值，则触发0代GC，0代GC后Gen 0中幸存的对象进入Gen1。如果Gen 1的内存达到阀值，则进行1代GC，1代GC将Gen 0 heap和Gen 1 heap一起进行回收，幸存的对象进入Gen2。如图：</p>
-<p><img src="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png"></p>
+<p><img src="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png" alt=""></p>
 <p>2代GC将Gen 0 heap、Gen 1 heap和Gen 2 heap一起回收，Gen 0和Gen 1比较小，这两个代龄加起来总是保持在16M左右；Gen2的大小由应用程序确定，可能达到几G，因此0代和1代GC的成本非常低，2代GC称为full GC，通常成本很高。粗略的计算0代和1代GC应当能在几毫秒到几十毫秒之间完成，Gen 2 heap比较大时，full GC可能需要花费几秒时间。大致上来讲.NET应用运行期间，2代、1代和0代GC的频率应当大致为1:10:100。</p>
 <h3 id="（3）几个较为重要的垃圾回收相关api"><a href="#（3）几个较为重要的垃圾回收相关api" class="headerlink" title="（3）几个较为重要的垃圾回收相关api"></a>（3）几个较为重要的垃圾回收相关api</h3><p>GC.Collect()：这个的立足点是整个程序，调用这个程序会强制执行一次垃圾回收。也就是像上文提到的那样。</p>
 <p>虚构函数：和C++的定义方法相同，它的立足点是类，一个类对象在被垃圾回收时会执行虚构函数中的内容。</p>
@@ -535,5 +534,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

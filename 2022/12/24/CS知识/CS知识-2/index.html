@@ -149,7 +149,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~2.00K
+                        ~1.98K
                     
                     字
                 </li>
@@ -168,50 +168,36 @@
             <hr />
             <div itemprop="articleBody"><p>本节主要内容：Partial关键字，结构体struct</p>
 <span id="more"></span>
-
 <h2 id="1-partial关键字"><a href="#1-partial关键字" class="headerlink" title="1.partial关键字"></a>1.partial关键字</h2><p>paritial 可以实现类的逻辑拆分到不同的文件。</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//A.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//AB.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show2</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>上面的代码虽然是在不同的文件中，但是在同一个项目中同时定义了两个相同的名字是一定会报错的。</p>
-<p><img src="https://s2.loli.net/2022/06/20/B4bUjYQKVWgqa3u.png"></p>
+<p><img src="https://s2.loli.net/2022/06/20/B4bUjYQKVWgqa3u.png" alt=""></p>
 <p>但是当我门使用partial关键字来限定类后则不会报错</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AB.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show2</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//A.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//main.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">main</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        a1.show();</span><br><span class="line">        a1.show2();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>运行输出结果：</p>
-<p><img src="https://s2.loli.net/2022/06/20/5V2xk3Lscovr6yX.png"></p>
+<p><img src="https://s2.loli.net/2022/06/20/5V2xk3Lscovr6yX.png" alt=""></p>
 <h2 id="2-结构体"><a href="#2-结构体" class="headerlink" title="2.结构体"></a>2.结构体</h2><p>C#中的结构体的定义和C++别无二致，并且声明的方式也是相同的，都是类似与以下的代码：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> mystruct</span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">public</span> <span class="built_in">int</span> e;</span><br><span class="line">   <span class="built_in">float</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>但是我查了一些资料，发现这两个语言的结构体其实差距还是蛮大的</p>
-<h3 id="1-C-struct"><a href="#1-C-struct" class="headerlink" title="1.C++ struct"></a>1.C++ struct</h3><p>首先是C++的结构体，<strong>C++<strong>的</strong>结构体</strong>和<strong>类</strong>几乎没有任何区别，他包含类有的所有特性，不仅能包含变量，也能继承，实现多态甚至类可以继承于结构体，结构体也能继承于类，说实话，我看到这的时候人都傻了，既然结构体和类这么像，为啥还要结构体，我认为是为了兼容c语言的语法吧。而在C++中<strong>结构体</strong>与<strong>类</strong>的<font color='red'>主要区别</font>就仅仅体现在两个方面：</p>
+<h3 id="1-C-struct"><a href="#1-C-struct" class="headerlink" title="1.C++ struct"></a>1.C++ struct</h3><p>首先是C++的结构体，<strong>C++</strong>的<strong>结构体</strong>和<strong>类</strong>几乎没有任何区别，他包含类有的所有特性，不仅能包含变量，也能继承，实现多态甚至类可以继承于结构体，结构体也能继承于类，说实话，我看到这的时候人都傻了，既然结构体和类这么像，为啥还要结构体，我认为是为了兼容c语言的语法吧。而在C++中<strong>结构体</strong>与<strong>类</strong>的<font color='red'>主要区别</font>就仅仅体现在两个方面：</p>
 <p>1.默认的继承访问权限，结构体默认是public继承，class是private的。</p>
 <p>2.成员变量的默认访问权限，结构体默认是public，class是private。</p>
 <h3 id="2-C-struct"><a href="#2-C-struct" class="headerlink" title="2.C# struct"></a>2.C# struct</h3><p>C#的结构体也没有C的那么单纯，他也能带有方法字段，同时他还能带有索引、属性、运算符方法和事件，大概有以下特点：</p>
 <ul>
-<li><p>结构可带有方法、字段、索引、属性、运算符方法和事件。</p>
-</li>
-<li><p>结构可定义构造函数，但不能定义析构函数。但是，您不能为结构定义无参构造函数。无参构造函数(默认)是自动定义的，且不能被改变。</p>
-</li>
-<li><p>与类不同，结构不能继承其他的结构或类。</p>
-</li>
-<li><p>结构不能作为其他结构或类的基础结构。</p>
-</li>
-<li><p>结构可实现一个或多个接口。</p>
-</li>
-<li><p>结构成员不能指定为 abstract、virtual 或 protected。</p>
-</li>
-<li><p>当您使用 <strong>New</strong> 操作符创建一个结构对象时，会调用适当的构造函数来创建结构。与类不同，结构可以不使用 New 操作符即可被实例化。</p>
-</li>
+<li>结构可带有方法、字段、索引、属性、运算符方法和事件。</li>
+<li>结构可定义构造函数，但不能定义析构函数。但是，您不能为结构定义无参构造函数。无参构造函数(默认)是自动定义的，且不能被改变。</li>
+<li>与类不同，结构不能继承其他的结构或类。</li>
+<li>结构不能作为其他结构或类的基础结构。</li>
+<li>结构可实现一个或多个接口。</li>
+<li>结构成员不能指定为 abstract、virtual 或 protected。</li>
+<li>当您使用 <strong>New</strong> 操作符创建一个结构对象时，会调用适当的构造函数来创建结构。与类不同，结构可以不使用 New 操作符即可被实例化。</li>
 <li><p>如果不使用 New 操作符，只有在所有的字段都被初始化之后，字段才被赋值，对象才被使用。</p>
 </li>
 <li><p>结构体中声明的字段，除非将字段声明为 const 或 static，否则无法赋予初值。</p>
 </li>
-<li><p>赋值时是深拷贝</p>
-</li>
-<li><p>在为属性器时，不能局部赋值（比如 transofrm.position.x 不能直接赋值）</p>
-</li>
-<li><p>结构体相比类，内存的回收效率更高，不容易产生 gc，所以需要频繁创建的数据对象建议用结构体来实现，比如 Unity 的 Vector3&#x2F;2 等。</p>
-</li>
+<li>赋值时是深拷贝</li>
+<li>在为属性器时，不能局部赋值（比如 transofrm.position.x 不能直接赋值）</li>
+<li>结构体相比类，内存的回收效率更高，不容易产生 gc，所以需要频繁创建的数据对象建议用结构体来实现，比如 Unity 的 Vector3/2 等。</li>
 </ul>
 <p>还有一点需要提醒，<font color='red'><strong>C#结构体</strong></font>的<font color='red'>默认访问权限</font>是<font color='red'>private</font></p>
 <p>其次结构体作为值类型在栈上分配内存存储，至于如果在结构体内有引用类型，那栈中就保存这个引用类型分配在堆的地址，值类型在用完由clr回收机制自动回收，对于结构体中的引用类型，回收的时候只回收用于存储地址的内存，而用于存储引用类型成员变量值的内存，则等待回收机制进行回收。</p>
@@ -549,5 +535,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

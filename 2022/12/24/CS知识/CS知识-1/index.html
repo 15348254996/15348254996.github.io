@@ -169,13 +169,13 @@
             <hr />
             <div itemprop="articleBody"><p>本节主要内容：引用类型与值类型，程序集和类的访问权限，internal。</p>
 <span id="more"></span>
-
 <h2 id="1-引用类型、值类型"><a href="#1-引用类型、值类型" class="headerlink" title="1.引用类型、值类型"></a>1.引用类型、值类型</h2><p>C#中有两种类型：分别是<strong>引用类型</strong>和<strong>值类型</strong></p>
 <p>在C#中值类型的变量直接存储数据，而引用类型的变量持有的是数据的引用，数据存储在数据堆中。</p>
 <p><img src="https://s2.loli.net/2022/06/19/kPCLzXW3njMx1sF.png" alt="image-20220619223350156"></p>
-<p><font color='red'>图上忘写了，数组也是引用类型</font></p>
+<font color='red'>图上忘写了，数组也是引用类型</font>
+
 <p>这里顺便提一下C++和C#在内存管理上的区别，C#是一种托管语言，它的垃圾回收机制时由.net平台负责，但是我们还是有必要了解这方面的。</p>
-<p>先是**C#**，程序运行时可能会有多个线程，每个线程在创建时都会生成一个线程栈，值类型的值会直接在线程栈上进行存储，而引用类型的值则会先在堆上开辟一块空间，在栈上存储这块控件的地址</p>
+<p>先是<strong>C#</strong>，程序运行时可能会有多个线程，每个线程在创建时都会生成一个线程栈，值类型的值会直接在线程栈上进行存储，而引用类型的值则会先在堆上开辟一块空间，在栈上存储这块控件的地址</p>
 <p>然后是<strong>C++</strong>,C++编译程序占用内存分为以下几个部分，</p>
 <p>1.<strong>栈区</strong>（stack）：— 由编译器自动分配释放 ，存放函数参数值，局部变量值等。其操作方式类似于数据结构中栈。</p>
 <p>2.<strong>堆区</strong>（heap）：一般由程序员分配释放， 若程序员不释放，程序结束时可能由OS回收 。注意它与数据结构中堆是两回事，分配方式类似于链表。</p>
@@ -195,9 +195,9 @@
 <p>2.减少项目的耦合度：不用多解释，和设计模式思路一样，而且可以快速判断代码出在哪一个程序集中的文件。通过程序集的依赖，来联系各个程序集。</p>
 <p>方法：</p>
 <p>1.在一个空的文件夹中右键，选择Create，选择Assembly Definition，在再这个文件夹中创建的文件将自动划入创建的程序集中</p>
-<p><img src="https://s2.loli.net/2022/06/20/bcYBG2fECmqP57D.png"></p>
+<p><img src="https://s2.loli.net/2022/06/20/bcYBG2fECmqP57D.png" alt=""></p>
 <p>2.在程序集的inspector面板上的Assembly Definition References添加需要依赖的类，则可以完成程序集的依赖设置。</p>
-<p><img src="https://s2.loli.net/2022/06/20/JYQ2gTXMyZazIC9.png"></p>
+<p><img src="https://s2.loli.net/2022/06/20/JYQ2gTXMyZazIC9.png" alt=""></p>
 </div>
         </div>
         
@@ -532,5 +532,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>

@@ -149,7 +149,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~3.14K
+                        ~3.17K
                     
                     字
                 </li>
@@ -168,26 +168,25 @@
             <hr />
             <div itemprop="articleBody"><p>近几年大量的网络游戏大热，相较于单机多了更多的趣味，且手游越来越火热，所以网络游戏开发势必成为一个客户端程序员的基本素养，不仅要了解客户端的搭建，还要熟悉服务端的基本实现方式。</p>
 <span id="more"></span>
-
 <p>本系列专栏作为Unity3D网络游戏实战的笔记总结</p>
 <h2 id="第一章-网络游戏的开端"><a href="#第一章-网络游戏的开端" class="headerlink" title="第一章 网络游戏的开端"></a>第一章 网络游戏的开端</h2><h3 id="1-1-服务端"><a href="#1-1-服务端" class="headerlink" title="1.1 服务端"></a>1.1 服务端</h3><p>一款网络游戏分为客户端服务端两个部分，客户端在用户设备上运行，服务端则在游戏运营商的服务器上运行。服务端与客户端之间通常使用TCP网络通信，各个服务端之间互相使用TCP连接，形成服务端集群。</p>
 <hr>
 <h3 id="1-2-Socket"><a href="#1-2-Socket" class="headerlink" title="1.2 Socket"></a>1.2 Socket</h3><p>我们都知道计算机网络七层模型和五层模型，那在学习的时候常用的五层模型来说，分为物理层，数据链路层，网络层，传输层，应用层，我们也知道传输层实现端到端的通信主要的两个协议：TCP协议、UDP协议，这两个协议的区别与实现请自行去学习计算机网络这门课，我们今天要介绍的是Socket。可能有人和我当时有一样的疑问，这个Socket是应用层的还是传输层的，经过我的查阅，这个Socket应该和TCP、UDP一样属于传输层，我们可以把它理解为TCP、UDP协议的封装，以及对外提供的接口。</p>
 <p>那么它其中都包含了什么呢？</p>
-<p>​	1.协议（TCP，UDP）</p>
-<p>​	2.本地IP地址</p>
-<p>​	3.本地端口</p>
-<p>​	4.远程IP地址</p>
-<p>​	5.远程端口</p>
+<p>​    1.协议（TCP，UDP）</p>
+<p>​    2.本地IP地址</p>
+<p>​    3.本地端口</p>
+<p>​    4.远程IP地址</p>
+<p>​    5.远程端口</p>
 <p>每一条Socket连接代表着：本地Socket→本地端口→网络介质→远程端口→远程Socket 的链路。</p>
 <p>为了方便之后的使用，我们先了解一下Socket通信的完整流程（TCP协议）</p>
-<p>​	1.创建一个Socket对象（使用API Socket），绑定本地使用的端口，服务端一定要在程序中指定端口进行绑定（使用API Bind），而客户端在连接（使用API Connect）时会由系统分配端口，可以省去绑定步骤</p>
-<p>​	2.服务端开启监听（使用API Listen），等待客户端接入</p>
-<p>​	3.客户端连接服务器（使用API Connect）</p>
-<p>​	4.服务端接收连接（使用API Accept）</p>
-<p>​	5.客户端与服务端通过Send和Receive等API收发数据</p>
-<p>​	6.某一方关闭连接（使用API Close），结束通信</p>
-<p><img src="https://s2.loli.net/2022/10/13/pxzlfyBvJNYPGKt.jpg"></p>
+<p>​    1.创建一个Socket对象（使用API Socket），绑定本地使用的端口，服务端一定要在程序中指定端口进行绑定（使用API Bind），而客户端在连接（使用API Connect）时会由系统分配端口，可以省去绑定步骤</p>
+<p>​    2.服务端开启监听（使用API Listen），等待客户端接入</p>
+<p>​    3.客户端连接服务器（使用API Connect）</p>
+<p>​    4.服务端接收连接（使用API Accept）</p>
+<p>​    5.客户端与服务端通过Send和Receive等API收发数据</p>
+<p>​    6.某一方关闭连接（使用API Close），结束通信</p>
+<p><img src="https://s2.loli.net/2022/10/13/pxzlfyBvJNYPGKt.jpg" alt=""></p>
 <hr>
 <h2 id="第二章-异步API"><a href="#第二章-异步API" class="headerlink" title="第二章 异步API"></a>第二章 异步API</h2><h3 id="2-1-API"><a href="#2-1-API" class="headerlink" title="2.1 API"></a>2.1 API</h3><p>如果使用上述API会因为是同步程序导致在网络环境稍差的情况下会造成客户端卡顿，所以同步API一般只用于早期测试，真正开发的时候会尽量使用异步API，虽然异步API不是那么容易理解，但是他能使客户端更加流畅。</p>
 <p>而这些API基本都是上面描述的API前面加上Begin前缀，比如Connect的异步调用就是BeginConnect。</p>
@@ -196,23 +195,19 @@
 <p>但是同时也有其他的一些API也能够达到类似的目的。也就是Poll、Select的API。</p>
 <h4 id="2-2-1-Poll"><a href="#2-2-1-Poll" class="headerlink" title="2.2.1 Poll"></a>2.2.1 Poll</h4><p>Poll的作用就是判断某个Socket是否可读可写可用，调用方式为</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.Poll(microSeconds,mode);</span><br></pre></td></tr></table></figure>
-
 <p>microSeconds：等待回应的时间，-1为一直等待，0表示不阻塞</p>
-<p>mode：	</p>
+<p>mode：    </p>
 <p>SelectMode.SelectRead：是否可读</p>
 <p>SelectMode.SelectWrite：是否可写</p>
 <p>SelectMode.SelectError：是否可用</p>
 <p>Poll的服务端的核心代码为：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//先判断本地服务端的Socket是否有新的连接需要连接</span></span><br><span class="line">    <span class="keyword">if</span> (listenfd.Poll(<span class="number">0</span>, SelectMode.SelectRead))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//如果有就将它加入客户端链表</span></span><br><span class="line">        ReadListenfd(listenfd);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//遍历整个列表</span></span><br><span class="line">    <span class="keyword">foreach</span> (ClientState s <span class="keyword">in</span> clients.Values)</span><br><span class="line">    &#123;</span><br><span class="line">        Socket clientfd = s.socket;</span><br><span class="line">        <span class="comment">//判断是否有新消息</span></span><br><span class="line">        <span class="keyword">if</span> (clientfd.Poll(<span class="number">0</span>, SelectMode.SelectRead))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//如果有就处理</span></span><br><span class="line">            <span class="keyword">if</span> (!ReadClientfd(clientfd))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//防止CPU占用过高</span></span><br><span class="line">    System.Threading.Thread.Sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>Poll简单来说就是一个一个检测是否有可读信息，有就处理，这样就能避免明明没有可用的消息还是将程序阻塞在哪里，导致卡顿，但是由于没有数据的时候也还是需要检测数据，同样也还是浪费，且导致CPU占用率过高。</p>
 <h4 id="2-2-2-Select"><a href="#2-2-2-Select" class="headerlink" title="2.2.2 Select"></a>2.2.2 Select</h4><p>Select相对Poll来说实现了多路复用，即同时检测多个Socket状态，调用方式为：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Socket.Select(checkRead,checkWrite,checkError,microSeconds)；</span><br></pre></td></tr></table></figure>
-
 <p>前三个参数分别对应三个列表，第四个参数为等待回应时间 </p>
 <p>Select服务端的核心代码：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//先创建一个Socket链表</span></span><br><span class="line">List&lt;Socket&gt; checkRead = <span class="keyword">new</span> List&lt;Socket&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//确保不会重复添加</span></span><br><span class="line">    checkRead.Clear();</span><br><span class="line">    <span class="comment">//把本地服务端的Socket添加进链表中，用于处理客户端发起的连接等请求</span></span><br><span class="line">    checkRead.Add(listenfd);</span><br><span class="line">    <span class="comment">//将服务器中的所有Socket添加进链表</span></span><br><span class="line">    <span class="keyword">foreach</span> (ClientState s <span class="keyword">in</span> clients.Values)</span><br><span class="line">    &#123;</span><br><span class="line">        checkRead.Add(s.socket);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//通过Select来处理链表</span></span><br><span class="line">    Socket.Select(checkRead, <span class="literal">null</span>, <span class="literal">null</span>, <span class="number">1000</span>);</span><br><span class="line">    <span class="keyword">foreach</span> (Socket s <span class="keyword">in</span> checkRead)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (s == listenfd)</span><br><span class="line">        &#123;</span><br><span class="line">            ReadListenfd(s);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            ReadClientfd(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>Select与Poll其实很相近，只是Poll是一个一个处理，导致其频繁的调用造成CPU占用率高，但是Select集中去处理，调用次数少CPU占用率就会稍微低一点，但是两个方法都是使用一个死循环循环的去执行，在客户端中也是在Update函数里面不停检测，所以商业上为了达到性能的极致通常还是会选用异步。</p>
 <hr>
 <h2 id="第三章-大乱斗游戏"><a href="#第三章-大乱斗游戏" class="headerlink" title="第三章 大乱斗游戏"></a>第三章 大乱斗游戏</h2><p>本游戏的原代码</p>
@@ -548,5 +543,21 @@
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>
