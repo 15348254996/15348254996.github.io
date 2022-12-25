@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>Unity网络游戏开发(3) | 舛羽的笔记小站</title>
+  <title>C#知识(9) | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,23 +14,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="unity, 网络游戏" />
+    <meta name="keywords" content="C#" />
   
-  <meta name="description" content="Unity网络游戏开发第三部分">
+  <meta name="description" content="本节主要内容：协程及Unity中的用法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity网络游戏开发(3)">
-<meta property="og:url" content="http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/index.html">
+<meta property="og:title" content="C#知识(9)">
+<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-9/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="Unity网络游戏开发第三部分">
+<meta property="og:description" content="本节主要内容：协程及Unity中的用法">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png">
-<meta property="article:published_time" content="2022-11-16T07:38:12.000Z">
-<meta property="article:modified_time" content="2022-11-16T07:49:05.728Z">
+<meta property="og:image" content="https://s2.loli.net/2022/06/26/TpwaurVb2QCkWc8.png">
+<meta property="article:published_time" content="2022-12-24T15:29:46.000Z">
+<meta property="article:modified_time" content="2022-12-25T06:30:59.096Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="网络游戏">
-<meta property="article:tag" content="unity">
+<meta property="article:tag" content="C#">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/06/26/TpwaurVb2QCkWc8.png">
   
   <!-- 站点验证相关 -->
   
@@ -133,15 +132,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-9/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">Unity网络游戏开发(3)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(9)</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-11-16T07:38:12.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-11-16</time></li>
+                <li><time datetime="2022-12-24T15:29:46.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -149,7 +148,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~3.17K
+                        ~2.17K
                     
                     字
                 </li>
@@ -160,44 +159,35 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1668584945728"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1671949859096"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>Unity网络游戏开发第三部分</p>
+            <div itemprop="articleBody"><p>本节主要内容：协程及Unity中的用法</p>
 <span id="more"></span>
 
-<h2 id="第五章-深入了解TCP"><a href="#第五章-深入了解TCP" class="headerlink" title="第五章 深入了解TCP"></a>第五章 深入了解TCP</h2><h3 id="5-1-TCP的连接、传输和终止"><a href="#5-1-TCP的连接、传输和终止" class="headerlink" title="5.1 TCP的连接、传输和终止"></a>5.1 TCP的连接、传输和终止</h3><p>我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。</p>
-<p>要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。</p>
-<p>先来看<strong>三次握手</strong>：</p>
-<p>主角：</p>
-<p>主机一和主机二</p>
-<p>过程：主机一向主机二发送请求连接的报文，由于网络环境差，致使此报文一直呆在网络环境中，最终导致失效，主机一或许早已完成连接，或许放弃了连接，反正此时不打算和主机二连接了，此时这个报文到达了主机二，主机二以为是主机一发的，假设只是两次握手，主机二向主机一发出确认报文问，但是主机一并没有打算连接，所以丢弃，但是主机二还以为连上了苦苦的在那里等，这就导致了资源的浪费。所以需要三次握手。</p>
-<p><font color='red'>本人理解:</font>一个面向连接的协议自然要保证连接的双向连通，两次握手，主机一知道了主机一到主机二的道路和主机二到主机一的道路都是通的，但是主机二只知道主机一到主机二的道路是通的，不知道主机二到主机一的道路是通的。除非主机一发送确认报文，并且主机二清楚的收到。（有点绕，可以多看几遍）</p>
-<p>再来看看<strong>四次挥手</strong>：</p>
-<p>主机一向主机二请求断开连接，代表着主机一并没有数据往主机二发了，但是不代表主机二没有数据往主机一发了，所以主机一你先别急，等主机二发完了，向主机一再发送请求断开连接，主机一再处理完主机二发来的剩余信息后才发送确认信息，然后主机一释放连接，主机二也释放连接。</p>
-<h3 id="5-2-常用的TCP参数"><a href="#5-2-常用的TCP参数" class="headerlink" title="5.2 常用的TCP参数"></a>5.2 常用的TCP参数</h3><p>Socket相当于TCP与UDP提供的接口，所以我们可以通过Socket获取或修改TCP的很多参数 ，这有利于我们构造更为实用的框架。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//操作系统读缓冲区大小</span></span><br><span class="line">socket.ReceiveBufferSize = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//操作系统写缓冲区大小，可以设置大点防止发送不完整带来的问题</span></span><br><span class="line">socket.SendBufferSize = <span class="number">81920</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启用Nagle算法，即连续发送小数据会攒够一定大数据在一起发送，true为不启用</span></span><br><span class="line"><span class="comment">//对实时性要求高的游戏设置为true</span></span><br><span class="line">socket.NoDelay = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//最多可经过的路由器数，也就是IP数据报的生存时间，主要是为了防止IP数据包在网络环境中陷入无限循环和收发</span></span><br><span class="line">socket.Ttl = <span class="number">64</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启动端口复用，当服务器需要重启时，经常会碰到端口尚未完全关闭的情况。</span></span><br><span class="line"><span class="comment">//这时如果不设置端口复用，则无法完成绑定，因为端口还处于被别的套接口绑定的状态之中。</span></span><br><span class="line"><span class="comment">//存在一定安全隐患，主动关闭方可能会收到上一次连接的数据包，可能会导致奇怪的现象</span></span><br><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//其中 LingerOption包含两个参数</span></span><br><span class="line"><span class="comment">//LingerState.Enabled代表是否启动LingerState</span></span><br><span class="line"><span class="comment">//LingerState.LingerTime,指定超时时间，在超时时间内会尝试发送数据</span></span><br><span class="line"><span class="comment">//如果发送时间超过了超时时间，操作系统还是会强制关闭链接。如果LingerTime设置为0，则会不断尝试发送，直至发送完毕才会关闭连接。</span></span><br><span class="line"><span class="comment">//主要是用于服务端在接收到断开连接后，先发送完缓冲区的数据再断开连接</span></span><br><span class="line">socket.LingerState.Enabled = <span class="literal">true</span>;</span><br><span class="line">socket.LingerState = <span class="keyword">new</span> LingerOption(<span class="literal">true</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="1-协程"><a href="#1-协程" class="headerlink" title="1.协程"></a>1.协程</h2><h3 id="（1）使用"><a href="#（1）使用" class="headerlink" title="（1）使用"></a>（1）使用</h3><p>本章的内容将紧扣unity中的协程进行讲解，先来看看一个协程应该怎么使用。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Cour</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Start is called before the first frame update</span></span><br><span class="line">    <span class="keyword">private</span> Coroutine c;</span><br><span class="line">    <span class="keyword">private</span> IEnumerator e;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//Coroutine c= StartCoroutine(count());                   </span></span><br><span class="line">        <span class="comment">//第一种调用方式</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//StartCoroutine(&quot;count&quot;);</span></span><br><span class="line">        <span class="comment">//第二种调用方式</span></span><br><span class="line">        </span><br><span class="line">        e = count();</span><br><span class="line">        StartCoroutine(e);</span><br><span class="line">        <span class="comment">//第三种调用方式</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Update</span>()</span></span><br><span class="line">    &#123; </span><br><span class="line">        <span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//StopCoroutine(c);</span></span><br><span class="line">            <span class="comment">//第一种调用方法的停止方式</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">//StopCoroutine(&quot;count&quot;);</span></span><br><span class="line">            <span class="comment">//第二种调用方法的停止方式</span></span><br><span class="line">            </span><br><span class="line">            StopCoroutine(e);</span><br><span class="line">            <span class="comment">//第三种调用方法的停止方式</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">IEnumerator <span class="title">count</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.Log(i);</span><br><span class="line">            <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params"><span class="number">2</span></span>)</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="5-3-Close的恰当的时机"><a href="#5-3-Close的恰当的时机" class="headerlink" title="5.3 Close的恰当的时机"></a>5.3 Close的恰当的时机</h3><p>在TCP参数中的LingerState能够尽量发完操作系统缓冲区的信息，但是不要忘了我们之前写的发送方法，我们在发送前会将消息放入自己设置的缓冲区，这些数据在关闭的时候就会丢失。</p>
-<p>解决方法是设置一个bool值判断是否正在Closing，主动关闭的一方如果还有要发送的消息就将isClosing设置为true，关闭前就判断isClosing为true就不能关闭，如果为false就能发送。</p>
-<h3 id="5-4-心跳机制"><a href="#5-4-心跳机制" class="headerlink" title="5.4 心跳机制"></a>5.4 心跳机制</h3><p>如果玩游戏一半，网线被噶了，那就没机会发送FIN信号了，如果不处理的话，服务端就一直占着系统资源，TCP有一个检测机制，如果在指定的时间没有数据传送就会发送一个信号，对端如果收到信号就会返回确认信号，如果一段时间没有收到回应就会重试几次，如果都没有，会认为网络不通关闭Socket。</p>
-<p>启用方法：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.KeepAlive,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-
-<p>但是TCP提供的方法不太适用于游戏，因为网游强调一个高实时性。</p>
-<p>所以一般会自己实现心跳机制，客户端会定时向服务端发出PING消息，服务端收到回应PONG消息，若是很久没收到就说明连接不通，释放资源。</p>
-<h2 id="第六章-帧同步和状态同步"><a href="#第六章-帧同步和状态同步" class="headerlink" title="第六章 帧同步和状态同步"></a>第六章 帧同步和状态同步</h2><h3 id="6-1-状态同步"><a href="#6-1-状态同步" class="headerlink" title="6.1 状态同步"></a>6.1 状态同步</h3><p>状态同步指的是同步状态信息，比如角色需要做出的动作，角色的位置坐标、旋转发送给服务端，服务端再做广播。这种同步方式会将核心的逻辑判断交给服务端，否则就会导致延迟过高。举个例子：</p>
-<p>如果服务端只是作为一个转发器，那么当一个玩家同步自己释放技能的状态，很有可能网络原因导致其他主机很晚才收到，这就会导致延迟很高，而如果只是将释放技能这个状态同步给服务端，服务端收到后进行一定程度的判断和运算再将处理后的状态同步给所有的玩家，这样再一定程度上保持了所有玩家是同步的，但是这也会导致响应慢等问题。所以状态同步一般不会适用于实时度比较高的pvp游戏。</p>
-<h4 id="6-1-1-跟随算法"><a href="#6-1-1-跟随算法" class="headerlink" title="6.1.1 跟随算法"></a>6.1.1 跟随算法</h4><p>上述是服务端处理完再广播的方式，还有一种方法就是服务端还是当个转发工具人，网络不好的情况下势必会导致经常瞬移，所以聪明的程序大佬们想到了一个方法，就是如果获得了一个状态与客户端的状态有差距就以一定的速度将物体达到这个状态，只要同步频率够高误差就可以忽略，但是如果我们仔细分析一下，这个相对于直接状态同步误差更大，于是人们又引用了预测算法。</p>
-<h4 id="6-1-2-预测算法"><a href="#6-1-2-预测算法" class="headerlink" title="6.1.2 预测算法"></a>6.1.2 预测算法</h4><p>在某些有规律可循的条件下比如坦克的匀速运动，或者匀加速运动，我们可以预测坦克接下来的位置，我们就让坦克提前走到预测的位置去，但是这也会引发一个问题，就是玩家控制的东西一般来说没啥规律，所以如果玩家再运行途中停了下来，就会看到一个神奇的现象，一个往前开的坦克又默默的退了回来，而且预测算法也比较复杂。</p>
-<p>两种算法各有优势，具体情况具体分析。</p>
-<h3 id="6-2-帧同步"><a href="#6-2-帧同步" class="headerlink" title="6.2 帧同步"></a>6.2 帧同步</h3><p>在游戏中同步的是玩家的操作指令，操作指令包含当前的帧索引。一般的流程是客户端上传操作到服务器， 服务器收到后并不计算游戏行为， 而是转发到所有客户端。帧同步其实是指令同步的一种。</p>
-<h4 id="6-2-1-指令同步"><a href="#6-2-1-指令同步" class="headerlink" title="6.2.1 指令同步"></a>6.2.1 指令同步</h4><p>玩家只同步指令信息，相同的输入 + 相同的时机 &#x3D; 相同的输出。</p>
-<h4 id="6-2-2-同步帧"><a href="#6-2-2-同步帧" class="headerlink" title="6.2.2 同步帧"></a>6.2.2 同步帧</h4><p>帧同步的帧与unity中的帧是两个概念，在unity中我们说Update函数每一帧调用一次，我们也说Update调用的快慢取决于使用的设备，那如果某个设备Update慢点就没法保证相同的时机了，这些偏差会导致整个游戏不同的客户端差距巨大，所以我们会另外引入一个叫同步帧的概念。帧同步的特性导致客户端的逻辑实现和表现实现必须完全分离。Unity中的一些方法接口(如 Invoke， Update、动画系统等)是不可靠的，所有要自己实现一套物理引擎、数学库，做到逻辑和表现分离。 这样即使Unity的渲染是不同步的，但是逻辑跑出来是同步的。</p>
-<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png"></p>
+<p>上面的就是协程的使用方式。</p>
+<h3 id="（2）优点"><a href="#（2）优点" class="headerlink" title="（2）优点"></a>（2）优点</h3><p>然后我们来聊一聊协程的好处，在搜资料的时候我看到一个有趣的例子，你去某个办事处办事，此时办事处是cpu每个人办的事就是一个一个线程，办事处只有一个员工（对应cpu在同一个时间只能进行一个线程），当这个员工要从一件事转头去做另一件事，自然要做许多事，比如先暂停上一件事，然后把上一件事资料整理好，方便下次做这件事的时候开始，然后要加载另一件事所需的资源，所以线程之间的切换是很耗费时间的，但是，如果你自己能仿制办事处的办事方法，就不需要再到办事处浪费时间了，这就是协程的好处。</p>
+<p>让原来要使用异步 + 回调方式写的非人类代码, 可以用看似同步的方式写出来。<br>能够分步做一个比较耗时的事情，如果需要大量的计算，将计算放到一个随时间进行的协程来处理，能分散计算压力</p>
+<h3 id="（3）缺点"><a href="#（3）缺点" class="headerlink" title="（3）缺点"></a>（3）缺点</h3><p>我们可以看到我们上面的程序，需要再返回时new一个对象，如果再程序中大量的创造对象会引发GC，同时，如果激活的协程较多，就可能会造成多个协程挤在同一帧执行，导致卡顿。</p>
+<h3 id="（4）协程的运行时间"><a href="#（4）协程的运行时间" class="headerlink" title="（4）协程的运行时间"></a>（4）协程的运行时间</h3><p><img src="https://s2.loli.net/2022/06/26/TpwaurVb2QCkWc8.png"></p>
+<p>所有使用到yield的都是协程，协程不是线程，和update和start一样在主线程上运行。</p>
+<h3 id="（5）协程结束方式"><a href="#（5）协程结束方式" class="headerlink" title="（5）协程结束方式"></a>（5）协程结束方式</h3><p>1.StopCoroutine，不解释，上面有用法，别用错了</p>
+<p>2.stopAllCoroutines暂停的是当前脚本下的所有协程</p>
+<p>3.移除脚本，移除物体，禁用物体（实测禁用脚本屁用没有）</p>
+<h3 id="（6）中断函数类型"><a href="#（6）中断函数类型" class="headerlink" title="（6）中断函数类型"></a>（6）中断函数类型</h3><p>null 在下一帧所有的Update()函数调用过之后执行</p>
+<p>WaitForSeconds() 等待指定秒数，在该帧（延迟过后的那一帧）所有update()函数调用完后执行。即等待给定时间周期， 受Time.timeScale影响，当Time.timeScale &#x3D; 0f 时，yield return new WaitForSecond(x) 将不会满足。</p>
+<p>WaitForFixedUpdate 等待一个固定帧，即等待物理周期循环结束后执行</p>
+<p>WaitForEndOfFrame 等待帧结束，即等待渲染周期循环结束后执行</p>
+<p>StartCoroutine 等待一个新协程暂停</p>
+<p>WWW 等待一个加载完成，等待www的网络请求完成后，isDone&#x3D;true后执行</p>
+<h3 id="（7）执行顺序"><a href="#（7）执行顺序" class="headerlink" title="（7）执行顺序"></a>（7）执行顺序</h3><p>开始协程-&gt;执行协程-&gt;遇到中断指令中断协程-&gt;返回上层函数继续执行上层函数的下一行代码-&gt;中断指令结束后，继续执行中断指令之后的代码-&gt;协程结束</p>
+<p>协程如果还有问题可以看看:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/59619632%EF%BC%8C%E6%88%91%E5%B0%B1%E6%98%AF%E7%9C%8B%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E6%80%BB%E7%BB%93%E5%87%BA%E6%9D%A5%E7%9A%84%E3%80%82">https://zhuanlan.zhihu.com/p/59619632，我就是看这篇文章总结出来的。</a></p>
 </div>
         </div>
         
@@ -251,7 +241,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/",
+                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-9/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -263,9 +253,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/";
-            const title         = "「Unity网络游戏开发(3)」";
-            const excerpt       = `Unity网络游戏开发第三部分`;
+            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-9/";
+            const title         = "「C#知识(9)」";
+            const excerpt       = `本节主要内容：协程及Unity中的用法`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -284,10 +274,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/unity/" rel="tag">unity</a>, <a class="tag-none-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" rel="tag">网络游戏</a>
+                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-11-16T07:49:05.728Z" itemprop="dateModified">最后编辑：2022-11-16</time>
+                    <time datetime="2022-12-25T06:30:59.096Z" itemprop="dateModified">最后编辑：2022-12-25</time>
                 </div>
             </div>
         </footer>
@@ -296,13 +286,9 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" Unity网络游戏开发(2)" href="/2022/11/16/Unity网络游戏开发/Unity网络游戏开发-2/">&lt; 上一篇</a>
+                <a title=" C#知识(8)" href="/2022/12/24/CS知识/CS知识-8/">&lt; 上一篇</a>
             </div>
             
-            
-            <div class="nav-next clearfix">
-                <a title=" C#知识(1)" href="/2022/12/24/CS知识/CS知识-1/">下一篇 &gt;</a>
-            </div>
             
         </nav>
     

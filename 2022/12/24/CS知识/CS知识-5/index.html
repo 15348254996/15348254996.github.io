@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>Unity网络游戏开发(3) | 舛羽的笔记小站</title>
+  <title>C#知识(5) | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,23 +14,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="unity, 网络游戏" />
+    <meta name="keywords" content="C#" />
   
-  <meta name="description" content="Unity网络游戏开发第三部分">
+  <meta name="description" content="本节主要内容：事件相关知识">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity网络游戏开发(3)">
-<meta property="og:url" content="http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/index.html">
+<meta property="og:title" content="C#知识(5)">
+<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-5/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="Unity网络游戏开发第三部分">
+<meta property="og:description" content="本节主要内容：事件相关知识">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png">
-<meta property="article:published_time" content="2022-11-16T07:38:12.000Z">
-<meta property="article:modified_time" content="2022-11-16T07:49:05.728Z">
+<meta property="article:published_time" content="2022-12-24T15:29:35.000Z">
+<meta property="article:modified_time" content="2022-12-25T04:03:03.772Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="网络游戏">
-<meta property="article:tag" content="unity">
+<meta property="article:tag" content="C#">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png">
   
   <!-- 站点验证相关 -->
   
@@ -133,15 +130,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-5/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">Unity网络游戏开发(3)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(5)</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-11-16T07:38:12.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-11-16</time></li>
+                <li><time datetime="2022-12-24T15:29:35.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -149,7 +146,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~3.17K
+                        1127
                     
                     字
                 </li>
@@ -160,44 +157,21 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1668584945728"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1671940983772"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>Unity网络游戏开发第三部分</p>
+            <div itemprop="articleBody"><p>本节主要内容：事件相关知识</p>
 <span id="more"></span>
 
-<h2 id="第五章-深入了解TCP"><a href="#第五章-深入了解TCP" class="headerlink" title="第五章 深入了解TCP"></a>第五章 深入了解TCP</h2><h3 id="5-1-TCP的连接、传输和终止"><a href="#5-1-TCP的连接、传输和终止" class="headerlink" title="5.1 TCP的连接、传输和终止"></a>5.1 TCP的连接、传输和终止</h3><p>我们都听说过三次握手，四次挥手的表述，但是很难理解为什么要三次握手四次挥手。</p>
-<p>要理解这点，我们首先要理解到TCP是一种面向连接的，可靠的，基于字节流的传输层协议，像连接这种事为了确保可靠一定要保证双方的网络是相通的。</p>
-<p>先来看<strong>三次握手</strong>：</p>
-<p>主角：</p>
-<p>主机一和主机二</p>
-<p>过程：主机一向主机二发送请求连接的报文，由于网络环境差，致使此报文一直呆在网络环境中，最终导致失效，主机一或许早已完成连接，或许放弃了连接，反正此时不打算和主机二连接了，此时这个报文到达了主机二，主机二以为是主机一发的，假设只是两次握手，主机二向主机一发出确认报文问，但是主机一并没有打算连接，所以丢弃，但是主机二还以为连上了苦苦的在那里等，这就导致了资源的浪费。所以需要三次握手。</p>
-<p><font color='red'>本人理解:</font>一个面向连接的协议自然要保证连接的双向连通，两次握手，主机一知道了主机一到主机二的道路和主机二到主机一的道路都是通的，但是主机二只知道主机一到主机二的道路是通的，不知道主机二到主机一的道路是通的。除非主机一发送确认报文，并且主机二清楚的收到。（有点绕，可以多看几遍）</p>
-<p>再来看看<strong>四次挥手</strong>：</p>
-<p>主机一向主机二请求断开连接，代表着主机一并没有数据往主机二发了，但是不代表主机二没有数据往主机一发了，所以主机一你先别急，等主机二发完了，向主机一再发送请求断开连接，主机一再处理完主机二发来的剩余信息后才发送确认信息，然后主机一释放连接，主机二也释放连接。</p>
-<h3 id="5-2-常用的TCP参数"><a href="#5-2-常用的TCP参数" class="headerlink" title="5.2 常用的TCP参数"></a>5.2 常用的TCP参数</h3><p>Socket相当于TCP与UDP提供的接口，所以我们可以通过Socket获取或修改TCP的很多参数 ，这有利于我们构造更为实用的框架。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//操作系统读缓冲区大小</span></span><br><span class="line">socket.ReceiveBufferSize = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//操作系统写缓冲区大小，可以设置大点防止发送不完整带来的问题</span></span><br><span class="line">socket.SendBufferSize = <span class="number">81920</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启用Nagle算法，即连续发送小数据会攒够一定大数据在一起发送，true为不启用</span></span><br><span class="line"><span class="comment">//对实时性要求高的游戏设置为true</span></span><br><span class="line">socket.NoDelay = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//最多可经过的路由器数，也就是IP数据报的生存时间，主要是为了防止IP数据包在网络环境中陷入无限循环和收发</span></span><br><span class="line">socket.Ttl = <span class="number">64</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//是否启动端口复用，当服务器需要重启时，经常会碰到端口尚未完全关闭的情况。</span></span><br><span class="line"><span class="comment">//这时如果不设置端口复用，则无法完成绑定，因为端口还处于被别的套接口绑定的状态之中。</span></span><br><span class="line"><span class="comment">//存在一定安全隐患，主动关闭方可能会收到上一次连接的数据包，可能会导致奇怪的现象</span></span><br><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//其中 LingerOption包含两个参数</span></span><br><span class="line"><span class="comment">//LingerState.Enabled代表是否启动LingerState</span></span><br><span class="line"><span class="comment">//LingerState.LingerTime,指定超时时间，在超时时间内会尝试发送数据</span></span><br><span class="line"><span class="comment">//如果发送时间超过了超时时间，操作系统还是会强制关闭链接。如果LingerTime设置为0，则会不断尝试发送，直至发送完毕才会关闭连接。</span></span><br><span class="line"><span class="comment">//主要是用于服务端在接收到断开连接后，先发送完缓冲区的数据再断开连接</span></span><br><span class="line">socket.LingerState.Enabled = <span class="literal">true</span>;</span><br><span class="line">socket.LingerState = <span class="keyword">new</span> LingerOption(<span class="literal">true</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-3-Close的恰当的时机"><a href="#5-3-Close的恰当的时机" class="headerlink" title="5.3 Close的恰当的时机"></a>5.3 Close的恰当的时机</h3><p>在TCP参数中的LingerState能够尽量发完操作系统缓冲区的信息，但是不要忘了我们之前写的发送方法，我们在发送前会将消息放入自己设置的缓冲区，这些数据在关闭的时候就会丢失。</p>
-<p>解决方法是设置一个bool值判断是否正在Closing，主动关闭的一方如果还有要发送的消息就将isClosing设置为true，关闭前就判断isClosing为true就不能关闭，如果为false就能发送。</p>
-<h3 id="5-4-心跳机制"><a href="#5-4-心跳机制" class="headerlink" title="5.4 心跳机制"></a>5.4 心跳机制</h3><p>如果玩游戏一半，网线被噶了，那就没机会发送FIN信号了，如果不处理的话，服务端就一直占着系统资源，TCP有一个检测机制，如果在指定的时间没有数据传送就会发送一个信号，对端如果收到信号就会返回确认信号，如果一段时间没有收到回应就会重试几次，如果都没有，会认为网络不通关闭Socket。</p>
-<p>启用方法：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socket.SetSocketOption(SocketOptionLevel.Socket,SocketOptionName.KeepAlive,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
-
-<p>但是TCP提供的方法不太适用于游戏，因为网游强调一个高实时性。</p>
-<p>所以一般会自己实现心跳机制，客户端会定时向服务端发出PING消息，服务端收到回应PONG消息，若是很久没收到就说明连接不通，释放资源。</p>
-<h2 id="第六章-帧同步和状态同步"><a href="#第六章-帧同步和状态同步" class="headerlink" title="第六章 帧同步和状态同步"></a>第六章 帧同步和状态同步</h2><h3 id="6-1-状态同步"><a href="#6-1-状态同步" class="headerlink" title="6.1 状态同步"></a>6.1 状态同步</h3><p>状态同步指的是同步状态信息，比如角色需要做出的动作，角色的位置坐标、旋转发送给服务端，服务端再做广播。这种同步方式会将核心的逻辑判断交给服务端，否则就会导致延迟过高。举个例子：</p>
-<p>如果服务端只是作为一个转发器，那么当一个玩家同步自己释放技能的状态，很有可能网络原因导致其他主机很晚才收到，这就会导致延迟很高，而如果只是将释放技能这个状态同步给服务端，服务端收到后进行一定程度的判断和运算再将处理后的状态同步给所有的玩家，这样再一定程度上保持了所有玩家是同步的，但是这也会导致响应慢等问题。所以状态同步一般不会适用于实时度比较高的pvp游戏。</p>
-<h4 id="6-1-1-跟随算法"><a href="#6-1-1-跟随算法" class="headerlink" title="6.1.1 跟随算法"></a>6.1.1 跟随算法</h4><p>上述是服务端处理完再广播的方式，还有一种方法就是服务端还是当个转发工具人，网络不好的情况下势必会导致经常瞬移，所以聪明的程序大佬们想到了一个方法，就是如果获得了一个状态与客户端的状态有差距就以一定的速度将物体达到这个状态，只要同步频率够高误差就可以忽略，但是如果我们仔细分析一下，这个相对于直接状态同步误差更大，于是人们又引用了预测算法。</p>
-<h4 id="6-1-2-预测算法"><a href="#6-1-2-预测算法" class="headerlink" title="6.1.2 预测算法"></a>6.1.2 预测算法</h4><p>在某些有规律可循的条件下比如坦克的匀速运动，或者匀加速运动，我们可以预测坦克接下来的位置，我们就让坦克提前走到预测的位置去，但是这也会引发一个问题，就是玩家控制的东西一般来说没啥规律，所以如果玩家再运行途中停了下来，就会看到一个神奇的现象，一个往前开的坦克又默默的退了回来，而且预测算法也比较复杂。</p>
-<p>两种算法各有优势，具体情况具体分析。</p>
-<h3 id="6-2-帧同步"><a href="#6-2-帧同步" class="headerlink" title="6.2 帧同步"></a>6.2 帧同步</h3><p>在游戏中同步的是玩家的操作指令，操作指令包含当前的帧索引。一般的流程是客户端上传操作到服务器， 服务器收到后并不计算游戏行为， 而是转发到所有客户端。帧同步其实是指令同步的一种。</p>
-<h4 id="6-2-1-指令同步"><a href="#6-2-1-指令同步" class="headerlink" title="6.2.1 指令同步"></a>6.2.1 指令同步</h4><p>玩家只同步指令信息，相同的输入 + 相同的时机 &#x3D; 相同的输出。</p>
-<h4 id="6-2-2-同步帧"><a href="#6-2-2-同步帧" class="headerlink" title="6.2.2 同步帧"></a>6.2.2 同步帧</h4><p>帧同步的帧与unity中的帧是两个概念，在unity中我们说Update函数每一帧调用一次，我们也说Update调用的快慢取决于使用的设备，那如果某个设备Update慢点就没法保证相同的时机了，这些偏差会导致整个游戏不同的客户端差距巨大，所以我们会另外引入一个叫同步帧的概念。帧同步的特性导致客户端的逻辑实现和表现实现必须完全分离。Unity中的一些方法接口(如 Invoke， Update、动画系统等)是不可靠的，所有要自己实现一套物理引擎、数学库，做到逻辑和表现分离。 这样即使Unity的渲染是不同步的，但是逻辑跑出来是同步的。</p>
-<h3 id="6-3-帧同步与状态同步对比"><a href="#6-3-帧同步与状态同步对比" class="headerlink" title="6.3 帧同步与状态同步对比"></a>6.3 帧同步与状态同步对比</h3><p><img src="https://s2.loli.net/2022/11/07/MJhDcYQV9vkRmyS.png"></p>
+<h3 id="1-事件"><a href="#1-事件" class="headerlink" title="1.事件"></a>1.事件</h3><p>上一篇讲了委托，这篇讲事件，事件这玩意我自己又没怎么用过，不过没关系，因为这玩意能干的事委托都能干，事实上他其实就是在委托上面加了一些限制来确保委托不会被滥用，至于它的相关知识，了解用法即可，因为用的确实不多。</p>
+<p>事件的声明：声明事件之前一定要声明委托类型，或者用C#自带的委托类型如Action&lt;&gt;之类的。</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">A</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">onable</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        prog.newevent += show;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title">prog</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">delegate</span> <span class="keyword">void</span> <span class="title">howshow</span>()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">event</span> howshow newevent;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">happenevent</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        newevent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title">progMain</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        A.onable();</span><br><span class="line">        prog.happenevent();</span><br><span class="line">        <span class="comment">//prog.newevent();</span></span><br><span class="line">        <span class="comment">//不能在内外直接调用事件</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//注：以上程序均使用static主要还是因为我比较懒，语法上并未规定一定要用static</span></span><br></pre></td></tr></table></figure>
+<p>三个类，我们把它分别叫做发布器类（prog），订阅类（A），触发类（progMain），使用方法基本上就是这样了。稍微了解以下编译器如何实现事件。</p>
+<p>C#编译器编译时把它转换为一个私有的委托和两个方法，两个方法是为了提供登记对某个事件的方法（用+&#x3D;的时候）和注销对某个事件的关注的方法（用-&#x3D;的时候）。因为提供的委托是私有类型的，所以事件相较于委托有个非常大的区别，event 只能在所声明的类的内部调用，但是在别的类中可以进行 +&#x3D; 和 -&#x3D; 操作。</p>
+<p>本来想讲讲反射的但是反射有点多，所以只能留到下章了。</p>
 </div>
         </div>
         
@@ -251,7 +225,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/",
+                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-5/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -263,9 +237,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/11/16/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91-3/";
-            const title         = "「Unity网络游戏开发(3)」";
-            const excerpt       = `Unity网络游戏开发第三部分`;
+            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-5/";
+            const title         = "「C#知识(5)」";
+            const excerpt       = `本节主要内容：事件相关知识`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -284,10 +258,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/unity/" rel="tag">unity</a>, <a class="tag-none-link" href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" rel="tag">网络游戏</a>
+                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-11-16T07:49:05.728Z" itemprop="dateModified">最后编辑：2022-11-16</time>
+                    <time datetime="2022-12-25T04:03:03.772Z" itemprop="dateModified">最后编辑：2022-12-25</time>
                 </div>
             </div>
         </footer>
@@ -296,12 +270,12 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" Unity网络游戏开发(2)" href="/2022/11/16/Unity网络游戏开发/Unity网络游戏开发-2/">&lt; 上一篇</a>
+                <a title=" C#知识(4)" href="/2022/12/24/CS知识/CS知识-4/">&lt; 上一篇</a>
             </div>
             
             
             <div class="nav-next clearfix">
-                <a title=" C#知识(1)" href="/2022/12/24/CS知识/CS知识-1/">下一篇 &gt;</a>
+                <a title=" C#知识(6)" href="/2022/12/24/CS知识/CS知识-6/">下一篇 &gt;</a>
             </div>
             
         </nav>
