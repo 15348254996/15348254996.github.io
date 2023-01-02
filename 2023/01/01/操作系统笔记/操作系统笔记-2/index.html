@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>操作系统概述（操作系统笔记1） | 舛羽的笔记小站</title>
+  <title>进程的描述与控制（操作系统笔记2） | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -16,20 +16,20 @@
   
     <meta name="keywords" content="操作系统" />
   
-  <meta name="description" content="本系列笔记是为了对操作系统相关的知识点进行记录，本篇文章主要记录概述相关内容。">
+  <meta name="description" content="本篇笔记进入操作系统的第一个功能处理器管理，而处理器管理重要功能就是对进程的管理。本篇对进程的描述和管理进行讲解。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="操作系统概述（操作系统笔记1）">
-<meta property="og:url" content="http://example.com/2022/12/31/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-1/index.html">
+<meta property="og:title" content="进程的描述与控制（操作系统笔记2）">
+<meta property="og:url" content="http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-2/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本系列笔记是为了对操作系统相关的知识点进行记录，本篇文章主要记录概述相关内容。">
+<meta property="og:description" content="本篇笔记进入操作系统的第一个功能处理器管理，而处理器管理重要功能就是对进程的管理。本篇对进程的描述和管理进行讲解。">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/12/31/vOtrgz61b8Ci7Zk.png">
-<meta property="article:published_time" content="2022-12-31T12:32:47.000Z">
-<meta property="article:modified_time" content="2023-01-01T04:09:02.789Z">
+<meta property="og:image" content="https://s2.loli.net/2023/01/01/dzyYDuA5POwZp6F.png">
+<meta property="article:published_time" content="2023-01-01T04:10:47.000Z">
+<meta property="article:modified_time" content="2023-01-02T14:20:17.510Z">
 <meta property="article:author" content="cy">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/12/31/vOtrgz61b8Ci7Zk.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/01/dzyYDuA5POwZp6F.png">
   
   <!-- 站点验证相关 -->
   
@@ -132,15 +132,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/31/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-2/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">操作系统概述（操作系统笔记1）</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">进程的描述与控制（操作系统笔记2）</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-31T12:32:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-31</time></li>
+                <li><time datetime="2023-01-01T04:10:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-01</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -148,7 +148,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~2.17K
+                        ~1.51K
                     
                     字
                 </li>
@@ -159,128 +159,101 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1672546142789"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1672669217510"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本系列笔记是为了对操作系统相关的知识点进行记录，本篇文章主要记录概述相关内容。</p>
+            <div itemprop="articleBody"><p>本篇笔记进入操作系统的第一个功能处理器管理，而处理器管理重要功能就是对进程的管理。本篇对进程的描述和管理进行讲解。</p>
 <span id="more"></span>
-<h2 id="第一章-操作系统概述"><a href="#第一章-操作系统概述" class="headerlink" title="第一章 操作系统概述"></a>第一章 操作系统概述</h2><h3 id="1-1-操作系统定义"><a href="#1-1-操作系统定义" class="headerlink" title="1.1 操作系统定义"></a>1.1 操作系统定义</h3><p>操作系统是一组用于控制和管理计算机系统软件和软件资源，合理地对各类作业进行调度，以及方便用户使用地集合。</p>
-<p>简单点来说就是为了让人们更方便地使用计算器而不是对着一堆电路发呆而专门设计地一层软件。他能帮忙处理很多需要与硬件交互的事件。</p>
-<h3 id="1-2-操作系统地位"><a href="#1-2-操作系统地位" class="headerlink" title="1.2 操作系统地位"></a>1.2 操作系统地位</h3><p>配置在计算机硬件上的第一层软件。</p>
-<h3 id="1-3-操作系统的四大基本特征（重要）"><a href="#1-3-操作系统的四大基本特征（重要）" class="headerlink" title="1.3 操作系统的四大基本特征（重要）"></a>1.3 操作系统的四大基本特征（<font color='red'>重要</font>）</h3><ul>
-<li><p><strong>并发</strong>：两个或多个活动在同一给定的时间间隔中进行。</p>
-</li>
-<li><p><strong>共享</strong>：计算机系统的资源可以被多个进程公用。</p>
-</li>
-<li><p><strong>异步</strong>：进程的执行并不是一气呵成，无论是为了实现并发还是达成交互性，进程在执行时总是断断续续的，所以进程的运行速度并不可预知。</p>
-</li>
-<li><p><strong>虚拟</strong>：通过时分复用，空分复用等技术，将一个物理实体转换成逻辑对应物，比如本来只有一根线来传递信息，通过不同频道让观众以为有好几根管道传递着不同的信息。</p>
-</li>
+<h2 id="第二章-进程的描述与控制"><a href="#第二章-进程的描述与控制" class="headerlink" title="第二章 进程的描述与控制"></a>第二章 进程的描述与控制</h2><h3 id="2-1-进程的引入和定义"><a href="#2-1-进程的引入和定义" class="headerlink" title="2.1  进程的引入和定义"></a>2.1  进程的引入和定义</h3><p>引入进程是为了方便操作系统对多道程序进行并发执行，系统为每个运行的程序配置一个数据结构（程序和进程不是一一对应的关系），称为进程控制块（PCB），用来描述进程的各种信息。</p>
+<p><font color='red'>程序段，数据段，PCB</font>三部分组成了进程实体，我们把进程实体简称为进程。</p>
+<h3 id="2-2-进程的特征"><a href="#2-2-进程的特征" class="headerlink" title="2.2 进程的特征"></a>2.2 进程的特征</h3><ul>
+<li>动态性：进程是程序的一次执行过程，动态产生、变化和消亡的。</li>
+<li>并发性：内存中有多个进程实体，各进程并发执行。</li>
+<li>独立性：进程独立运行，独立获得资源，独立接收调用（<font color="red">是资源分配的基本单位，如果不引入线程也是处理机调度的基本单位</font>）。</li>
+<li>异步性：各进程独立向前推进，速度不可预知。</li>
+<li>结构性：每个进程都会配置一个PCB。</li>
 </ul>
-<p><font color='red'>最基本特征</font>：并发，共享（互为存在条件）</p>
-<h3 id="1-4-主要功能"><a href="#1-4-主要功能" class="headerlink" title="1.4 主要功能"></a>1.4 主要功能</h3><p>也就是后面我们要介绍的主要内容。分别分为四个模块：</p>
+<h3 id="2-3-进程的状态"><a href="#2-3-进程的状态" class="headerlink" title="2.3 进程的状态"></a>2.3 进程的状态</h3><p>基本状态：</p>
 <ul>
-<li>处理机管理：包括进程控制、同步、通信，以及导致的死锁问题，作业调度，进程调度。</li>
-<li>存储器管理：内存分配回收，内存保护，地址映射，内存扩充</li>
-<li>设备管理功能：缓冲管理，设备分配，设备处理</li>
-<li>文件管理功能：文件存储空间管理，目录管理，文件的读写管理和保护</li>
-<li>接口管理功能：<ul>
-<li>用户接口：便于用户直接或间接控制自己的作业<ul>
-<li>联机用户接口：CMD</li>
-<li>脱机用户接口：.bat文件</li>
-<li>图形用户接口：采用图形化操作界面，比如双击文件夹就打开了</li>
+<li>运行态：占有CPU，并在CPU上运行</li>
+<li>就绪态：具备运行条件，由于CPU没空，暂时不能运行</li>
+<li>阻塞态：因等待某一时间暂时不能运行</li>
 </ul>
-</li>
-<li>程序接口：用户程序在访问系统资源而设置的<ul>
-<li>如使用各种外部设备、申请分配和回收内存及其它各种要求</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="1-5-操作系统发展（考试重要）"><a href="#1-5-操作系统发展（考试重要）" class="headerlink" title="1.5 操作系统发展（考试重要）"></a>1.5 操作系统发展（考试重要）</h3><ol>
-<li><p>人工操作阶段（无操作系统）：<font color='red'>缺点</font>：用户独占计算机，人机速度矛盾资源利用率低。</p>
-</li>
-<li><p>批处理系统：</p>
+<p>另外两张状态：</p>
 <ul>
-<li>单道批处理系统：脱机输入，并控制作业的输入输出（操作系统雏形），内存中仅有一道程序</li>
-<li>优点：缓解了人机矛盾，资源利用率有所提升</li>
-<li><p>缺点：资源利用率依然很低</p>
-</li>
-<li><p>多道批处理系统：内存中多道程序，在CPU中交替进行，初步实现了并发</p>
-</li>
-<li><p>优点：多道程序并发执行，资源利用率高</p>
-</li>
-<li>去点：用户响应时间长，无人机交互，无法跟踪程序运行情况</li>
+<li>创建态：进程正在被创建，操作系统为进程分配资源，初始化PCB</li>
+<li>终止态：进程正在从系统中撤销，操作系统会回收进程拥有的资源、撤销PCB</li>
 </ul>
-</li>
-<li><p>分时操作系统：以时间片为单位轮流为各个用户或作业提供服务。</p>
+<p><img src="https://s2.loli.net/2023/01/01/dzyYDuA5POwZp6F.png" alt="图片来自https://blog.csdn.net/weixin_43914604/article/details/104819326"></p>
+<h3 id="2-4-进程控制"><a href="#2-4-进程控制" class="headerlink" title="2.4 进程控制"></a>2.4 进程控制</h3><p>进程控制就是实现进程状态的转换。</p>
+<p>进程控制是通过<font color="red">原语</font>来实现的。</p>
+<p>而源于是通过开关中断来实现的。</p>
+<p>原语的执行必须一气呵成，不可中断。</p>
+<p>对于进程控制相关的原语：</p>
 <ul>
-<li>优点：实现了人机交互</li>
-<li>缺点：对于突发情况难以及时响应处理</li>
-</ul>
-</li>
-<li><p>实时操作系统：能够优先响应紧急任务</p>
-<ul>
-<li>硬实时系统：某个动作必须在规定时间内完成，否则后果严重</li>
-<li>软实时系统：可以偶尔违反实时响应，不会造成重大后果</li>
-<li>优点：解决了分时系统无法响应紧急情况的问题</li>
-</ul>
-</li>
-<li><p>微机操作系统：个人计算机操作系统，由于个人计算机飞速发展种类多样</p>
-</li>
-</ol>
-<ul>
-<li>单用户单任务：MS-DOS</li>
-<li>单用户多任务：Windows系列</li>
-<li>多用户多任务：UNIX，Windows NT/Server</li>
-</ul>
+<li><p>进程的创建</p>
 <ol>
-<li>网络操作系统：把计算机网络中的各台计算机有机的结合起来，对网络资源进行管理和控制</li>
-<li>嵌入式操作系统：为了完成特定某个功能而实现的操作系统，不具有通用性，Android，iOS等。</li>
-<li>分布式操作系统：系统中的各计算机相互协同并行完成同一任务，包含通信管理功能，资源管理功能，进程管理功能。</li>
+<li>申请空白PCB</li>
+<li>分新进程分配资源</li>
+<li>初始化PCB</li>
+<li>将PCB加入就绪队列</li>
 </ol>
-<h3 id="1-6-操作系统运行机制"><a href="#1-6-操作系统运行机制" class="headerlink" title="1.6 操作系统运行机制"></a>1.6 操作系统运行机制</h3><p><img src="https://s2.loli.net/2022/12/31/vOtrgz61b8Ci7Zk.png" alt="图片来自https://blog.csdn.net/weixin_43914604/article/details/104452762"></p>
-<p>用户态转核心态：只能通过中断来实现</p>
-<p>核心态转用户态：执行一个特权指令</p>
-<h3 id="1-7-中断和异常"><a href="#1-7-中断和异常" class="headerlink" title="1.7 中断和异常"></a>1.7 中断和异常</h3><p>中断：为了实现多道程序提高资源利用率，而程序切换需要进入核心态，为了从用户态进入核心态，所以引入中断操作。</p>
-<p>当发生中断，意味着需要操作系统介入管理工作，cpu会立即进入核心态。</p>
-<p>中断分为两种：</p>
+</li>
+<li><p>进程的终止</p>
 <ol>
-<li>内中断（异常）：来自CPU内部，包括程序出错或者程序自愿中断</li>
-<li>外中断（中断）：来自CPU外部，包括外设要求，人工干预（用户强行终止一个进程）</li>
+<li>从PCB的集合中找到终止进程的PCB</li>
+<li>若进程正在运行，立即剥夺CPU，将CPU分配给其他进程</li>
+<li>终止其所有子进程</li>
+<li>将所有资源归还父进程或操作系统</li>
+<li>删除PCB</li>
 </ol>
-<p>中断处理过程：</p>
+</li>
+<li><p>进程阻塞</p>
 <ol>
-<li>关中断：CPU响应中断，需要保护程序的现场状态，这个时候CPU不应该响应更高级中断源的中断请求，否则现场保护不完整。</li>
-<li>保存断点：为了保证能回到原来的程序，将断点保存起来。</li>
-<li>引出中断服务：取出中断服务程序的入口地址送入程序计数器。</li>
-<li>保存现场和屏蔽字：进入中断服务程序后首先要保存现场，现场信息一般指的是程序状态字、中断屏蔽寄存器和CPU中某些寄存器的内容。</li>
-<li>开中断：保护现场完毕就可以响应更高级的中断请求了。</li>
-<li>执行中断服务程序：中断系统的核心，不同的中断请求对应不同的中断服务程序。</li>
-<li>关中断：执行完中断服务程序后需要恢复现场，这个时候也不允许响应更高级中断源的中断请求。</li>
-<li>恢复现场和屏蔽字：将现场和屏蔽字恢复到原来的状态。</li>
-<li>开中断及中断返回：恢复完现场后可以响应更高级中断源的中断请求，并回到程序断点处继续执行源程序。</li>
+<li>找到要阻塞进程的PCB</li>
+<li>保护现场，设置为阻塞态，停止进程运行</li>
+<li>将PCB插入相应等待队列</li>
 </ol>
-<h3 id="1-8-系统调用"><a href="#1-8-系统调用" class="headerlink" title="1.8 系统调用"></a>1.8 系统调用</h3><p>用户程序通过系统调用（程序接口）请求获得操作系统的服务。</p>
-<p>系统调用会产生中断使处理器从用户态转为核心态。</p>
-<p>系统调用可分为一下几类：</p>
-<ul>
-<li><p>设备管理：完成设备请求、释放、启动等功能</p>
 </li>
-<li><p>文件管理：文件的读写、创建删除等功能</p>
+<li><p>进程唤醒</p>
+<ol>
+<li>找到要唤醒进程的PCB</li>
+<li>将其从等待序列中溢出，变为就绪态</li>
+<li>加入就绪队列等待被调度</li>
+</ol>
 </li>
-<li><p>进程控制：包括进程的创建、撤销、阻塞、唤醒等功能</p>
-</li>
-<li><p>进程通信：完成消息传递、信号传递等功能</p>
-</li>
-<li><p>内存管理：包括内存分配、回收等功能</p>
+<li>进程切换<ol>
+<li>将运行环境信息存入PCB</li>
+<li>PCB移进相应队列</li>
+<li>选择另一个进程执行，并更新其PCB</li>
+<li>根据PCB恢复新进程所需运行环境</li>
+</ol>
 </li>
 </ul>
-<p>系统调用发生在用户态，对系统调用的处理发生在核心态。</p>
+<h3 id="2-5-进程通信"><a href="#2-5-进程通信" class="headerlink" title="2.5 进程通信"></a>2.5 进程通信</h3><p>进程通信指的是进程之间的信息交换。</p>
+<p>一个进程并不能直接访问另一个进程的地址空间。但是进程之间的信息交换是必须的。</p>
+<p>经过发展有利能传送大量数据的高级通信机制，可归结为4类：</p>
+<ul>
+<li><p>共享存储器系统：共享一块大家都可以访问的空间，一次只能有一个进程进行读或写操作</p>
+<ul>
+<li>基于数据结构的共享：由程序源对空想数据结构进行设置和对进程间同步进行处理，OS只负责提供共享存储区，是一种低级通信方式</li>
+<li>基于共享存储区的共享：在内存中画出一块共享存储区，数据形式存放位置均由进程控制，是一种高级通信方式</li>
+</ul>
+</li>
+<li><p>管道通信系统：  指用于连接读写进程的一个共享文件。和共享存储器系统一样需要呼出访问，可以实现半双工通信，同时他确保两个进程达成同步，写进程写一定数量后便会休眠，直到读进程取走数据，读进程读完后也需要进入休眠，直到写进程再次写入数据。相比于共享存储器，管道系统两个进程之间一定会确定对方存在。</p>
+</li>
+<li><p>消息传递系统：通过操作系统提供的“发送/接收消息”的原语实现，发送放将消息头写好，接收方通过消息头读取或寻找哪个消息是自己的，网络上的报文传输也是一样的道理。同时他也分两类：</p>
+<ol>
+<li>直接通信方式：发送方发送的消息直接放入接收方的消息缓冲队列。（QQ式）</li>
+<li>间接通信方式：发送方先将消息发送给中转站，等接收方有时间了在去中转站找。（油箱式）</li>
+</ol>
+</li>
+<li><p>客户机服务端式：使用套接字或远程过程调用和远程方法调用</p>
+</li>
+</ul>
 </div>
         </div>
         
@@ -334,7 +307,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/31/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-1/",
+                text: "http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-2/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -346,9 +319,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/31/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-1/";
-            const title         = "「操作系统概述（操作系统笔记1）」";
-            const excerpt       = `本系列笔记是为了对操作系统相关的知识点进行记录，本篇文章主要记录概述相关内容。`;
+            const hostUrl       = "http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-2/";
+            const title         = "「进程的描述与控制（操作系统笔记2）」";
+            const excerpt       = `本篇笔记进入操作系统的第一个功能处理器管理，而处理器管理重要功能就是对进程的管理。本篇对进程的描述和管理进行讲解。`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -370,7 +343,7 @@
                     <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2023-01-01T04:09:02.789Z" itemprop="dateModified">最后编辑：2023-01-01</time>
+                    <time datetime="2023-01-02T14:20:17.510Z" itemprop="dateModified">最后编辑：2023-01-02</time>
                 </div>
             </div>
         </footer>
@@ -379,12 +352,12 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" 数据结构笔记" href="/2022/12/25/数据结构笔记/数据结构笔记/">&lt; 上一篇</a>
+                <a title=" 操作系统概述（操作系统笔记1）" href="/2022/12/31/操作系统笔记/操作系统笔记-1/">&lt; 上一篇</a>
             </div>
             
             
             <div class="nav-next clearfix">
-                <a title=" 进程的描述与控制（操作系统笔记2）" href="/2023/01/01/操作系统笔记/操作系统笔记-2/">下一篇 &gt;</a>
+                <a title=" 线程（操作系统笔记3）" href="/2023/01/01/操作系统笔记/操作系统笔记-3/">下一篇 &gt;</a>
             </div>
             
         </nav>
