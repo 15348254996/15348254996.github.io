@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>C#知识(8) | 舛羽的笔记小站</title>
+  <title>处理机调度（操作系统笔记4） | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,23 +14,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="C#" />
+    <meta name="keywords" content="操作系统" />
   
-  <meta name="description" content="本节主要内容：垃圾回收机制和相关重要算法">
+  <meta name="description" content="本篇笔记将介绍一下处理机调度，这一章会涉及非常多的算法，评判标准，这一章考试的话，会考大题。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C#知识(8)">
-<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/index.html">
+<meta property="og:title" content="处理机调度（操作系统笔记4）">
+<meta property="og:url" content="http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-4/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本节主要内容：垃圾回收机制和相关重要算法">
+<meta property="og:description" content="本篇笔记将介绍一下处理机调度，这一章会涉及非常多的算法，评判标准，这一章考试的话，会考大题。">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png">
-<meta property="og:image" content="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png">
-<meta property="article:published_time" content="2022-12-24T15:29:43.000Z">
-<meta property="article:modified_time" content="2022-12-25T06:31:37.902Z">
+<meta property="og:image" content="https://s2.loli.net/2023/01/03/vmk8YdcqHfz4x67.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/03/Fn1VBZupXlPcg7r.png">
+<meta property="article:published_time" content="2023-01-01T14:17:47.000Z">
+<meta property="article:modified_time" content="2023-01-04T07:43:35.299Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/03/vmk8YdcqHfz4x67.png">
   
   <!-- 站点验证相关 -->
   
@@ -133,15 +133,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-4/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(8)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">处理机调度（操作系统笔记4）</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-24T15:29:43.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
+                <li><time datetime="2023-01-01T14:17:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-01</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -149,7 +149,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~2.42K
+                        ~3.03K
                     
                     字
                 </li>
@@ -160,46 +160,182 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1671949897902"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1672818215299"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：垃圾回收机制和相关重要算法</p>
+            <div itemprop="articleBody"><p>本篇笔记将介绍一下处理机调度，这一章会涉及非常多的算法，评判标准，这一章考试的话，会考大题。</p>
 <span id="more"></span>
-<p>本章内容大量参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/nele/p/5673215.html">https://www.cnblogs.com/nele/p/5673215.html</a></p>
-<h2 id="1-GC（垃圾回收机制）"><a href="#1-GC（垃圾回收机制）" class="headerlink" title="1.GC（垃圾回收机制）"></a>1.GC（垃圾回收机制）</h2><p>当我们进行C++的开发的时候，我们有时需要使用new关键词在堆上手动开辟空间，同时也会用到delete来进行空间的释放，在C里面则是使用malloc和free关键词，但是当我们使用C#时我们大部分时候并不需要去管理堆上的内存，就好像系统帮我们完成了开辟和回收。</p>
-<p>其实C#作为一门托管型语言，托管代码在clr中运行，clr会自动惊醒垃圾回收等服务，所以我们才可以放心的随便创建引用值而不用担心内存遗漏。接下来简单介绍以下GC的机制。</p>
-<h3 id="（1）标志压缩算法"><a href="#（1）标志压缩算法" class="headerlink" title="（1）标志压缩算法"></a>（1）标志压缩算法</h3><p>该算法分三个步骤：</p>
-<p>1.先假设堆中所有对象都可以回收</p>
-<p>2.然后找出不能回收的对象</p>
-<p>3.最后堆中没有打标记的对象都是可以被回收的</p>
-<p>4.此时堆中对象不连续，移动这些对象，使他们重新从基地址开始连续</p>
-<p><img src="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png" alt=""></p>
-<p>经过这四步处理后，可以继续采用前面的堆内存分配方法，即仅用一个指针记录堆分配的起始地址就可以。</p>
-<p>主要处理步骤：将线程挂起→确定不能回收的对象→对象回收→堆压缩→指针修复。</p>
-<p>此处有两个问题：</p>
-<p>1.怎么确定哪些对象不能回收？</p>
-<p>答：首先GC从已经初始化的静态变量或者线程人在使用的对象（stack+CPU register）确定roots，通过复杂的引用关系，从roots出发开始寻找，如果能通过相互引用到达的引用则标记为不能回收的对象，剩余的对象则可以回收。</p>
-<p>2.指针修复干了什么？</p>
-<p>答：我们知道引用对象的存储方式是在栈上存储一个引用，这个引用其实就类似一根指针，他指向堆中相对应的内存，而当我们回收完并对堆进行压缩后，这些指针之前指的就会变成错误的地址，所以要进行修复。</p>
-<p>Debug和release执行模式之间稍有区别，release模式下后续代码没有引用的对象是可以回收的，而debug模式下需要等到当前函数执行完毕，这些对象才会成为可回收的，目的是为了调试时跟踪局部对象的内容。</p>
-<p>一些问题：Pinned objects指分配之后不能移动位置的对象，例如传递给非托管代码的对象（或者使用了fixed关键字），GC在指针修复时无法修改非托管代码中的引用指针，因此将这些对象移动将发生异常。pinned objects会导致堆出现碎片，但大部分情况来说传给非托管代码的对象应当在GC时能够被回收掉。 </p>
-<h3 id="（2）分代算法"><a href="#（2）分代算法" class="headerlink" title="（2）分代算法"></a>（2）分代算法</h3><p>程序可能使用几百M、几G的内存，对这样的内存区域进行GC操作成本很高，分代算法是基于一定的统计学基础，对GC的性能进行了改善。通过对象的生命周期讲对象分成了新对象和老对象也就是分了代，分代算法的假设前提</p>
-<p>1.新创建的对象生命周期都比较短，而较老的对象生命周期会更长</p>
-<p>2.对部分内存进行回收比基于全部内存的回收操作要快</p>
-<p>3.新创建的对象之间关联程度通常较强。堆分配的对象是连续的，关联度较强有利于提高CPU cache的命中率</p>
-<p>于是我们把堆分为了3代，分别是Gen0、Gen1、Gen2</p>
-<p>如果Gen 0 heap内存达到阀值，则触发0代GC，0代GC后Gen 0中幸存的对象进入Gen1。如果Gen 1的内存达到阀值，则进行1代GC，1代GC将Gen 0 heap和Gen 1 heap一起进行回收，幸存的对象进入Gen2。如图：</p>
-<p><img src="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png" alt=""></p>
-<p>2代GC将Gen 0 heap、Gen 1 heap和Gen 2 heap一起回收，Gen 0和Gen 1比较小，这两个代龄加起来总是保持在16M左右；Gen2的大小由应用程序确定，可能达到几G，因此0代和1代GC的成本非常低，2代GC称为full GC，通常成本很高。粗略的计算0代和1代GC应当能在几毫秒到几十毫秒之间完成，Gen 2 heap比较大时，full GC可能需要花费几秒时间。大致上来讲.NET应用运行期间，2代、1代和0代GC的频率应当大致为1:10:100。</p>
-<h3 id="（3）几个较为重要的垃圾回收相关api"><a href="#（3）几个较为重要的垃圾回收相关api" class="headerlink" title="（3）几个较为重要的垃圾回收相关api"></a>（3）几个较为重要的垃圾回收相关api</h3><p>GC.Collect()：这个的立足点是整个程序，调用这个程序会强制执行一次垃圾回收。也就是像上文提到的那样。</p>
-<p>虚构函数：和C++的定义方法相同，它的立足点是类，一个类对象在被垃圾回收时会执行虚构函数中的内容。</p>
-<p>Dispose()和close()：也是基于某个类对象，但是这个类对象是有非托管对象的类，GC不会处理非托管对象的释放，所以需要手动调用，有些类对象的是Dispose，而有些是close，但是实现的功能是一样的。如果你自己需要定义自己的Dispose()函数需要实现 IDisposable接口。</p>
-<p><font color='red'>注</font>：使用using语句可以自动调用Dispose()函数。</p>
-<h3 id="（4）Finalization-Queue和Freachable-Queue"><a href="#（4）Finalization-Queue和Freachable-Queue" class="headerlink" title="（4）Finalization Queue和Freachable Queue"></a>（4）Finalization Queue和Freachable Queue</h3><p>看到这个标题可能有点懵，但是我们可以提取关键词，queue一眼队列，这两个队列并不用于存储真正的对象，而是存储一组指向对象的指针。当程序中使用了new操作符在Managed Heap上分配空间时，GC会对其进行分析，如果该对象含有Finalize方法则在Finalization Queue中添加一个指向该对象的指针。</p>
-<p>在GC被启动以后，经过Mark阶段分辨出哪些是垃圾。再在垃圾中搜索，如果发现垃圾中有被Finalization Queue中的指针所指向的对象，则将这个对象从垃圾中分离出来，并将指向它的指针移动到Freachable Queue中。这个过程被称为是对象的复生（Resurrection），本来死去的对象就这样被救活了。为什么要救活它呢？因为这个对象的Finalize方法还没有被执行，所以不能让它死去。Freachable Queue平时不做什么事，但是一旦里面被添加了指针之后，它就会去触发所指对象的Finalize方法执行，之后将这个指针从队列中剔除，这是对象就可以安静的死去了。</p>
+<h2 id="第四章-处理机调度"><a href="#第四章-处理机调度" class="headerlink" title="第四章 处理机调度"></a>第四章 处理机调度</h2><h3 id="4-1-处理机调度概念"><a href="#4-1-处理机调度概念" class="headerlink" title="4.1  处理机调度概念"></a>4.1  处理机调度概念</h3><p>无论是进程还是作业，他们都是一堆一堆的进入计算机，但是CPU是有极限的，不可能同时处理所有的事，所以我们需要确定某种规则来决定处理的顺序，这就是处理机调度所需要研究的问题。</p>
+<h3 id="4-2-调度的三个层次"><a href="#4-2-调度的三个层次" class="headerlink" title="4.2 调度的三个层次"></a>4.2 调度的三个层次</h3><ul>
+<li><strong>高级调度（作业调度）</strong>：由于内存空间有限，不可能将用户所提交的所有作业全部放入内存中进行运行，因此需要一定的规则将作业调入内存。主要目的是为了<font color='red'>给作业建立相应的进程</font>，使它们<font color='red'>获得竞争处理机的权枥</font>。高级调度主要是<font color='red'>外存与内存之间的调度</font>。</li>
+<li><strong>中级调度（内存调度）</strong>：等引入虚拟存储技术之后，操作系统会将暂时不能运行的进程调至外村等待，等需要时再重新调回内存，为了提高内存利用率和系统吞吐量，暂时调到外存等待的进程为<font color='red'>挂起状态</font>，PCB并不会一起调到外存，会常驻内存。被挂起的进程PCB会被放到的挂起队列。引入挂起态后进程状态变为七状态。<img src="https://s2.loli.net/2023/01/03/vmk8YdcqHfz4x67.png" alt="图片来自https://blog.csdn.net/weixin_43914604/article/details/105323244"></li>
+<li><strong>低级调度（进程调度）</strong>：主要任务使按照某种方法和策略从就绪队列中选取一个进程，将处理机分配给他，最基本的一种调度，频率也是最高的。（引入线程后就变成了线程调度）</li>
+</ul>
+<p>三层调度联系与对比：<img src="https://s2.loli.net/2023/01/03/Fn1VBZupXlPcg7r.png" alt="图片来自https://blog.csdn.net/weixin_43914604/article/details/105323244"></p>
+<h3 id="4-3-进程调度时机与切换过程"><a href="#4-3-进程调度时机与切换过程" class="headerlink" title="4.3 进程调度时机与切换过程"></a>4.3 进程调度时机与切换过程</h3><p>进程调度一般发生在两个时机：</p>
+<ul>
+<li><p>进程主动放弃（来自进程内部）：</p>
+<ol>
+<li>进程正常终止，退出处理机</li>
+<li>运行过程中发生异常终止，此时不得不主动退出处理机</li>
+<li>主动的阻塞（比如等待I/O）</li>
+</ol>
+</li>
+<li><p>进程被动放弃：</p>
+<ol>
+<li>分给进程的时间片用完</li>
+<li>有更紧急的事情需要处理（如I/O中断）</li>
+<li>有更高优先级的进程进入就绪队列</li>
+</ol>
+</li>
+</ul>
+<p>而有三个时间点一定不会发生进程调度：</p>
+<ul>
+<li>在处理中断的过程中（会开关中断且是原语）</li>
+<li>进程在操作系统内核程序临界区中（不能一个进程搁临界区写一半被切换出去吧）</li>
+<li>原子操作过程中（原语）</li>
+</ul>
+<p>进程的切换其实就是中断的过程加上进程调度，总结下来也就两点：</p>
+<ol>
+<li>对原来运行进程各种数据的保存</li>
+<li>对新的进程各种数据的恢复</li>
+</ol>
+<p>需要注意的是进程切换是有代价的，过于平凡的进程调度切换回时系统的效率降低反而降低并发性</p>
+<h3 id="4-4-进程调度方式"><a href="#4-4-进程调度方式" class="headerlink" title="4.4 进程调度方式"></a>4.4 进程调度方式</h3><ul>
+<li><p>非剥夺调度泛式（非抢占式）：只能由当前运行的进程主动放弃CPU（实现简单，适用于早期的批处理系统）</p>
+</li>
+<li><p>剥夺调度方式（抢占式）：可又操作系统剥夺当前进程的CPU使用权（可以优先处理更紧急的进程，也可实现让各进程按时间片流转的功能，适用于做分时操作系统，实时操作系统）</p>
+</li>
+</ul>
+<h3 id="4-5-进程调度算法的指标"><a href="#4-5-进程调度算法的指标" class="headerlink" title="4.5 进程调度算法的指标"></a>4.5 进程调度算法的指标</h3><ul>
+<li><h4 id="CPU利用率"><a href="#CPU利用率" class="headerlink" title="CPU利用率"></a>CPU利用率</h4><script type="math/tex; mode=display">
+CPU利用率=\frac{忙碌的时间}{总时间}</script></li>
+<li><h4 id="系统吞吐量"><a href="#系统吞吐量" class="headerlink" title="系统吞吐量"></a>系统吞吐量</h4><script type="math/tex; mode=display">
+系统吞吐量=\frac{总共完成的作业数}{总共化类多少时间}</script></li>
+</ul>
+<ul>
+<li><h4 id="周转时间"><a href="#周转时间" class="headerlink" title="周转时间"></a>周转时间</h4><ul>
+<li>周转时间</li>
+</ul>
+<script type="math/tex; mode=display">
+周转时间=作业完成时间-作业提交时间</script><ul>
+<li><p>平均周转时间</p>
+<script type="math/tex; mode=display">
+平均周转时间=\frac{各作业周转时间之和}{作业数}</script></li>
+<li><p>带权周转时间</p>
+<script type="math/tex; mode=display">
+带权周转时间=\frac{作业周转时间}{作业实际运行的时间}</script></li>
+<li><p>平均带权周转时间</p>
+<script type="math/tex; mode=display">
+平均带权周转时间=\frac{各作业带权周转时间之和}{作业数}</script></li>
+</ul>
+</li>
+<li><h4 id="等待时间"><a href="#等待时间" class="headerlink" title="等待时间"></a>等待时间</h4><script type="math/tex; mode=display">
+等待时间=处于等待处理机状态时间之和</script></li>
+<li><h4 id="相应时间"><a href="#相应时间" class="headerlink" title="相应时间"></a>相应时间</h4><script type="math/tex; mode=display">
+相应时间=用户提交的时间点-首次相应的时间点</script></li>
+</ul>
+<h3 id="4-6-进程调度算法"><a href="#4-6-进程调度算法" class="headerlink" title="4.6 进程调度算法"></a>4.6 进程调度算法</h3><p>这一块涉及非常非常多的题，无论期末还是考研都是重中之重。</p>
+<ol>
+<li><h4 id="先来先服务（FCFS）"><a href="#先来先服务（FCFS）" class="headerlink" title="先来先服务（FCFS）"></a>先来先服务（FCFS）</h4><ul>
+<li>算法思想：主打的就是公平，谁来都得排队</li>
+<li>算法规则：按照先后顺序进行服务</li>
+<li>适用：作业调度的话看谁见到后备队列，进程调度则看谁先到就绪队列</li>
+<li>是否抢占：非抢占式算法</li>
+<li>优点：公平，实现简单</li>
+<li>缺点：排在长作业后面的短作业需要较长等待时间，带权周转时间很打</li>
+<li>是否会导致饥饿：不会</li>
+</ul>
+</li>
+<li><h4 id="短作业优先（SJF）"><a href="#短作业优先（SJF）" class="headerlink" title="短作业优先（SJF）"></a>短作业优先（SJF）</h4><ul>
+<li>算法思想：最求最少的平均等待时间，最少的平均周转时间，追杀哦的平均带权周转时间</li>
+<li>算法规则：最短（指要求服务时间最短）的作业/进程优先的到服务</li>
+<li>适用：作业调度就是短作业优先（SJF），进程调度就是（SPF）</li>
+<li>是否抢占：是非抢占式算法，但也有抢占式版本：最短剩余时间优先算法（SRTN）</li>
+<li>优点：“最短的”平均等待时间、平均周转时间</li>
+<li>缺点：不公平。对短作业有利，长作业不利，可能会导致长作业长期的不到服务，也就是导致饥饿</li>
+<li>是否会导致饥饿：会，如果源源不断地有短作业/进程到来，可能使长作业/进程长时间地不到服务，产生<font color='red'>饥饿</font>，如果一直地不到服务则称为<font color='red'>饿死</font></li>
+</ul>
+</li>
+<li><h4 id="高响应比优先（HRRN）"><a href="#高响应比优先（HRRN）" class="headerlink" title="高响应比优先（HRRN）"></a>高响应比优先（HRRN）</h4><ul>
+<li><p>算法思想：综合考虑作业/进程地等待时间和要求服务时间</p>
+</li>
+<li><p>算法规则：在每次调度时计算各个作业进程地相应比，选择最高的为其服务</p>
+<script type="math/tex; mode=display">
+相应比=\frac{等待时间+要求服务时间}{要求服务时间}</script></li>
+<li><p>适用：既可用于进程调度，也可用于作业调度</p>
+</li>
+<li><p>是否抢占：是非抢占式算法</p>
+</li>
+<li><p>优点：综合考虑不了等待时间和运行时间，结合了前两个算法的优点，也解决了饥饿</p>
+</li>
+<li><p>缺点：无明显缺点</p>
+</li>
+<li><p>是否会导致饥饿：不会</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="前三个算法的评价："><a href="#前三个算法的评价：" class="headerlink" title="前三个算法的评价："></a>前三个算法的评价：</h4><p>这三个算法主要关心对用户的公平性、平均周转时间、平均等待时间等指标，并不关心相应时间，也不区分任务的紧要程度，导致<font color='red'>交互性很差</font>，适用于<font color='red'>早期的批处理系统</font>。</p>
+<ol>
+<li><h4 id="时间片轮转（RR）"><a href="#时间片轮转（RR）" class="headerlink" title="时间片轮转（RR）"></a>时间片轮转（RR）</h4><ul>
+<li><p>算法思想：公平地轮流为各个进程服务，让每个进程在一定时间间隔内都可以得到相应</p>
+</li>
+<li><p>算法规则：按照各进程到达就绪队列地顺序，轮流让各个进程执行一个时间片。若进程在一个时间片执行不玩，也要剥夺处理机，将进程重新放到就绪对立对位重新排队</p>
+</li>
+<li><p>适用：只用于进程调度（只有作业放入内存建立了相应的进程后，才能分配处理机时间片）</p>
+<p><font color='red'>个人理解</font>：你不能每次都调一点作业的东西放进内存吧，这样大伙资源都不够，大伙都运行不了（都得死（bushi））</p>
+</li>
+<li><p>是否抢占：<font color='red'>抢占式</font>算法，通过时钟装置发出的<font color='red'>时钟中断</font>来通知CPU时间片已到，到了还没运行完，就会强行剥夺处理机使用权。</p>
+</li>
+<li><p>优点：公平，响应快，适用于分时系统</p>
+</li>
+<li><p>缺点：由于高频率的进程切换，因此有一定开销，不区分任务紧急程度</p>
+</li>
+<li><p>是否会导致饥饿：不会</p>
+</li>
+</ul>
+</li>
+<li><h4 id="优先级调度算法"><a href="#优先级调度算法" class="headerlink" title="优先级调度算法"></a>优先级调度算法</h4><ul>
+<li><p>算法思想：实时系统需要根据任务的紧急程度来决定处理顺序</p>
+</li>
+<li><p>算法规则：调度时选择优先级最高的作业/进程</p>
+</li>
+<li><p>适用：即可用于作业调度，也可用于进程调度</p>
+</li>
+<li><p>是否抢占：<font color='red'>抢占式</font>算法，通过时钟装置发出的<font color='red'>时钟中断</font>来通知CPU时间片已到，到了还没运行完，就会强行剥夺处理机使用权。</p>
+</li>
+<li><p>优点：公平，响应快，适用于分时系统</p>
+</li>
+<li><p>缺点：由于高频率的进程切换，因此有一定开销，不区分任务紧急程度</p>
+</li>
+<li><p>是否会导致饥饿：不会</p>
+</li>
+</ul>
+</li>
+<li><h4 id="多级反馈队列调度算法"><a href="#多级反馈队列调度算法" class="headerlink" title="多级反馈队列调度算法"></a>多级反馈队列调度算法</h4><ul>
+<li>算法思想：对其他算法的折中权衡</li>
+<li>算法规则：<ol>
+<li>设置多级就绪队列，各级队列优先级从高到低，时间片从小到大</li>
+<li>新进程到达时先进入第一级队列，按FCFS原则排队等待被分配时间片，若用完时间片进程还未结束，则进程进入下以及队列队尾</li>
+<li>只有等k级队列为空时，才会为k+1级对头的进程分配时间片</li>
+</ol>
+</li>
+<li><p>适用：进程调度</p>
+</li>
+<li><p>是否抢占：<font color='red'>抢占式</font>算法，在k级队列的进程运行过程中，若更上级的队列中进入一个进程，会先完成优先级更高的队列，因此进程会被抢占</p>
+</li>
+<li>优点：相对公平，每个新到达的进程很快能得到响应，不必实现估计进程得时间，短进程只用较少时间就可完成，不必估计运行时间</li>
+<li>缺点：由于高频率的进程切换，因此有一定开销，不区分任务紧急程度</li>
+<li>是否会导致饥饿：会</li>
+</ul>
+</li>
+</ol>
+<h4 id="后三个算法的评价："><a href="#后三个算法的评价：" class="headerlink" title="后三个算法的评价："></a>后三个算法的评价：</h4><p>这三个算法更注重系统的响应时间、公平性、平衡性，满足欢呼时系统需求，适用于交互式系统</p>
+<h3 id="注："><a href="#注：" class="headerlink" title="注："></a>注：</h3><p>本章算法等知识需要做题巩固。</p>
 </div>
         </div>
         
@@ -253,7 +389,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/",
+                text: "http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-4/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -265,9 +401,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/";
-            const title         = "「C#知识(8)」";
-            const excerpt       = `本节主要内容：垃圾回收机制和相关重要算法`;
+            const hostUrl       = "http://example.com/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-4/";
+            const title         = "「处理机调度（操作系统笔记4）」";
+            const excerpt       = `本篇笔记将介绍一下处理机调度，这一章会涉及非常多的算法，评判标准，这一章考试的话，会考大题。`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -286,10 +422,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
+                    <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-12-25T06:31:37.902Z" itemprop="dateModified">最后编辑：2022-12-25</time>
+                    <time datetime="2023-01-04T07:43:35.299Z" itemprop="dateModified">最后编辑：2023-01-04</time>
                 </div>
             </div>
         </footer>
@@ -298,12 +434,12 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" C#知识(7)" href="/2022/12/24/CS知识/CS知识-7/">&lt; 上一篇</a>
+                <a title=" 进程的描述与控制（操作系统笔记2）" href="/2023/01/01/操作系统笔记/操作系统笔记-2/">&lt; 上一篇</a>
             </div>
             
             
             <div class="nav-next clearfix">
-                <a title=" C#知识(9)" href="/2022/12/24/CS知识/CS知识-9/">下一篇 &gt;</a>
+                <a title=" 线程（操作系统笔记3）" href="/2023/01/01/操作系统笔记/操作系统笔记-3/">下一篇 &gt;</a>
             </div>
             
         </nav>
