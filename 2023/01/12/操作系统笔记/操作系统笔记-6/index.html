@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  
+  
+  <title>内存管理（操作系统笔记6） | 舛羽的笔记小站</title>
+  <meta name="author" content="cy" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="操作系统" />
+  
+  <meta name="description" content="本章将进入内存管理的学习，包括内存分配回收等，内容不少于之前的进程同步和互斥，且容易考大题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存管理（操作系统笔记6）">
+<meta property="og:url" content="http://example.com/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/index.html">
+<meta property="og:site_name" content="舛羽的笔记小站">
+<meta property="og:description" content="本章将进入内存管理的学习，包括内存分配回收等，内容不少于之前的进程同步和互斥，且容易考大题">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/gDYB8tVudnAkzCX.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/W2zEDRghAbfjLuP.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/mjuD9d52qrJBNVL.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/vmjyCgTxbI4Rqte.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/gmo3FrDwcf2HCdY.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/hnrpKGw21odJEW3.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/ta9vCHpZIix2Xkg.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/vKcn2FbEiwjRaI4.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/7ykY3WLu9bEGQAl.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/tk3aLWuO2l6ZhcS.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/12/YdwBWsy2hc9OKAq.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/gfjyVOYUK76QZHE.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/CWtzjB97aXh2JRg.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/RmUxwZQV41uTyJd.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/NjnJVg126kCMozI.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/bXQmkdBUM3Hg65J.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/tsu9S16hwarf8Ij.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/flMp32dKyremPWv.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/vNU97xk3LXs2wV5.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/L7wW4tBRTu3hbgp.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/MzDjyLt6RgaZeQn.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/V2ACr7BspNRL9jt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/2fwKTJXr8B7bs63.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/oixqnpwbWcR6BKk.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/EOTUPdKgQkDwG8x.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/19/scj6RyBvaft2q7n.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/20/ESZiz7yVsPYtLuj.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/20/PTymutgqeIiCnSs.png">
+<meta property="article:published_time" content="2023-01-12T08:13:47.000Z">
+<meta property="article:modified_time" content="2023-01-20T05:50:30.809Z">
+<meta property="article:author" content="cy">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/12/gDYB8tVudnAkzCX.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('/images/banner.webp');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('/images/bg.webp');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">舛羽的笔记小站</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>舛羽的笔记小站</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">内存管理（操作系统笔记6）</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2023-01-12T08:13:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-12</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~7.54K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1674193830809"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><p>本章将进入内存管理的学习，包括内存分配回收等，内容不少于之前的进程同步和互斥，且容易考大题</p>
+<span id="more"></span>
+<h2 id="第六章-内存管理"><a href="#第六章-内存管理" class="headerlink" title="第六章 内存管理"></a>第六章 内存管理</h2><h3 id="6-1-多层结构的存储器"><a href="#6-1-多层结构的存储器" class="headerlink" title="6.1 多层结构的存储器"></a>6.1 多层结构的存储器</h3><p>计算机在执行指令的时候，几乎每条指令都会设计对存储器的访问，因此要求计算机对存储器的访问速度能跟的上处理机的运行速度，并且同时我们还要追求存储器容量大，价格低。</p>
+<p>这三个条件目前来说是不可能同时满足的，于是现代计算机无一例外的采用了多层结构的存储器。</p>
+<p>存储结构至少具有三层：最高层为CPU寄存器，中间层为主存储器，最底层为辅助存储器。层次越高，读取速度越快，存储容量越小，价格越低。</p>
+<p><img src="https://s2.loli.net/2023/01/12/gDYB8tVudnAkzCX.png" alt=""></p>
+<p>而主存储器就是我们平常说的内存，在程序执行的时我饿们要如何定位各个程序的数据放在哪个位置呢？</p>
+<p>为此我们将存储器的空间分为一个一个的存储单元。存储单元的大小与计算机的编址方式有关，如果计算机是<strong>按字节编址</strong>的 ，则每个存储单元的大小为1字节，也就是8个二进制位，弱国计算机是<strong>按字编址</strong>的，则每个存储单元大小为一个字。每个字的大小也与计算机有关。</p>
+<h3 id="6-2-进程运行的基本原理"><a href="#6-2-进程运行的基本原理" class="headerlink" title="6.2 进程运行的基本原理"></a>6.2 进程运行的基本原理</h3><p>从源代码变成正在执行的进程主要分三步：<font color='red'>编译，链接，装入</font>。</p>
+<p>编译：由编译程序将用户源代码编译成若个个目标模块（把高级语言翻译成机器语言）</p>
+<p>链接：由链接陈旭将编译后新城的一组目标模块，以及所需库函数链接在一起，形成一个完成的装入模块</p>
+<p>装入：由装入程序将装入模块装入内存运行</p>
+<h4 id="1-地址绑定和内存保护"><a href="#1-地址绑定和内存保护" class="headerlink" title="(1)地址绑定和内存保护"></a>(1)地址绑定和内存保护</h4><p>程序中的地址在不同的步骤有着不同的表示方法。在源程序中的地址通常用符号表示，比如定义一个整形变量count，那么这个count就是源程序中的地址表示方法。编译器通常将这些符号地址绑定在可重定位的地址或相对地址上。链接程序或装入程序再将这些相对地址绑定到绝对地址。每次绑定都是从一个地址空间到另一个地址空间的映射。CPU申城的地址通常称为逻辑地址或相对地址。而内存单元看到的地址通常称为物理地址（绝对地址）。</p>
+<p>内存分配前，需要保护操作系统不受用户进程的影响，同时保护用户进程不受其他用户进程的影响。通过釆用重定位寄存器和界地址寄存器来实现这种保护。重定位寄存器含最小的物理地址值，界地址寄存器含逻辑地址值。每个逻辑地址值必须小于界地址寄存器；内存管理机构动态地将逻辑地址与界地址寄存器进行比较，如果未发生地址越界，则加上重定位寄存器的值后映射成物理地址，再送交内存单元。每一个逻辑地址都需要与这两个寄存器进行核对，以保证操作系统和其他用户程序及数据不被该进程的运行所影响。</p>
+<h4 id="2-程序的链接"><a href="#2-程序的链接" class="headerlink" title="(2)程序的链接"></a>(2)程序的链接</h4><p>程序的链接方式分为三种：</p>
+<ul>
+<li>静态链接：在程序运行之前先将个目标模块及他们所需的库函数连接成一个完整的可执行文件，之后不再拆开</li>
+<li>装入时动态链接：将个目标模块装如内存时，边装入边链接的链接方式</li>
+<li>运行时动态链接：在程序执行中需要改目标模块时，才对它进行链接，其优点是加快装入过程，可节省大量内存空间</li>
+</ul>
+<h4 id="3-程序的装入"><a href="#3-程序的装入" class="headerlink" title="(3)程序的装入"></a>(3)程序的装入</h4><p>程序装入内存中的时候必须要将相对地址修改成绝对地址，否则就不知道所对应的地址具体存在内存的哪个位置了。</p>
+<p>装入也有三种方式（将逻辑地址转化成物理地址）：</p>
+<ul>
+<li><p>绝对装入：在编译时，如果知道程序将放到内存中的哪个位置，编译程序将产生绝对地址的目标代码，装入程序按照装入模块中的地址，将程序和数据装入内存。</p>
+<p>这种方式仅使用与单道程序环境，也就是直接使用绝对地址编程。</p>
+</li>
+<li><p>静态重定位：</p>
+<p><img src="https://s2.loli.net/2023/01/12/W2zEDRghAbfjLuP.png" alt=""></p>
+</li>
+<li><p>动态重定位：</p>
+<p><img src="https://s2.loli.net/2023/01/12/mjuD9d52qrJBNVL.png" alt=""></p>
+</li>
+</ul>
+<h3 id="6-3-内存管理"><a href="#6-3-内存管理" class="headerlink" title="6.3 内存管理"></a>6.3 内存管理</h3><p>介绍了这么多内存的东西，那么操作系统作为系统资源的管理者，在内存管理中需要做什么呢？事实上操作系统主要完成以下的内容：</p>
+<ol>
+<li>内存空间的分配和回收。</li>
+<li>内存空间的扩展（实现虚拟内存）<ul>
+<li>覆盖技术</li>
+<li>交换技术</li>
+<li>虚拟内存技术</li>
+</ul>
+</li>
+<li><p>负责程序的逻辑地址与物理地址的转换</p>
+<ul>
+<li>绝对装入</li>
+<li>可重定位装入</li>
+<li>动态运行时装入</li>
+</ul>
+</li>
+<li><p>内存保护</p>
+<ul>
+<li>设置一对上下限寄存器，存放进程的上、下限地址。进程的指令要访问某个地址时，CPU检查是否越界。</li>
+<li>采用重定位寄存器（基址寄存器）和界地址寄存器（限长寄存器）进行越界检查。重定位寄存器存放的时进程的起始物理地址。界地址寄存器中存放的是进程的最大逻辑地址。</li>
+</ul>
+</li>
+</ol>
+<p>对于地址转换和内存保护我们都已经在之前进行了详细的阐述，而分配和回收是我们后面的重头戏，所以我们先放在这里，现在对于内存空间的扩展中的<font color='red'>覆盖技术</font>和<font color='red'>交换技术</font>进行讲解，而虚拟内存技术也是会在后面重点介绍。</p>
+<h4 id="1-覆盖技术"><a href="#1-覆盖技术" class="headerlink" title="(1)覆盖技术"></a>(1)覆盖技术</h4><p><img src="https://s2.loli.net/2023/01/12/vmjyCgTxbI4Rqte.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/12/gmo3FrDwcf2HCdY.png" alt=""></p>
+<h4 id="2-对换技术"><a href="#2-对换技术" class="headerlink" title="(2)对换技术"></a>(2)对换技术</h4><p><img src="https://s2.loli.net/2023/01/12/hnrpKGw21odJEW3.png" alt=""></p>
+<p>暂时被换出外存等待的进程就会变成挂起态</p>
+<p><img src="https://s2.loli.net/2023/01/12/ta9vCHpZIix2Xkg.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/12/vKcn2FbEiwjRaI4.png" alt=""></p>
+<h3 id="6-4-内部碎片与外部碎片"><a href="#6-4-内部碎片与外部碎片" class="headerlink" title="6.4 内部碎片与外部碎片"></a>6.4 内部碎片与外部碎片</h3><ul>
+<li>内部碎片：分配给某些进程的内存区域中，没有用上的部分久交内存碎片</li>
+<li>外部碎片：是指内存中的某些空闲分区由于太小而难以利用</li>
+</ul>
+<h3 id="6-5-内存的分配和回收（1）"><a href="#6-5-内存的分配和回收（1）" class="headerlink" title="6.5 内存的分配和回收（1）"></a>6.5 内存的分配和回收（1）</h3><p>内存分配管理方式分为：连续分配管理方式，非连续分配管理方式</p>
+<h4 id="1-连续分配管理"><a href="#1-连续分配管理" class="headerlink" title="(1)连续分配管理"></a>(1)连续分配管理</h4><p>连续分配：只为用户进程分配的必须是一个连续的内存空间。</p>
+<h5 id="1-1-单一连续分配"><a href="#1-1-单一连续分配" class="headerlink" title="(1.1)单一连续分配"></a>(1.1)单一连续分配</h5><p>内存被分为<font color='red'>系统区</font>和<font color='red'>用户区</font>。系统区通常为与内存的低地址部分，用于存放操作系统相关数据，用户区用于存放用户进程相关数据。</p>
+<p>内存中<font color='red'>只能有个一道用户程序</font>，用户程序独占整个用户区空间。</p>
+<p>优点：实现简单，<code>无外部碎片</code>，可采用覆盖技术扩充内存，不一定需要采取内存保护</p>
+<p>缺点：只能用于单用户，单任务的操作系统，<code>有内部碎片</code>，存储器利用率低</p>
+<h5 id="1-2-固定分区分配"><a href="#1-2-固定分区分配" class="headerlink" title="(1.2)固定分区分配"></a>(1.2)固定分区分配</h5><p>将单一连续分配的<font color='red'>用户区</font>划分为若干个固定大小的分区，在每个分区中只装入一道作业。</p>
+<p>固定分区分配也分为两种：<font color='red'>分区大小相等</font>，<font color='red'>分区大小不等</font></p>
+<p>分区大小相等：缺乏灵活性，但是哼适用于用一台计算机控制多个相同对象的场合</p>
+<p>分区大小不等：增加了灵活性，可以满足不同大小的进程需求</p>
+<p><img src="https://s2.loli.net/2023/01/12/7ykY3WLu9bEGQAl.png" alt=""></p>
+<h5 id="1-3-动态分区分配"><a href="#1-3-动态分区分配" class="headerlink" title="(1.3)动态分区分配"></a>(1.3)动态分区分配</h5><p>动态分区分配又称为可变分区分配。这种分配方式不会预先划分内存分区，而是在进程装入内存时，根据进程的大小动态地建立分区，并使分区的大小正好适合进程地需要。因此系统分区的大小和数目是可变的。</p>
+<p>这种方式会衍生出三个问题：</p>
+<ol>
+<li><p>系统要用怎样的数据结构记录内存的使用情况？</p>
+<p><img src="https://s2.loli.net/2023/01/12/tk3aLWuO2l6ZhcS.png" alt=""></p>
+</li>
+<li><p>当多个空闲分区都能满足要求时应该选则哪个分区进行分配？（动态分区分配算法后面会详细介绍）</p>
+<p><img src="https://s2.loli.net/2023/01/12/YdwBWsy2hc9OKAq.png" alt=""></p>
+</li>
+<li><p>如何进行分区的分配和回收操作</p>
+<p>对存储结构进行修改</p>
+</li>
+</ol>
+<p>动态分区分配在没有内部碎片，但是又外部碎片。</p>
+<p>如果内存中空闲空间的总和本来可以满足某进程的有球单由于进程需要的是一整块连续的内存空间，因此这些“碎片”不能满足进程的需求。但是我们可以通过<font color='red'>紧凑</font>技术来解决外部碎片。</p>
+<h3 id="6-6-动态分区分配算法"><a href="#6-6-动态分区分配算法" class="headerlink" title="6.6 动态分区分配算法"></a>6.6 动态分区分配算法</h3><ol>
+<li><p>首次适应算法</p>
+<p><strong>算法思想</strong>：每次都从低地址开始查找，找到第一个能满足大小的空闲分区。</p>
+<p>实现方式：空闲分区以地址递增的次序排列。每次分配内存时顺序查找空闲分区表（空闲分区链），找到大小能满足要求的第一个空闲分区。</p>
+<p><strong>优点</strong>：综合看性能最好，<font color="red">算法开销小</font>,回收分区后一般不许要对空闲分区队列重新排序。</p>
+</li>
+<li><p>最佳适应算法</p>
+<p><strong>算法思想</strong>：由于动态分区分配是一种连续分配方式，为各进程分配的控件必须是连续的一整片区域，因此为了保证当“大进程”到来时有连续的大片控件，可以尽可能多地留下大片的空闲区域，有限使用更下的空闲区。</p>
+<p><strong>实现方式</strong>：空闲分区按容量递增次序排序。每次分配内存时顺序查找空闲分区表（空闲分区链），找到大小能满足要求的第一个空闲分区。</p>
+<p><strong>优点</strong>：会有更多的打分去呗保留下来，更能满足大进程需求</p>
+<p><strong>缺点</strong>：会产生很多太小的、难以利用的碎片，<font color='red'>算法开销大</font>，回收分区后可能需要对空闲分区队列重新排序</p>
+</li>
+<li><p>最坏适应算法</p>
+<p><strong>算法思想</strong>：为了解决最佳适应算法的问题（留下太多难以利用的小碎片），在每次分配时有限使用最大的连续空闲区，这样分配后剩余的空闲区就不会太小，更方便使用。</p>
+<p><strong>实现方式</strong>：空闲分区按容量递减次序链接。每次分配内存时顺序查找空闲分区表（空闲分区链），找到大小能满足要求的第一个空闲分区。</p>
+<p><strong>优点</strong>：可以减少难以利用的小碎片</p>
+<p><strong>缺点</strong>：大分区容易被用完，不利于大进程，<font color='red'>算法开销大</font></p>
+</li>
+<li><p>邻近适应算法</p>
+<p><strong>算法思想</strong>：首次适应算法每次都要从链头开始查找的。这可能会导致低地址部分出现很多小的空闲分区，而每次分配查找时，都要经过这些这些分区，增加查找开销。如果每次都从上次查找位置开始检索，就能解决上述问题。</p>
+<p><strong>实现方式</strong>：空闲分区一地址递增的顺序排，每次分配内存时从上次查找结束的位置开始查找空闲分区表（空闲分区链），找到大小能满足要求的第一个空闲分区。</p>
+<p><strong>优点</strong>：不用每次都从低地址的小分区开始检索。<font color='red'>算法开销小</font></p>
+<p><strong>缺点</strong>：回时高地址的大分区也被用完</p>
+</li>
+</ol>
+<h3 id="6-5-内存的分配和回收（2）"><a href="#6-5-内存的分配和回收（2）" class="headerlink" title="6.5 内存的分配和回收（2）"></a>6.5 内存的分配和回收（2）</h3><font color='red'>连续分配</font>强调<font color='red'>为用户进程分配的必须是一个连续的内存空间</font>。
+
+<font color='red'>非连续分配</font>强调<font color='red'>为用户进程分配的可以时一些分散的内存空间</font>。
+
+在正式介绍非连续分配管理方式前，我们先看看连续分配管理方式有什么问题。
+
+首先是<font color='red'>固定分区分配</font>：缺乏灵活性，会产生大量的内部碎片，内存的利用率低。
+
+然后是<font color='red'>动态分区分配</font>：会产生很多外部碎片，虽然可以用“紧凑”技术来处理，但是“紧凑”的时间待见很高。
+
+#### (2)非连续分配管理方式
+
+##### (2.1)分页存储管理
+
+借用固定分区分配的方式，将内存分为一个个相等的小分区，但与固定分区分配不同的是并不将一个进程全部放进一个个小分区，而是将进程按照分区大小把进程拆分成一个个小部分，离散的分配在内存中。
+
+而我们将内存空间分为一个个大小相等的分区，每个分区就是一个“页框”（“页帧”、“内存块”、“”物理块），每个页框有一个标号，即“页框号”（“页帧号”，“内存块号”，“物理块号”），页框号从0开始。
+
+将用户进程的地址空间也分为与页框大小相等的一个个区域，称为“页”（“页面”）。每个页面也有个编号，即“页号”，页号也从0开始。
+
+**注**：进程的最后一个页面可能没有一个页框呢么大，因此，页框不能太大，否则可能产生过大的<font color='red'>内部碎片</font>
+
+<p>操作系统以页框为单位为各个进程分配内存空间，进程的每个页面分别放入一个页框中。也就是说，<font color='red'>进程的页面</font>与<font color='red'>内存的页框</font>有<font color='red'>一一对应</font>的关系。</p>
+<p>各个页面不必连续存放，页不必按先后顺序来，可以放到不想零的各个页框中。</p>
+<p>分页虽然能够解决一个进程要很大一块连续内存不好分配的麻烦，但是操作系统就不知到如何将逻辑地址转换成物理地址了。</p>
+<p><img src="https://s2.loli.net/2023/01/19/gfjyVOYUK76QZHE.png" alt=""></p>
+<p>页号的计算方式：</p>
+<script type="math/tex; mode=display">
+页号=\frac{逻辑地址}{页面长度}</script><p>页内偏移量的计算方式：</p>
+<script type="math/tex; mode=display">
+页内偏移量=逻辑地址\%页面长度</script><p>物理地址的计算方式：</p>
+<script type="math/tex; mode=display">
+物理地址=页面起始地址+页内偏移量</script><p>上面的方法是我们平时做题的时候的方法，但是计算机是使用二进制的，他反而更加方便</p>
+<p><img src="https://s2.loli.net/2023/01/19/CWtzjB97aXh2JRg.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/19/RmUxwZQV41uTyJd.png" alt=""></p>
+<p>方法我们知道了，但是还有个问题我们没解决，就是我们要知道该页号对应页面在内存中的起始地址，为此我们引入一个新概念：<font color='red'>页表</font></p>
+<p>为了能知道进程的每个页面在内存中存放的位置，操作系统要为每个进程建立一张页表</p>
+<ul>
+<li>一个进程对应一张页表</li>
+<li>进程的每一页对应一个页表项</li>
+<li>每个页表项由“页号”和“块号”组成</li>
+<li>页表记录进程页面和实际存放的内存块之间的对应关系</li>
+<li>每个页表项的长度是相同的，页号是“隐含”的</li>
+</ul>
+<p>为什么每个页表项的长度相同，页号是隐含的呢？</p>
+<p><img src="https://s2.loli.net/2023/01/19/NjnJVg126kCMozI.png" alt=""></p>
+<p>了解了分页机制，我们再来具体到逻辑地址与物理地址转换上，看一下大概是一个怎样的流程来完成这项工作的。</p>
+<p>我们把完成这项工作的结构称为<font color='red'>基本地址变换结构</font></p>
+<p>通常会在系统中设置一个<font color='red'>页表寄存器</font>（PTR），存放页表在内存中的<code>起始地址F</code>和<code>页表长度M</code>,进程为执行时，页表的起始地址和页表长度存放在进程控制块（PCB）中，当进程被调度时，操作系统内核会把他们放到页表寄存器中。然后经历以下几个步骤。</p>
+<ol>
+<li>更具逻辑地址算出页号、页内偏移量</li>
+<li><font color='red'>页号的合法性检查（与页表长度对比）</font></li>
+<li>若页号合法，在根据页表起始地址，页号找到对应页表项（第一次访问内存）</li>
+<li>根据页表象中记录的内存块号、页内偏移量得到最终的物理地址</li>
+<li>访问物理内存对应的内存单元（第二次访问内存）</li>
+</ol>
+<p><img src="https://s2.loli.net/2023/01/19/bXQmkdBUM3Hg65J.png" alt=""></p>
+<p>注：实际应用中，通常使一个页恰好能放入整数个页表项</p>
+<p><img src="https://s2.loli.net/2023/01/19/tsu9S16hwarf8Ij.png" alt=""></p>
+<h5 id="2-1-1-引入快表的分页存储管理"><a href="#2-1-1-引入快表的分页存储管理" class="headerlink" title="(2.1.1)引入快表的分页存储管理"></a>(2.1.1)引入快表的分页存储管理</h5><p>我们了解了基本地址变换结构的分页存储管理，发现对于寻找到逻辑地址对应的物理地址至少要访问两次内存，虽然内存的访问速度很快，但是对于CPU来说还是远远不够的，为了访问页表而专门访问一次内存太花时间了。但是页表很大不可能放入更高速的存储设备中。按理来说这个问题无解，但是我们引入一个新原理。</p>
+<p><font color='red'>局部性原理</font>：</p>
+<ul>
+<li>时间局部性：如果执行流程序中的某条指令，那么不久后这条指令很有可能被再次执行；如果某个数据被访问过，不就后该数据很可能再次被访问。（程序中存在大量的循环）</li>
+<li>空间局部性：一旦程序访问了某个存储单元，在不久之后，其附近的存储单元很有可能被访问。（因为很多数据在内存中都是连续存放）</li>
+</ul>
+<p>由于局部性原理，可能连续很多次查到的都是同一个页表项。为此我们可以将页表的部分可能会被访问到的项放入更快速的存储器中。我们将其称为快表。</p>
+<p><font color='red'>快表</font>：又称联想寄存器（TLB），是一种访问速度比内存快很多的高速缓冲存储器，用来存放到前访问的若干页表项，以加速地址变换的过程。于此对应，内存中的页表常称为慢表。</p>
+<p>引入快表后地址表换结构就会有所改变：</p>
+<ol>
+<li>CPU给出逻辑地址，断初页号、页内偏移量，将页号与快表中的页号进行对比</li>
+<li>若找到匹配的页号，说明要访问的页表项在快表中有副本，则直接从快表中找到内存块号，与页内偏移量凭借形成物理地址，最后，访问该物理地址对应的内存单元。（<font color='red'>只需访问一次内存</font>）</li>
+<li>如果没有找到匹配的页号，则需要访问内存中的页表，找到对应的页表项（<font color='red'>要判定是否越界</font>），最后与页内偏移量组成物理地址。在访问内存相应物理单元。（<font color='red'>访问两次内存</font>）</li>
+</ol>
+<p>基本地址变换与快表地址变换的比较</p>
+<p><img src="https://s2.loli.net/2023/01/19/flMp32dKyremPWv.png" alt=""></p>
+<h5 id="2-1-2-二级页表"><a href="#2-1-2-二级页表" class="headerlink" title="(2.1.2)二级页表"></a>(2.1.2)二级页表</h5><p>当我们使用分页存储时我们并没有考虑页表有多大，为了能够快速查找到需要的页表项，所以页表一定是连续存储的，如果我们的页表太大，我们就需要一块很大的连续空间用于存储页表。</p>
+<p>而我们当初引入页表的目的就是为了防止进程需要很大一块连续的内存，如果不想办法解决这个问题，那么就违背了我们引入分页的初衷，所以我们引入了二级页表。</p>
+<p>对页表再次进行分页这样我们就可以把一个长长的页表分散的存储在内存中，并为页表创建一张页表，称为页目录表，或称为外层页表，或称为顶层页表。</p>
+<p><img src="https://s2.loli.net/2023/01/19/vNU97xk3LXs2wV5.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/19/L7wW4tBRTu3hbgp.png" alt=""></p>
+<p>那二级页表地址转换是怎样的呢？</p>
+<ol>
+<li><p>按照地址结构讲逻辑地址拆分为三部分</p>
+</li>
+<li><p>从PCB中读出页目录表起始地址，再根据一级页号查页目录表，找到下一级页表在内存中的存放位置</p>
+</li>
+<li><p>根据二级页号查表，找到最终像访问的内存块号</p>
+</li>
+<li><p>结合页内偏移量得到物理地址</p>
+</li>
+</ol>
+<p>首先需要明确的是不一定只有二级页表，也有可能采用多级页表。若没有快表，每多一级页表，对内存的访问次数就要多1。一级页表仅需要两次，二级需要三次，以此类推。</p>
+<p><font color='red'>重点</font>：很多人可能会对页表怀有不切实际的幻想，比如页表分级越多，页表对内存的占用就会越少，其实不然，将页表分级只是为了将页表打碎了放入内存，但是它该占多少的位置还是占多少位置，而且因为引入另外一张页表，会导致内存占用更大。</p>
+<p><img src="https://s2.loli.net/2023/01/19/MzDjyLt6RgaZeQn.png" alt=""></p>
+<h5 id="2-1-3-反置页表"><a href="#2-1-3-反置页表" class="headerlink" title="(2.1.3)反置页表"></a>(2.1.3)反置页表</h5><p>正如上面所说多级页表虽然能将大页表打散，但是对于内存的占用并不会减少，甚至会变得更大，这对于内存来说是十分的不划算的，这主要是因为我们之前的页表是用逻辑页号来查找的，只要进程的内存需要的够大，那么页表就会越大。且每多一个进程就得重新给他划分一块区域装页表。</p>
+<p>如果我们换一种思路，我们页表记录的不再是虚拟地址→物理地址的映射，而是物理地址→逻辑地址的映射，这样无论进程需要多大的内存，有多少的内存，页表大小都只与物理地址有关。</p>
+<p>那要如何将虚拟地址和物理地址对应上呢？</p>
+<p>如果将反置页表做成之前的页表一样线性的，那么依次检索起来将会非常耗费性能，所以一般会使用哈希算法来进行存储，不过哈希算法可能会出现“地址冲突”的问题，必须妥善解决这个问题。</p>
+<p>并且如果所需要的地址不在内存中，将直接无法找到这个内存（其他页表可以使用<font color='red'>虚拟内存技术</font>），所以为了找到不在内存中的地址还需要为每个进程建立一个外部页表，这个页表和创痛页表一样，当所访问的页表不在内存中，就需要通过外部页表找到他。</p>
+<h5 id="2-2-分段存储管理方式"><a href="#2-2-分段存储管理方式" class="headerlink" title="(2.2)分段存储管理方式"></a>(2.2)分段存储管理方式</h5><p>前面的无论是分页还是前面的连续分配管理都是为了提供内存的利用率。而引入分短短存储管理方式的主要目的是满足用户在编程和使用上的多方面要求，有些要求是其他集中存储管理方式所难以满足的。因此，分段存储管理方式已成为当今所有存储管理方式的基础。</p>
+<p>那么什么是分段呢？</p>
+<p><img src="https://s2.loli.net/2023/01/19/V2ACr7BspNRL9jt.png" alt=""></p>
+<p>分段的逻辑地址结构与分页相近，始有段号（段名）和段内地址（段内偏移量）所组成。</p>
+<p>段号的位数决定了每个进程最多可以分几个段</p>
+<p>段内地址位数决定了每个段的最大长度。</p>
+<p>程序分多个段，各断离散地装入内存，为了保证程序能正常运行，就必须想办法将逻辑地址和物理地址对应上，为此需为每个进程建立一张段映射表，简称“段表”。</p>
+<p>由于和分页不一样，每一段的长度都不同，所以相对于页表我们需要多存储一个段的长度，用于判断是否会产生越界。</p>
+<p>但是各个段表项长度是相同的。所以段表项应包含<font color='red'>段长</font>，<font color='red'>基址</font>。</p>
+<p>分段具体的地址变换流程：</p>
+<ol>
+<li>由逻辑地址得到段号，段内地址</li>
+<li>段号与段表寄存器中的长度进行比较，判断是否越界（<font color='red'>重要</font>）</li>
+<li>由段表起始地址、段号找到对应段表项</li>
+<li>根据段表中记录的段长，检查段内地址是否越界</li>
+<li>由段表中的“基址+段内地址”得到物理地址</li>
+<li>访问目标单元</li>
+</ol>
+<h5 id="2-3-分页和分段的比较："><a href="#2-3-分页和分段的比较：" class="headerlink" title="(2.3)分页和分段的比较："></a>(2.3)分页和分段的比较：</h5><p><img src="https://s2.loli.net/2023/01/19/2fwKTJXr8B7bs63.png" alt=""></p>
+<p>对于信息的共享和保护为什么分段好实现而分页却不好实现呢？</p>
+<p><img src="https://s2.loli.net/2023/01/19/oixqnpwbWcR6BKk.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/19/EOTUPdKgQkDwG8x.png" alt=""></p>
+<h5 id="2-3-段页式存储管理方式"><a href="#2-3-段页式存储管理方式" class="headerlink" title="(2.3)段页式存储管理方式"></a>(2.3)段页式存储管理方式</h5><p>先分析一下分页式管理和分段式管理的优缺点</p>
+<p><img src="https://s2.loli.net/2023/01/19/scj6RyBvaft2q7n.png" alt=""></p>
+<p>如果能将这两种方式结合一下就能达到相当不错的效果</p>
+<p>怎样结合呢？</p>
+<p>将地址空间按照程序自身的逻辑关系划分成若干段，在将各段分为大小相等的页面</p>
+<p>将内存空间划分为与页面大小相等的一个个内存块，系统以块为单位为进程分配内存</p>
+<p>逻辑地址结构变为：段号，页号，页内偏移量 </p>
+<p>当然既然分了段也分了页，那么一个进程都会对应一个段表，每个段又会对应一个页表。</p>
+<p><img src="https://s2.loli.net/2023/01/20/ESZiz7yVsPYtLuj.png" alt=""></p>
+<p>段页式管理的地址转换过程又是怎样呢？</p>
+<ol>
+<li>由逻辑地址得到段号，页号，页内偏移量</li>
+<li>段号与段表寄存器中的段长度进行比较，检查是否越界</li>
+<li>由段表始址、段号找到相应段表项</li>
+<li>更具段表中记录的页表长度，检查页号是否越界</li>
+<li>由段表中的页表地址、页号得到查询页表，找到相应页表项</li>
+<li>由页表存放的内存块号、页内偏移量得到最终的物理地址</li>
+<li>访问目标单元</li>
+</ol>
+<p>当然也可以引入快表机制，加快寻址速度</p>
+<p>若未引入快表需要三次访问内存：</p>
+<ol>
+<li>查段表</li>
+<li>查页表</li>
+<li>访问目标单元</li>
+</ol>
+<p>引入快表后，以段号和页号未关键字查询快表，即可直接找到最终的目标页面存放为置。引入快表后仅需一次访问内存。</p>
+<p><img src="https://s2.loli.net/2023/01/20/PTymutgqeIiCnSs.png" alt=""></p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "http://example.com/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "http://example.com/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/";
+            const title         = "「内存管理（操作系统笔记6）」";
+            const excerpt       = `本章将进入内存管理的学习，包括内存分配回收等，内容不少于之前的进程同步和互斥，且容易考大题`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2023-01-20T05:50:30.809Z" itemprop="dateModified">最后编辑：2023-01-20</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" 进程同步与互斥（操作系统笔记5）" href="/2023/01/04/操作系统笔记/操作系统笔记-5/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                19
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                4
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                6
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-%E7%9F%A5%E8%AF%86/">C#知识</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Unity网络游戏开发</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/">操作系统笔记</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">数据结构笔记</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/C/" style="font-size: 0.8em;">C#</a> <a href="/tags/unity/" style="font-size: 0.67em;">unity</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 0.73em;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.6em;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.6em;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" style="font-size: 0.67em;">网络游戏</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/"><i class="fa  fa-book"></i> 内存管理（操作系统笔记6）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/04/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-5/"><i class="fa  fa-book"></i> 进程同步与互斥（操作系统笔记5）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-3/"><i class="fa  fa-book"></i> 线程（操作系统笔记3）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-4/"><i class="fa  fa-book"></i> 处理机调度（操作系统笔记4）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/01/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-2/"><i class="fa  fa-book"></i> 进程的描述与控制（操作系统笔记2）</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2023 舛羽的笔记小站 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by cy.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
+</html>
