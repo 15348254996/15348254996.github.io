@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>C#知识(8) | 舛羽的笔记小站</title>
+  <title>虚拟内存（操作系统笔记7） | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,23 +14,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="C#" />
+    <meta name="keywords" content="操作系统" />
   
-  <meta name="description" content="本节主要内容：垃圾回收机制和相关重要算法">
+  <meta name="description" content="本章会介绍虚拟内存技术是如何做到内存的扩充的，这一章只是相对来说较为抽象，但是虚拟内存已经广泛的运用于各种操作系统。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C#知识(8)">
-<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/index.html">
+<meta property="og:title" content="虚拟内存（操作系统笔记7）">
+<meta property="og:url" content="http://example.com/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本节主要内容：垃圾回收机制和相关重要算法">
+<meta property="og:description" content="本章会介绍虚拟内存技术是如何做到内存的扩充的，这一章只是相对来说较为抽象，但是虚拟内存已经广泛的运用于各种操作系统。">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png">
-<meta property="og:image" content="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png">
-<meta property="article:published_time" content="2022-12-24T15:29:43.000Z">
-<meta property="article:modified_time" content="2022-12-25T06:31:37.902Z">
+<meta property="og:image" content="https://s2.loli.net/2023/01/20/1pvyg5a3oqrmfRd.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/20/gDpI3798ojlKzvE.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/21/4bvZliRsoYLNrXy.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/21/9wZGDbPkpAfEOJy.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/21/Mrf7axkRTzYPeqF.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/21/cS4GFByp7J51qix.png">
+<meta property="article:published_time" content="2023-01-20T06:20:47.000Z">
+<meta property="article:modified_time" content="2023-01-21T11:01:23.294Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/20/1pvyg5a3oqrmfRd.png">
   
   <!-- 站点验证相关 -->
   
@@ -133,15 +137,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(8)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">虚拟内存（操作系统笔记7）</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-24T15:29:43.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
+                <li><time datetime="2023-01-20T06:20:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-20</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -149,7 +153,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~2.42K
+                        ~2.53K
                     
                     字
                 </li>
@@ -160,46 +164,116 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1671949897902"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1674298883294"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：垃圾回收机制和相关重要算法</p>
+            <div itemprop="articleBody"><p>本章会介绍虚拟内存技术是如何做到内存的扩充的，这一章只是相对来说较为抽象，但是虚拟内存已经广泛的运用于各种操作系统。</p>
 <span id="more"></span>
-<p>本章内容大量参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/nele/p/5673215.html">https://www.cnblogs.com/nele/p/5673215.html</a></p>
-<h2 id="1-GC（垃圾回收机制）"><a href="#1-GC（垃圾回收机制）" class="headerlink" title="1.GC（垃圾回收机制）"></a>1.GC（垃圾回收机制）</h2><p>当我们进行C++的开发的时候，我们有时需要使用new关键词在堆上手动开辟空间，同时也会用到delete来进行空间的释放，在C里面则是使用malloc和free关键词，但是当我们使用C#时我们大部分时候并不需要去管理堆上的内存，就好像系统帮我们完成了开辟和回收。</p>
-<p>其实C#作为一门托管型语言，托管代码在clr中运行，clr会自动惊醒垃圾回收等服务，所以我们才可以放心的随便创建引用值而不用担心内存遗漏。接下来简单介绍以下GC的机制。</p>
-<h3 id="（1）标志压缩算法"><a href="#（1）标志压缩算法" class="headerlink" title="（1）标志压缩算法"></a>（1）标志压缩算法</h3><p>该算法分三个步骤：</p>
-<p>1.先假设堆中所有对象都可以回收</p>
-<p>2.然后找出不能回收的对象</p>
-<p>3.最后堆中没有打标记的对象都是可以被回收的</p>
-<p>4.此时堆中对象不连续，移动这些对象，使他们重新从基地址开始连续</p>
-<p><img src="https://s2.loli.net/2022/12/25/8nr9UZjci34ylWY.png" alt=""></p>
-<p>经过这四步处理后，可以继续采用前面的堆内存分配方法，即仅用一个指针记录堆分配的起始地址就可以。</p>
-<p>主要处理步骤：将线程挂起→确定不能回收的对象→对象回收→堆压缩→指针修复。</p>
-<p>此处有两个问题：</p>
-<p>1.怎么确定哪些对象不能回收？</p>
-<p>答：首先GC从已经初始化的静态变量或者线程人在使用的对象（stack+CPU register）确定roots，通过复杂的引用关系，从roots出发开始寻找，如果能通过相互引用到达的引用则标记为不能回收的对象，剩余的对象则可以回收。</p>
-<p>2.指针修复干了什么？</p>
-<p>答：我们知道引用对象的存储方式是在栈上存储一个引用，这个引用其实就类似一根指针，他指向堆中相对应的内存，而当我们回收完并对堆进行压缩后，这些指针之前指的就会变成错误的地址，所以要进行修复。</p>
-<p>Debug和release执行模式之间稍有区别，release模式下后续代码没有引用的对象是可以回收的，而debug模式下需要等到当前函数执行完毕，这些对象才会成为可回收的，目的是为了调试时跟踪局部对象的内容。</p>
-<p>一些问题：Pinned objects指分配之后不能移动位置的对象，例如传递给非托管代码的对象（或者使用了fixed关键字），GC在指针修复时无法修改非托管代码中的引用指针，因此将这些对象移动将发生异常。pinned objects会导致堆出现碎片，但大部分情况来说传给非托管代码的对象应当在GC时能够被回收掉。 </p>
-<h3 id="（2）分代算法"><a href="#（2）分代算法" class="headerlink" title="（2）分代算法"></a>（2）分代算法</h3><p>程序可能使用几百M、几G的内存，对这样的内存区域进行GC操作成本很高，分代算法是基于一定的统计学基础，对GC的性能进行了改善。通过对象的生命周期讲对象分成了新对象和老对象也就是分了代，分代算法的假设前提</p>
-<p>1.新创建的对象生命周期都比较短，而较老的对象生命周期会更长</p>
-<p>2.对部分内存进行回收比基于全部内存的回收操作要快</p>
-<p>3.新创建的对象之间关联程度通常较强。堆分配的对象是连续的，关联度较强有利于提高CPU cache的命中率</p>
-<p>于是我们把堆分为了3代，分别是Gen0、Gen1、Gen2</p>
-<p>如果Gen 0 heap内存达到阀值，则触发0代GC，0代GC后Gen 0中幸存的对象进入Gen1。如果Gen 1的内存达到阀值，则进行1代GC，1代GC将Gen 0 heap和Gen 1 heap一起进行回收，幸存的对象进入Gen2。如图：</p>
-<p><img src="https://s2.loli.net/2022/12/25/os4WiQkyIErcj7u.png" alt=""></p>
-<p>2代GC将Gen 0 heap、Gen 1 heap和Gen 2 heap一起回收，Gen 0和Gen 1比较小，这两个代龄加起来总是保持在16M左右；Gen2的大小由应用程序确定，可能达到几G，因此0代和1代GC的成本非常低，2代GC称为full GC，通常成本很高。粗略的计算0代和1代GC应当能在几毫秒到几十毫秒之间完成，Gen 2 heap比较大时，full GC可能需要花费几秒时间。大致上来讲.NET应用运行期间，2代、1代和0代GC的频率应当大致为1:10:100。</p>
-<h3 id="（3）几个较为重要的垃圾回收相关api"><a href="#（3）几个较为重要的垃圾回收相关api" class="headerlink" title="（3）几个较为重要的垃圾回收相关api"></a>（3）几个较为重要的垃圾回收相关api</h3><p>GC.Collect()：这个的立足点是整个程序，调用这个程序会强制执行一次垃圾回收。也就是像上文提到的那样。</p>
-<p>虚构函数：和C++的定义方法相同，它的立足点是类，一个类对象在被垃圾回收时会执行虚构函数中的内容。</p>
-<p>Dispose()和close()：也是基于某个类对象，但是这个类对象是有非托管对象的类，GC不会处理非托管对象的释放，所以需要手动调用，有些类对象的是Dispose，而有些是close，但是实现的功能是一样的。如果你自己需要定义自己的Dispose()函数需要实现 IDisposable接口。</p>
-<p><font color='red'>注</font>：使用using语句可以自动调用Dispose()函数。</p>
-<h3 id="（4）Finalization-Queue和Freachable-Queue"><a href="#（4）Finalization-Queue和Freachable-Queue" class="headerlink" title="（4）Finalization Queue和Freachable Queue"></a>（4）Finalization Queue和Freachable Queue</h3><p>看到这个标题可能有点懵，但是我们可以提取关键词，queue一眼队列，这两个队列并不用于存储真正的对象，而是存储一组指向对象的指针。当程序中使用了new操作符在Managed Heap上分配空间时，GC会对其进行分析，如果该对象含有Finalize方法则在Finalization Queue中添加一个指向该对象的指针。</p>
-<p>在GC被启动以后，经过Mark阶段分辨出哪些是垃圾。再在垃圾中搜索，如果发现垃圾中有被Finalization Queue中的指针所指向的对象，则将这个对象从垃圾中分离出来，并将指向它的指针移动到Freachable Queue中。这个过程被称为是对象的复生（Resurrection），本来死去的对象就这样被救活了。为什么要救活它呢？因为这个对象的Finalize方法还没有被执行，所以不能让它死去。Freachable Queue平时不做什么事，但是一旦里面被添加了指针之后，它就会去触发所指对象的Finalize方法执行，之后将这个指针从队列中剔除，这是对象就可以安静的死去了。</p>
+<h2 id="第七章-虚拟内存"><a href="#第七章-虚拟内存" class="headerlink" title="第七章 虚拟内存"></a>第七章 虚拟内存</h2><p>在上一章内存管理中我们稍微介绍了内存扩充技术，包括对换与覆盖进行扩充，而这一章我们将介绍内存扩充最重要的技术，那就是虚拟内存技术，学会了这章你就能明白为什么你的电脑内存只有16G，却能运行30G的游戏了。</p>
+<h3 id="7-1-传统存储管理方式的特征"><a href="#7-1-传统存储管理方式的特征" class="headerlink" title="7.1 传统存储管理方式的特征"></a>7.1 传统存储管理方式的特征</h3><p>传统的存储管理方式有如下两点特征：</p>
+<ul>
+<li><p>一次性：作业必须一次性全部装入内存后才能开始运行。</p>
+<p>缺点：</p>
+<ol>
+<li>作业很大时，不能全部装入内存，导致大作业无法运行</li>
+<li>当大量作业要求运行时，由于内存无法容纳所有作业，因此只有少量作业能运行，导致多道程序并发度降低</li>
+</ol>
+</li>
+<li><p>驻留性：一旦作业被装入内存，就会一直驻留在内存中，直至作业运行结束。</p>
+<p>缺点：</p>
+<ol>
+<li>内存中会驻留大量的、暂时用不到的数据，浪费宝贵的内存资源</li>
+</ol>
+</li>
+</ul>
+<p>在结合我们之前介绍的局部性原理，传统存储管理方式已经很难满足这些需求了，也无法应用局部性原理优化，于是衍生出了内存扩充技术。</p>
+<h3 id="7-2-虚拟内存的定义与特征"><a href="#7-2-虚拟内存的定义与特征" class="headerlink" title="7.2 虚拟内存的定义与特征"></a>7.2 虚拟内存的定义与特征</h3><p><img src="https://s2.loli.net/2023/01/20/1pvyg5a3oqrmfRd.png" alt=""></p>
+<p>虚拟内存主要有以下三个特征：</p>
+<ul>
+<li>多次性：无需再作业云高兴是一次性全部装入内存，而是允许多次调入内存。</li>
+<li>对换性：再作业运行时无需一直常驻内存，而是允许作业在运行过程中，将作业换出、换入。</li>
+<li>虚拟性：从逻辑上扩充了内存的容量，时用户看到的内存容量，远大于实际的容量。</li>
+</ul>
+<p>实现虚拟内存技术主要有以下三种方式：</p>
+<ul>
+<li>请求分页存储管理</li>
+<li>请求分段存储管理</li>
+<li>请求段页式存储管理</li>
+</ul>
+<p>虽然形式有所不同，但是他们都要实现以下两点：</p>
+<ol>
+<li>访问的信息不在内存时，由操作系统负责将所需信息从外存调入内存（请求调页功能）</li>
+<li>内存空间不够时，将内存中赞时用不到的信息换出到外存（页面置换功能）</li>
+</ol>
+<h3 id="7-3-请求分页管理方式"><a href="#7-3-请求分页管理方式" class="headerlink" title="7.3 请求分页管理方式"></a>7.3 请求分页管理方式</h3><h4 id="1-请求分页存储管理与基本分页存储管理的区别"><a href="#1-请求分页存储管理与基本分页存储管理的区别" class="headerlink" title="(1)请求分页存储管理与基本分页存储管理的区别"></a>(1)请求分页存储管理与基本分页存储管理的区别</h4><font color='red'>请求分页存储管理</font>与<font color='red'>基本分页存储管理</font>的<font color='red'>主要区别</font>：
+
+在程序执行过程中，当所访问的信息不在内存时，由操作系统将所需信息从外存调入内存，然后继续执行程序。
+
+若内存空间不够，由操作系统负责将内存中暂时用不到的信息换出到外存。
+
+请求分页存储管理的<font color='red'>页表</font>与基本分页存储管理的<font color='red'>页表</font>的<font color='red'>主要区别</font>：
+
+![](https://s2.loli.net/2023/01/20/iVtCgM2ILsFf8YH.png)
+
+#### (2)缺页中断机构
+
+1. 找到页表项后检查页面是否已在内存，若没在内存，产生缺页中断
+2. 缺页中断处理中，需要将目标页面调入内存，有必要时还要换出页面
+3. 缺页中断属于内中断，属于内中断中的“故障”，即可能被系统修复的异常
+4. 一条指令在执行过程中可能产生多次缺页中断
+
+![](https://s2.loli.net/2023/01/20/CUHIuLVRaoAGSKN.png)
+
+#### (3)地址变换机构
+
+![](https://s2.loli.net/2023/01/20/iWfJ9GlkIEsOXaK.png)
+
+### 7.4 页面置换算法
+
+#### (1)最佳置换算法
+
+规则：优先淘汰最长时间内不会被访问的页面。
+
+优点：保证<font color='red'>最低的缺页率</font>
+
+<p>缺点：操作系统只有个在进程执行的过程中才知道接下来会访问到那个页面。因此最佳置换算法是<font color='red'>无法实现</font>的。</p>
+<h4 id="2-先进先出置换算法（FIFO）"><a href="#2-先进先出置换算法（FIFO）" class="headerlink" title="(2)先进先出置换算法（FIFO）"></a>(2)先进先出置换算法（FIFO）</h4><p>规则：每次选择淘汰的页面是最早进入内存的页面</p>
+<p>实现方法：把调入内存的页面根据调入的先后顺序排成一个队列，需要换出页面时选择对头页面即可。队列的最大长度取决于系统未进程分配了多少个内存块。</p>
+<p>优点：实现简单</p>
+<p>缺点：</p>
+<ol>
+<li>该算法与进程实际运行时的规律不适应，算法性能差。</li>
+<li>会产生Belady异常：党委进程分配的物理块数增大时，缺页次数不减反增的异常现象（只有FIFO算法会产生）</li>
+</ol>
+<h4 id="3-最近最久未使用置换算法（LRU）"><a href="#3-最近最久未使用置换算法（LRU）" class="headerlink" title="(3)最近最久未使用置换算法（LRU）"></a>(3)最近最久未使用置换算法（LRU）</h4><p>规则：每次淘汰的页面时最近最久未使用的页面</p>
+<p>实现方法：赋予每个页面对应的页表项中，用访问字段记录该页面自上次被访问依赖所经历的时间t。当需要淘汰一个页面时，选择现有页面中t值最大的，即最近最久未使用页面。</p>
+<p>优点：性能号</p>
+<p>缺点：需要专门的硬件支持，实现困难，开销大</p>
+<h4 id="4-时钟置换算法（CLOCK）"><a href="#4-时钟置换算法（CLOCK）" class="headerlink" title="(4)时钟置换算法（CLOCK）"></a>(4)时钟置换算法（CLOCK）</h4><p>规则：将最近未使用的算法进行置换，所以也称为最近未用算法</p>
+<p>实现方法：为每个页面是指一个访问位，再将内存中的页面都通过链接指针链接成一个循化队列。当某页被访问时，其访问位置位为1，当需要淘汰一个页面时，只需检查页的访问位，如果是0，就选择换出；如果是1，则将它置为0，暂不换出，继续检查下一个页面，若第一轮扫描中所有页面都是1，则将这些页面的访问位一次置为0后，进行第二轮扫描。（最多会经过两轮扫描）</p>
+<p>优点：实现简单，算法开销小</p>
+<p>缺点：未考虑页面被修改导致的I/O</p>
+<h4 id="5-改造型时钟置换算法"><a href="#5-改造型时钟置换算法" class="headerlink" title="(5)改造型时钟置换算法"></a>(5)改造型时钟置换算法</h4><p><img src="https://s2.loli.net/2023/01/20/gDpI3798ojlKzvE.png" alt=""></p>
+<p>算法开销小，且性能也不错，就是理解起来有点麻烦。</p>
+<h3 id="7-5-页面分配策略"><a href="#7-5-页面分配策略" class="headerlink" title="7.5 页面分配策略"></a>7.5 页面分配策略</h3><h4 id="1-驻留集"><a href="#1-驻留集" class="headerlink" title="(1)驻留集"></a>(1)驻留集</h4><p>请求分页存储管理中各进程分配的物理块的集合被称为驻留集。</p>
+<p>在采用了虚拟存储技术的系统中，驻留集大小一般小于进程的总大小。</p>
+<p>若驻留集太小，会导致缺页平凡，系统要花大量的时间来处理缺页，实际用于进程推进的时间很小；</p>
+<p>驻留集太大，又会导致多道陈旭并发度下降，资源利用率降低。所以应该选择一个合适的驻留集大小。</p>
+<p>那么怎样分配驻留集就是我们这章需要讨论的问题。</p>
+<h4 id="2-页面分配置换策略"><a href="#2-页面分配置换策略" class="headerlink" title="(2)页面分配置换策略"></a>(2)页面分配置换策略</h4><p>固定分配：</p>
+<p>操作系统为每个进程分配一组固定数目的物理块，在进程运行期间不再改变。即，驻留集大小不变。</p>
+<p>可变分配：</p>
+<p>先为每个进程分配一定数目的物理块，在进程运行期间，可根据情况做适当的增加或减少。即驻留集大小可变</p>
+<p>局部置换：发生缺页时只能选进程自己的物理块进行置换</p>
+<p>全局置换：可以将操作系统保留的空闲物理块分配给缺页进程，也可以将别的进程持有的物理块置换到外存，在分配给缺页进程</p>
+<p><img src="https://s2.loli.net/2023/01/21/4bvZliRsoYLNrXy.png" alt=""></p>
+<h3 id="7-6-调入页面的时机"><a href="#7-6-调入页面的时机" class="headerlink" title="7.6 调入页面的时机"></a>7.6 调入页面的时机</h3><p><img src="https://s2.loli.net/2023/01/21/9wZGDbPkpAfEOJy.png" alt=""></p>
+<h3 id="7-7-调页位置"><a href="#7-7-调页位置" class="headerlink" title="7.7 调页位置"></a>7.7 调页位置</h3><p><img src="https://s2.loli.net/2023/01/21/Mrf7axkRTzYPeqF.png" alt=""></p>
+<h3 id="7-7-抖动现象"><a href="#7-7-抖动现象" class="headerlink" title="7.7 抖动现象"></a>7.7 抖动现象</h3><p>刚刚换出的页面马上又要换入内存，刚刚换入的页面马上又换出内存，这种频繁的页面调度行为称为抖动（颠簸）产生抖动的主要原因时进程频繁访问的页面数目高于可用的物理快数（分配给进程的物理块不够）</p>
+<h3 id="7-8-工作集"><a href="#7-8-工作集" class="headerlink" title="7.8 工作集"></a>7.8 工作集</h3><p><img src="https://s2.loli.net/2023/01/21/cS4GFByp7J51qix.png" alt=""></p>
 </div>
         </div>
         
@@ -253,7 +327,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/",
+                text: "http://example.com/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -265,9 +339,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-8/";
-            const title         = "「C#知识(8)」";
-            const excerpt       = `本节主要内容：垃圾回收机制和相关重要算法`;
+            const hostUrl       = "http://example.com/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/";
+            const title         = "「虚拟内存（操作系统笔记7）」";
+            const excerpt       = `本章会介绍虚拟内存技术是如何做到内存的扩充的，这一章只是相对来说较为抽象，但是虚拟内存已经广泛的运用于各种操作系统。`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -286,10 +360,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
+                    <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-12-25T06:31:37.902Z" itemprop="dateModified">最后编辑：2022-12-25</time>
+                    <time datetime="2023-01-21T11:01:23.294Z" itemprop="dateModified">最后编辑：2023-01-21</time>
                 </div>
             </div>
         </footer>
@@ -298,13 +372,9 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" C#知识(7)" href="/2022/12/24/CS知识/CS知识-7/">&lt; 上一篇</a>
+                <a title=" 内存管理（操作系统笔记6）" href="/2023/01/12/操作系统笔记/操作系统笔记-6/">&lt; 上一篇</a>
             </div>
             
-            
-            <div class="nav-next clearfix">
-                <a title=" C#知识(9)" href="/2022/12/24/CS知识/CS知识-9/">下一篇 &gt;</a>
-            </div>
             
         </nav>
     
