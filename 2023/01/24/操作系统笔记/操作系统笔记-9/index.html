@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>C#知识(2) | 舛羽的笔记小站</title>
+  <title>磁盘组织与管理（操作系统笔记9） | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,23 +14,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="C#" />
+    <meta name="keywords" content="操作系统" />
   
-  <meta name="description" content="本节主要内容：Partial关键字，结构体struct">
+  <meta name="description" content="本章开始会讲解磁盘也就是外存的硬件系统的相关知识">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C#知识(2)">
-<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-2/index.html">
+<meta property="og:title" content="磁盘组织与管理（操作系统笔记9）">
+<meta property="og:url" content="http://example.com/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本节主要内容：Partial关键字，结构体struct">
+<meta property="og:description" content="本章开始会讲解磁盘也就是外存的硬件系统的相关知识">
 <meta property="og:locale">
-<meta property="og:image" content="https://s2.loli.net/2022/06/20/B4bUjYQKVWgqa3u.png">
-<meta property="og:image" content="https://s2.loli.net/2022/06/20/5V2xk3Lscovr6yX.png">
-<meta property="article:published_time" content="2022-12-24T15:16:39.000Z">
-<meta property="article:modified_time" content="2022-12-25T03:48:22.878Z">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/ikRqfBrvXQGyxPm.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/X2xRj5l93qyFPrG.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/IiV3Pl61vUAaxoW.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/UpsRE8fY9ie74Lv.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/OQ82km3FwXRPEpn.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/eGV4EQBh3mcSFTn.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/KzeTBt1uFvxHqbr.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/wRqPstei2INO3UM.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/twQzhxBHqpCc7iV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/EGJuOnA6QlHN81B.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/8ufEPrAWoc93zjK.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/7oGJ2RKHD45pLYc.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/24/PBo8K7tpa3JAHOs.png">
+<meta property="article:published_time" content="2023-01-24T12:33:47.000Z">
+<meta property="article:modified_time" content="2023-01-24T14:58:36.440Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/06/20/B4bUjYQKVWgqa3u.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/24/ikRqfBrvXQGyxPm.png">
   
   <!-- 站点验证相关 -->
   
@@ -133,15 +144,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(2)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">磁盘组织与管理（操作系统笔记9）</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-24T15:16:39.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
+                <li><time datetime="2023-01-24T12:33:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-24</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -149,7 +160,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~1.98K
+                        1177
                     
                     字
                 </li>
@@ -160,47 +171,66 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1671940102878"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1674572316440"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：Partial关键字，结构体struct</p>
+            <div itemprop="articleBody"><p>本章开始会讲解磁盘也就是外存的硬件系统的相关知识</p>
 <span id="more"></span>
-<h2 id="1-partial关键字"><a href="#1-partial关键字" class="headerlink" title="1.partial关键字"></a>1.partial关键字</h2><p>paritial 可以实现类的逻辑拆分到不同的文件。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//A.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//AB.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show2</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的代码虽然是在不同的文件中，但是在同一个项目中同时定义了两个相同的名字是一定会报错的。</p>
-<p><img src="https://s2.loli.net/2022/06/20/B4bUjYQKVWgqa3u.png" alt=""></p>
-<p>但是当我门使用partial关键字来限定类后则不会报错</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//AB.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show2</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//A.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">a1</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">show</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;show&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//main.cs</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">main</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        a1.show();</span><br><span class="line">        a1.show2();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行输出结果：</p>
-<p><img src="https://s2.loli.net/2022/06/20/5V2xk3Lscovr6yX.png" alt=""></p>
-<h2 id="2-结构体"><a href="#2-结构体" class="headerlink" title="2.结构体"></a>2.结构体</h2><p>C#中的结构体的定义和C++别无二致，并且声明的方式也是相同的，都是类似与以下的代码：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> mystruct</span><br><span class="line">&#123;</span><br><span class="line">   <span class="keyword">public</span> <span class="built_in">int</span> e;</span><br><span class="line">   <span class="built_in">float</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是我查了一些资料，发现这两个语言的结构体其实差距还是蛮大的</p>
-<h3 id="1-C-struct"><a href="#1-C-struct" class="headerlink" title="1.C++ struct"></a>1.C++ struct</h3><p>首先是C++的结构体，<strong>C++</strong>的<strong>结构体</strong>和<strong>类</strong>几乎没有任何区别，他包含类有的所有特性，不仅能包含变量，也能继承，实现多态甚至类可以继承于结构体，结构体也能继承于类，说实话，我看到这的时候人都傻了，既然结构体和类这么像，为啥还要结构体，我认为是为了兼容c语言的语法吧。而在C++中<strong>结构体</strong>与<strong>类</strong>的<font color='red'>主要区别</font>就仅仅体现在两个方面：</p>
-<p>1.默认的继承访问权限，结构体默认是public继承，class是private的。</p>
-<p>2.成员变量的默认访问权限，结构体默认是public，class是private。</p>
-<h3 id="2-C-struct"><a href="#2-C-struct" class="headerlink" title="2.C# struct"></a>2.C# struct</h3><p>C#的结构体也没有C的那么单纯，他也能带有方法字段，同时他还能带有索引、属性、运算符方法和事件，大概有以下特点：</p>
-<ul>
-<li>结构可带有方法、字段、索引、属性、运算符方法和事件。</li>
-<li>结构可定义构造函数，但不能定义析构函数。但是，您不能为结构定义无参构造函数。无参构造函数(默认)是自动定义的，且不能被改变。</li>
-<li>与类不同，结构不能继承其他的结构或类。</li>
-<li>结构不能作为其他结构或类的基础结构。</li>
-<li>结构可实现一个或多个接口。</li>
-<li>结构成员不能指定为 abstract、virtual 或 protected。</li>
-<li>当您使用 <strong>New</strong> 操作符创建一个结构对象时，会调用适当的构造函数来创建结构。与类不同，结构可以不使用 New 操作符即可被实例化。</li>
-<li><p>如果不使用 New 操作符，只有在所有的字段都被初始化之后，字段才被赋值，对象才被使用。</p>
-</li>
-<li><p>结构体中声明的字段，除非将字段声明为 const 或 static，否则无法赋予初值。</p>
-</li>
-<li>赋值时是深拷贝</li>
-<li>在为属性器时，不能局部赋值（比如 transofrm.position.x 不能直接赋值）</li>
-<li>结构体相比类，内存的回收效率更高，不容易产生 gc，所以需要频繁创建的数据对象建议用结构体来实现，比如 Unity 的 Vector3/2 等。</li>
-</ul>
-<p>还有一点需要提醒，<font color='red'><strong>C#结构体</strong></font>的<font color='red'>默认访问权限</font>是<font color='red'>private</font></p>
-<p>其次结构体作为值类型在栈上分配内存存储，至于如果在结构体内有引用类型，那栈中就保存这个引用类型分配在堆的地址，值类型在用完由clr回收机制自动回收，对于结构体中的引用类型，回收的时候只回收用于存储地址的内存，而用于存储引用类型成员变量值的内存，则等待回收机制进行回收。</p>
+<h2 id="第九章-磁盘组织与管理"><a href="#第九章-磁盘组织与管理" class="headerlink" title="第九章 磁盘组织与管理"></a>第九章 磁盘组织与管理</h2><h3 id="9-1-磁盘的组成"><a href="#9-1-磁盘的组成" class="headerlink" title="9.1 磁盘的组成"></a>9.1 磁盘的组成</h3><p><img src="https://s2.loli.net/2023/01/24/ikRqfBrvXQGyxPm.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/24/X2xRj5l93qyFPrG.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/24/IiV3Pl61vUAaxoW.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/24/UpsRE8fY9ie74Lv.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/24/OQ82km3FwXRPEpn.png" alt=""></p>
+<h3 id="9-2-磁盘调度算法"><a href="#9-2-磁盘调度算法" class="headerlink" title="9.2 磁盘调度算法"></a>9.2 磁盘调度算法</h3><h4 id="1-一次磁盘读-写操作需要的时间"><a href="#1-一次磁盘读-写操作需要的时间" class="headerlink" title="(1)一次磁盘读/写操作需要的时间"></a>(1)一次磁盘读/写操作需要的时间</h4><p>寻找时间（寻道时间）$T_s$：在读/写数据前，将磁头移动到指定刺刀所花时间</p>
+<ol>
+<li>启动磁头臂需要时间的。假设耗时为s</li>
+<li>移动磁头也是需要时间的。假设磁头匀速移动，没跨越一个磁道耗时为m，总共需要跨越n条磁道</li>
+</ol>
+<script type="math/tex; mode=display">
+T_s=s+m*n</script><p>延迟时间$T_R$：通过旋转磁盘，使磁头定位到目标扇区所需要的时间。</p>
+<ol>
+<li>磁盘转速为r（转/秒）</li>
+</ol>
+<p>平均延迟时间：</p>
+<script type="math/tex; mode=display">
+T_R=\frac{1}{2r}</script><p>传输时间$T_t$：从磁盘读出或向磁盘写入数据所经历的时间</p>
+<ol>
+<li>磁盘转速为r</li>
+<li>此次读/写的字节数为b</li>
+<li>每个磁道上的字节数为N</li>
+</ol>
+<script type="math/tex; mode=display">
+T_t=\frac{b}{rN}</script><p>总的平均存取时间</p>
+<script type="math/tex; mode=display">
+T_a=T_s+\frac{1}{2r}+\frac{b}{rN}</script><p>延迟时间和存储时间与磁盘转速相关，且为线性相关，这是磁盘的固有属性，所以一般来说无法优化。但是操作系统的磁盘调度算法会直接影响寻道时间。</p>
+<h4 id="2-先来先服务（FCFS）"><a href="#2-先来先服务（FCFS）" class="headerlink" title="(2)先来先服务（FCFS）"></a>(2)先来先服务（FCFS）</h4><p><img src="https://s2.loli.net/2023/01/24/eGV4EQBh3mcSFTn.png" alt=""></p>
+<h4 id="3-最短寻找时间优点算法（SSTF）"><a href="#3-最短寻找时间优点算法（SSTF）" class="headerlink" title="(3)最短寻找时间优点算法（SSTF）"></a>(3)最短寻找时间优点算法（SSTF）</h4><p><img src="https://s2.loli.net/2023/01/24/KzeTBt1uFvxHqbr.png" alt=""></p>
+<p>(4)扫描算法（SCAN）</p>
+<p><img src="https://s2.loli.net/2023/01/24/wRqPstei2INO3UM.png" alt=""></p>
+<h4 id="5-LOOK算法"><a href="#5-LOOK算法" class="headerlink" title="(5)LOOK算法"></a>(5)LOOK算法</h4><p><img src="https://s2.loli.net/2023/01/24/twQzhxBHqpCc7iV.png" alt=""></p>
+<h4 id="6-循环扫描算法"><a href="#6-循环扫描算法" class="headerlink" title="(6)循环扫描算法"></a>(6)循环扫描算法</h4><p><img src="https://s2.loli.net/2023/01/24/EGJuOnA6QlHN81B.png" alt=""></p>
+<h4 id="7-C-LOOK算法"><a href="#7-C-LOOK算法" class="headerlink" title="(7)C-LOOK算法"></a>(7)C-LOOK算法</h4><p><img src="https://s2.loli.net/2023/01/24/8ufEPrAWoc93zjK.png" alt=""></p>
+<h3 id="9-3-减少延迟时间的方法"><a href="#9-3-减少延迟时间的方法" class="headerlink" title="9.3 减少延迟时间的方法"></a>9.3 减少延迟时间的方法</h3><p>磁头读入一个扇区数据后需要一小段时间处理，如果逻辑上相邻的扇区在物理上也相邻，则读入几个连续的逻辑扇区，可能需要很长的“延迟时间”</p>
+<h4 id="1-交替编号"><a href="#1-交替编号" class="headerlink" title="(1)交替编号"></a>(1)交替编号</h4><p>若采用交替编号的策略，即让逻辑上相邻的扇区在物理上有一定的间隔，可以使读取连续的逻辑扇区所需要的延迟时间更小。</p>
+<p>磁盘地址结构的设计：</p>
+<p><img src="https://s2.loli.net/2023/01/24/7oGJ2RKHD45pLYc.png" alt=""></p>
+<p>所以采用（柱面号，盘面号，扇区号）的地址结构可以减少磁头移动消耗的时间。</p>
+<h4 id="2-错位命名"><a href="#2-错位命名" class="headerlink" title="(2)错位命名"></a>(2)错位命名</h4><p>假设我们现在的0号盘面与1号盘面相同的盘面位置相同处扇区标号相同，现在我们需要访问玩(000，00,111)之后访问(000,01,000)。</p>
+<p>如果读取完磁盘块(000，00,111)之后，需要短暂的时间处理，而盘面又在不停地转动，因此当(000,01,000)第一次划过1号盘面的磁头下方时，并不能读取数据，只能再等该扇区再次划过磁头。</p>
+<p>这显然是不划算的。</p>
+<p>如果我们将0号盘面与1号盘面相同盘面位置对应不同盘面号形成错位命名就可以加快磁盘的读取速度</p>
+<p><img src="https://s2.loli.net/2023/01/24/PBo8K7tpa3JAHOs.png" alt=""></p>
+<h3 id="9-4-磁盘管理"><a href="#9-4-磁盘管理" class="headerlink" title="9.4 磁盘管理"></a>9.4 磁盘管理</h3><h4 id="1-磁盘初始化"><a href="#1-磁盘初始化" class="headerlink" title="(1)磁盘初始化"></a>(1)磁盘初始化</h4><ol>
+<li>物理格式化：划分扇区</li>
+<li>磁盘分区：分成C盘，D盘之类的</li>
+<li>逻辑格式化：建立文件系统（建立根目录文件、建立用于存储空间管理的数据结构）</li>
+</ol>
+<h4 id="2-磁盘引导块"><a href="#2-磁盘引导块" class="headerlink" title="(2)磁盘引导块"></a>(2)磁盘引导块</h4><p>计算机启动时需要运行初始化程序，来完成初始化。ROM（只读存储器）中存放很小的自举装入程序，完整的自举程序存放在初始块（引导块）中。</p>
+<h4 id="3-坏块的管理"><a href="#3-坏块的管理" class="headerlink" title="(3)坏块的管理"></a>(3)坏块的管理</h4><p>简单的磁盘：逻辑格式化时将坏块标记出来</p>
+<p>复杂的磁盘：磁盘控制器维护一个坏块链，并管理备用扇区</p>
 </div>
         </div>
         
@@ -254,7 +284,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-2/",
+                text: "http://example.com/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -266,9 +296,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-2/";
-            const title         = "「C#知识(2)」";
-            const excerpt       = `本节主要内容：Partial关键字，结构体struct`;
+            const hostUrl       = "http://example.com/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/";
+            const title         = "「磁盘组织与管理（操作系统笔记9）」";
+            const excerpt       = `本章开始会讲解磁盘也就是外存的硬件系统的相关知识`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -287,10 +317,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
+                    <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-12-25T03:48:22.878Z" itemprop="dateModified">最后编辑：2022-12-25</time>
+                    <time datetime="2023-01-24T14:58:36.440Z" itemprop="dateModified">最后编辑：2023-01-24</time>
                 </div>
             </div>
         </footer>
@@ -299,12 +329,12 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" C#知识(1)" href="/2022/12/24/CS知识/CS知识-1/">&lt; 上一篇</a>
+                <a title=" 文件系统（操作系统笔记8）" href="/2023/01/22/操作系统笔记/操作系统笔记-8/">&lt; 上一篇</a>
             </div>
             
             
             <div class="nav-next clearfix">
-                <a title=" C#知识(3)" href="/2022/12/24/CS知识/CS知识-3/">下一篇 &gt;</a>
+                <a title=" I/O管理（操作系统笔记10）" href="/2023/01/25/操作系统笔记/操作系统笔记-10/">下一篇 &gt;</a>
             </div>
             
         </nav>

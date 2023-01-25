@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  
+  
+  <title>I/O管理（操作系统笔记10） | 舛羽的笔记小站</title>
+  <meta name="author" content="cy" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="操作系统" />
+  
+  <meta name="description" content="本章开始会讲解I&#x2F;O设备管理的相关知识，这也是操作系统的最后一章。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I&#x2F;O管理（操作系统笔记10）">
+<meta property="og:url" content="http://example.com/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/index.html">
+<meta property="og:site_name" content="舛羽的笔记小站">
+<meta property="og:description" content="本章开始会讲解I&#x2F;O设备管理的相关知识，这也是操作系统的最后一章。">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/WOnxct1gkTm7SUB.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/MfPpoOnwaJWmuvs.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/6gsWDdmIaY3PZxF.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/LplfSW98aDR7wmi.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/L8ADKIk9MBeiFxj.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/si9ZWdOcR3yPQjh.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/EbHF7hMQAL3m1nI.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/3nAz8VwoXklrbMt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/7l8NT3xiyk1oJBS.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/N9E5UDYtMFXVCoI.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/xrkTzORwK5L2moj.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/STbR1Ii3YxzJoCV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/9Ua8Aep7iEntVb5.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/Ql9JztZSXUx8ROY.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/FbEKs5AioceSpuZ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/8ONH349jTXuWhdC.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/8uX5NkOK4Se3Uap.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/wAkjTpsIt426QLE.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/oJeculFI94hZjMV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/J8BuwCalAZbiTc4.png">
+<meta property="og:image" content="c:\Users\cy\Desktop\20200515234644297.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/rRADhbVWs8gcK41.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/IcWLVwj1C6hRoMv.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/jJPlkMHL2ZibRsW.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/OUlSbKnZ2Rmxw6s.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/25/vP3xqLkQGSUma2W.png">
+<meta property="article:published_time" content="2023-01-25T01:12:47.000Z">
+<meta property="article:modified_time" content="2023-01-25T12:51:05.883Z">
+<meta property="article:author" content="cy">
+<meta property="article:tag" content="操作系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/25/WOnxct1gkTm7SUB.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('/images/banner.webp');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('/images/bg.webp');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">舛羽的笔记小站</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>舛羽的笔记小站</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">I/O管理（操作系统笔记10）</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2023-01-25T01:12:47.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-01-25</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~3.19K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1674651065883"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><p>本章开始会讲解I/O设备管理的相关知识，这也是操作系统的最后一章。</p>
+<span id="more"></span>
+<h2 id="第十章-I-O管理"><a href="#第十章-I-O管理" class="headerlink" title="第十章 I/O管理"></a>第十章 I/O管理</h2><p>接下来我们进入操作系统的最后一个功能，I/O管理。</p>
+<h3 id="10-1-I-O设备"><a href="#10-1-I-O设备" class="headerlink" title="10.1 I/O设备"></a>10.1 I/O设备</h3><p>“I/O”就是“输入/输出”</p>
+<p>I/O设备就是可以将数据输入到计算机，或者可以接收计算机输出数据的外部服务，属于计算机中的硬件部件</p>
+<p>UNIX系统将外部设备抽象为一种特殊的文件，用户可以使用与文件操作系统相同的方式将外部设备进行操作</p>
+<p>I/O设备可以按以下方式进行分类：</p>
+<ul>
+<li><p>按使用特性分类：</p>
+<ul>
+<li>人机交互类外部设备：数据传输速度慢（比如：鼠标、键盘、打印机等），用于人机交互</li>
+<li>存储设备：数据传输速度快（比如：移动硬盘、光盘等），用于数据存储</li>
+<li>网络通信设备：数据传输通信设备（比如：调制解调器），用于网络通信</li>
+</ul>
+</li>
+<li><p>按传输速率分类：</p>
+<ul>
+<li>低速设备：鼠标、键盘等，传输速率为每秒几个到几百字节</li>
+<li>中速设备：如激光打印机等，传输速率为每秒数千至上万个字节</li>
+<li>高速设备：如磁盘等，传输速率为每秒数千字节至千兆字节的设备</li>
+</ul>
+</li>
+<li><p>按信息交换单位分类：</p>
+<ul>
+<li>块设备：传输速率较高，可寻址，即对它可随机的读/写任一块，数据传输的基本单位是“块”，如磁盘等</li>
+<li>字符设备：传输效率较慢，不可寻址，在输入/输出时长采用中断驱动方式，数据传输的基本单位是字符，如键盘鼠标等。</li>
+</ul>
+</li>
+</ul>
+<h3 id="10-2-I-O设备的组成"><a href="#10-2-I-O设备的组成" class="headerlink" title="10.2 I/O设备的组成"></a>10.2 I/O设备的组成</h3><p>I/O设备分为机械部件和电子部件</p>
+<p>机械部件：主要用来执行具体I/O操作。如我们看得见鼠标、键盘的按钮，显示器的LED屏</p>
+<p>电子部件：通常是一块插入主板扩充槽的印刷电路板</p>
+<h4 id="1-电子部件中的I-O控制器的功能"><a href="#1-电子部件中的I-O控制器的功能" class="headerlink" title="(1)电子部件中的I/O控制器的功能"></a>(1)电子部件中的I/O控制器的功能</h4><p>CPU无法直接控制I/O设备的机械部件，因此I/O设备还要有一个电子部件作为CPU和I/O设备机械部件之间的“中介”，用于实现CPU对设备的控制。这个电子部件就是I/O控制器，又称设备控制器。CPU可控制I/O控制器，又由I/O控制器来控制设备的机械部件。</p>
+<p><img src="https://s2.loli.net/2023/01/25/WOnxct1gkTm7SUB.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/25/MfPpoOnwaJWmuvs.png" alt=""></p>
+<p>注：</p>
+<ol>
+<li>一个I/O控制器可能对应多个设备</li>
+<li>数据寄存器，控制寄存器，状态寄存器可能有多个，且都要有相应的的值才能方便CPU操作。</li>
+</ol>
+<p>设置地址的方法有两种：</p>
+<ul>
+<li><p>内存映像I/O</p>
+<p>计算机会让这些寄存器占用内存地址的一部分，这称为内存映射I/O</p>
+</li>
+<li><p>寄存器独立编址</p>
+<p>计算机则采用I/O专用地址，这称为寄存器独立编址</p>
+</li>
+</ul>
+<p>两种方式的比较</p>
+<p><img src="https://s2.loli.net/2023/01/25/6gsWDdmIaY3PZxF.png" alt=""></p>
+<h3 id="10-3-操作系统控制I-O设备方式"><a href="#10-3-操作系统控制I-O设备方式" class="headerlink" title="10.3 操作系统控制I/O设备方式"></a>10.3 操作系统控制I/O设备方式</h3><h4 id="1-程序直接控制方式"><a href="#1-程序直接控制方式" class="headerlink" title="(1)程序直接控制方式"></a>(1)程序直接控制方式</h4><p><img src="https://s2.loli.net/2023/01/25/LplfSW98aDR7wmi.png" alt=""></p>
+<h4 id="2-中断驱动方式"><a href="#2-中断驱动方式" class="headerlink" title="(2)中断驱动方式"></a>(2)中断驱动方式</h4><p><img src="https://s2.loli.net/2023/01/25/L8ADKIk9MBeiFxj.png" alt=""></p>
+<h4 id="3-DMA方式"><a href="#3-DMA方式" class="headerlink" title="(3)DMA方式"></a>(3)DMA方式</h4><p>虽然<code>中断驱动方式解决了程序直接控制方式</code>的问题，但是每一次只能读/写一个字，导致CPU频繁切换，耗费了很多时间。于是人们又发明了DMA方式。</p>
+<p>使用一个DMA控制器，让I/O控制器直接与内存进行交互，可以一次性传送多个数据块</p>
+<p><img src="https://s2.loli.net/2023/01/25/si9ZWdOcR3yPQjh.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/25/EbHF7hMQAL3m1nI.png" alt=""></p>
+<h4 id="4-通道控制方式"><a href="#4-通道控制方式" class="headerlink" title="(4)通道控制方式"></a>(4)通道控制方式</h4><p>通道控制方式是为了解决DMA方式连续存储的问题。</p>
+<p>通道是一个硬件，他是一个特化CPU，只能用于执行一系列通道指令。CPU将需要处理的I/O请求相关数据提供给通道，之后执行其他进程，至于I/O处理就交给通道完成了。</p>
+<p><img src="https://s2.loli.net/2023/01/25/3nAz8VwoXklrbMt.png" alt=""></p>
+<p><img src="https://s2.loli.net/2023/01/25/7l8NT3xiyk1oJBS.png" alt=""></p>
+<p>最后对四种方式进行总结：</p>
+<p><img src="https://s2.loli.net/2023/01/25/N9E5UDYtMFXVCoI.png" alt=""></p>
+<h3 id="10-4-I-O软件的层次结构"><a href="#10-4-I-O软件的层次结构" class="headerlink" title="10.4 I/O软件的层次结构"></a>10.4 I/O软件的层次结构</h3><p>I/O软件由上至下分别是：用户层软件，设备独立性软件，设备驱动程序，中断处理程序，硬件</p>
+<p><img src="https://s2.loli.net/2023/01/25/xrkTzORwK5L2moj.png" alt=""></p>
+<h4 id="1-用户层软件"><a href="#1-用户层软件" class="headerlink" title="(1)用户层软件"></a>(1)用户层软件</h4><p>用户层软件实现了与用户交互的接口，用户可直接使用该层提供的、与I/O操作相关的库函数对设备进行操作</p>
+<p>用户层软件将用户请求翻译成格式化的I/O请求，并通过“系统调用”请求操作系统内核的服务</p>
+<p>也就是对系统调用的一种封装，同时负责把这种封装翻译成系统调用。</p>
+<h4 id="2-设备独立性软件（设备无关性软件）"><a href="#2-设备独立性软件（设备无关性软件）" class="headerlink" title="(2)设备独立性软件（设备无关性软件）"></a>(2)设备独立性软件（设备无关性软件）</h4><p>主要实现以下功能：</p>
+<ol>
+<li>向上层提供统一的调用接口</li>
+<li>设备的保护，与文件保护类似</li>
+<li>差错处理</li>
+<li>设备的分配与回收</li>
+<li>数据缓冲区管理</li>
+<li>建立逻辑设备名到物理设备名的映射关系，根据设备类型选择调用相应的驱动程序</li>
+</ol>
+<p>为了实现<font color="red">逻辑设备名和物理设备名的映射关系</font>，并找到该设备对应的设备驱动程序我们需要建立逻辑设备表。</p>
+<p><img src="https://s2.loli.net/2023/01/25/STbR1Ii3YxzJoCV.png" alt=""></p>
+<h4 id="3-设备驱动程序"><a href="#3-设备驱动程序" class="headerlink" title="(3)设备驱动程序"></a>(3)设备驱动程序</h4><p>不同设备的内部硬件特性不同，规定不同，所以不同的设备需要不同的方法去操纵或访问设备，于是就有了设备驱动程序</p>
+<p><img src="https://s2.loli.net/2023/01/25/9Ua8Aep7iEntVb5.png" alt=""></p>
+<h4 id="4-中断处理程序"><a href="#4-中断处理程序" class="headerlink" title="(4)中断处理程序"></a>(4)中断处理程序</h4><p><img src="https://s2.loli.net/2023/01/25/Ql9JztZSXUx8ROY.png" alt=""></p>
+<p>总结：</p>
+<p><img src="https://s2.loli.net/2023/01/25/FbEKs5AioceSpuZ.png" alt=""></p>
+<h3 id="10-5-I-O核心子系统"><a href="#10-5-I-O核心子系统" class="headerlink" title="10.5 I/O核心子系统"></a>10.5 I/O核心子系统</h3><h4 id="1-假脱机技术（SPOOLing技术）"><a href="#1-假脱机技术（SPOOLing技术）" class="headerlink" title="(1)假脱机技术（SPOOLing技术）"></a>(1)假脱机技术（SPOOLing技术）</h4><p>要知道什么是假脱机技术首先要知道什么是脱机技术。</p>
+<p>由于CPU与I/O的速度不匹配，人们想出的第一个发子就是将I/O与主机控制脱离开，比如批处理系统先用外围控制机将纸带转化为磁带，</p>
+<p>在脱机技术的基础上人们发明了更好的假脱机技术</p>
+<p><img src="https://s2.loli.net/2023/01/25/8ONH349jTXuWhdC.png" alt=""></p>
+<p>“输入进程”模拟脱机输入时的外围控制机，“输出进程”模拟脱机输出时外围控制机</p>
+<p>输入缓冲区：在输入进程的控制下，输入缓冲区用于暂存从输入设备输入的数据，之后再转存到输入井中</p>
+<p>输出缓冲区：在输出进程的控制下，输出缓冲区用于暂存从输出井送来的数据，之后再传送到输出设备上</p>
+<p>注意：两个缓冲区均在内存中</p>
+<p>假脱机技术可以完成独占式设备转换为共享设备。</p>
+<p><img src="https://s2.loli.net/2023/01/25/8uX5NkOK4Se3Uap.png" alt=""></p>
+<p>需要了解的是：假脱机技术一般在用户层软件</p>
+<h4 id="2-I-O调度"><a href="#2-I-O调度" class="headerlink" title="(2)I/O调度"></a>(2)I/O调度</h4><p>I/O调度主要是I/O设备的分配与回收</p>
+<p>再分配时我们需要考虑以下几个因素：</p>
+<ul>
+<li><p>固有属性：独占设备、共享设备、虚拟设备</p>
+</li>
+<li><p>分配算法：先来先服务、优先级高者优先、短任务优先等</p>
+</li>
+<li><p>安全性：</p>
+<ul>
+<li><p>安全分配方式：为进程分配一个设备后就将进程阻塞，本次I/O完成后才将进程唤醒。</p>
+<p>优点：破坏了“请求和保持”条件，不会死锁</p>
+<p>缺点：对于一个进程来说，CPU和I/O设备只能串行工作</p>
+</li>
+<li><p>不安全分配方式：进程发出I/O请求后，系统为其分配/O设备，进程可继续执行，之后还可以发出新的I/O请求。只有某个I/O请求得不到满足时才将进程阻塞。</p>
+<p>优点：进程的计算任务和I/O任务可以并行处理，时进程迅速推进</p>
+<p>缺点：有可能发生死锁</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>有以下两类分配方式</p>
+<ul>
+<li>静态分配：进程运行前为其分配全部所需资源，运行结束后归还资源</li>
+<li>动态分配：进程运行过程中动态申请设备资源</li>
+</ul>
+<p>设备分配中会用到相应的数据结构：</p>
+<p>设备控制表：</p>
+<p><img src="https://s2.loli.net/2023/01/25/wAkjTpsIt426QLE.png" alt=""></p>
+<p>控制器控制表：</p>
+<p><img src="https://s2.loli.net/2023/01/25/oJeculFI94hZjMV.png" alt=""></p>
+<p>通道控制表：</p>
+<p><img src="https://s2.loli.net/2023/01/25/J8BuwCalAZbiTc4.png" alt=""></p>
+<p>系统设备表：</p>
+<p><img src="C:\Users\cy\Desktop\20200515234644297.png" alt=""></p>
+<p>设备分配步骤：</p>
+<ol>
+<li>根据进程请求的物理设备名查找SDT(注：物理设备名是进程请求分配设备时提供的参数)</li>
+<li>根据SDT找到DCT,若设备忙碌则将进程PCB挂到设备等待队列中，不忙碌则将设备分配给进程。</li>
+<li>根据DCT找到COCT,若控制器忙碌则将进程PCB挂到控制器等待队列中，不忙碌则将控制器分配给进程。</li>
+<li>根据COCT找到CHCT,若通道忙碌则将进程PCB挂到通道等待队列中，不忙碌则将通道分配给进程。</li>
+</ol>
+<p>这种方法有些缺点：</p>
+<ol>
+<li>用户编程时必须使用“物理设备名”，底层细节对用户不透明，不方便编程</li>
+<li>若换了一个物理设备，则程序无法运行</li>
+<li>若进程请求的物理设备正在忙碌，则即使系统中还有同类型的设备，进程也必须阻塞等待</li>
+</ol>
+<p><font color="red">改进方法</font>：建立逻辑设备名与物理设备名的映射机制，用户编程时只需提供逻辑设备名</p>
+<p><img src="https://s2.loli.net/2023/01/25/rRADhbVWs8gcK41.png" alt=""></p>
+<h4 id="3-缓冲区管理"><a href="#3-缓冲区管理" class="headerlink" title="(3)缓冲区管理"></a>(3)缓冲区管理</h4><p>缓冲区是一个存储区域，可以由专门的硬件寄存器组成，也可利用内存作为缓冲区。</p>
+<p>使用硬件作为缓冲区的成本较高，容量也较小，一般仅用在对速度要求非常高的场合（如存储器管理中所用的联想寄存器，由于对页表的访问频率极高，因此使用速度很快的联想寄存器来存放页表项的副本)</p>
+<p>一般情况下，更多的是利用内存作为缓冲区，“设备独立性软件”的缓冲区管理就是要组织管理好这些缓冲区</p>
+<p>缓冲区主要由以下几个作用：</p>
+<ol>
+<li>缓和CPU与I/O设备之间速度不匹配的矛盾</li>
+<li>减少对CPU的中断频率，放宽对CPU中断响应时间的限制</li>
+<li>解决数据粒度不匹配的问题</li>
+<li>提高CPU与I/O设备之间的并行性</li>
+</ol>
+<p>单缓冲区:</p>
+<p><img src="https://s2.loli.net/2023/01/25/IcWLVwj1C6hRoMv.png" alt=""></p>
+<p>双缓冲:系统在内存中提供两个缓冲区，当第一个缓冲区充满后，输入设备可以向二号缓冲区装入。而操作系统可以将议号缓冲区中数据移出并进行处理。</p>
+<p>单缓冲与双缓冲的区别：</p>
+<p><img src="https://s2.loli.net/2023/01/25/jJPlkMHL2ZibRsW.png" alt=""></p>
+<p>循环缓冲区：</p>
+<p><img src="https://s2.loli.net/2023/01/25/OUlSbKnZ2Rmxw6s.png" alt=""></p>
+<p>缓冲池：</p>
+<p><img src="https://s2.loli.net/2023/01/25/vP3xqLkQGSUma2W.png" alt=""></p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "http://example.com/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "http://example.com/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/";
+            const title         = "「I/O管理（操作系统笔记10）」";
+            const excerpt       = `本章开始会讲解I/O设备管理的相关知识，这也是操作系统的最后一章。`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2023-01-25T12:51:05.883Z" itemprop="dateModified">最后编辑：2023-01-25</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" 磁盘组织与管理（操作系统笔记9）" href="/2023/01/24/操作系统笔记/操作系统笔记-9/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                23
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                4
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                6
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-%E7%9F%A5%E8%AF%86/">C#知识</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Unity网络游戏开发</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/">操作系统笔记</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">数据结构笔记</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/C/" style="font-size: 0.73em;">C#</a> <a href="/tags/unity/" style="font-size: 0.67em;">unity</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 0.8em;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.6em;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.6em;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" style="font-size: 0.67em;">网络游戏</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/"><i class="fa  fa-book"></i> I/O管理（操作系统笔记10）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/"><i class="fa  fa-book"></i> 磁盘组织与管理（操作系统笔记9）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/22/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-8/"><i class="fa  fa-book"></i> 文件系统（操作系统笔记8）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/"><i class="fa  fa-book"></i> 虚拟内存（操作系统笔记7）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/12/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-6/"><i class="fa  fa-book"></i> 内存管理（操作系统笔记6）</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2023 舛羽的笔记小站 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by cy.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    </body>
+</html>
