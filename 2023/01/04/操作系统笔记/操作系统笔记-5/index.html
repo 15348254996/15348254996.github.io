@@ -23,6 +23,25 @@
 <meta property="og:site_name" content="舛羽的笔记小站">
 <meta property="og:description" content="本篇笔记将介绍一下进程的同步与互斥，由于进程的异步性会产生非常多的包括死锁等问题。本章主要讲述如何处理或解决这些问题。">
 <meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/WZHM1DObSBePoXx.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/DY6NKd8xjkeaT4O.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/yU67XpsZgwimQSW.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/9edIMwRyWZqb3mo.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/DIKnGZQ9gOLVvJS.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/s1QYvLt6a3HWuf8.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/AldfWkLJTZiMDGh.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/p7fUPIsZdOy1g8t.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/ZiRtLB1FISMmzYo.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/24VIRFjcCMeGvYD.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/04/TyZfjb3hCmvzlaP.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/09/C8hQdRY4UL7eigr.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/09/WoVeiuNvMw7d38Q.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/09/TB4f6OmlFDVN2de.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/09/P4HjFV7JWiwD9BE.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/10/xqMaI8vho67Ufcy.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/10/9vuaDQBlNnobxYf.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/10/nckNgCZfO7IJAe4.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/10/PdFxtjOT2ArKGas.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/10/7dHPFQfpusAtmSk.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/10/oJflm3bgO4NkETu.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/11/w2NzyafVkEqpK5T.png">
@@ -34,11 +53,11 @@
 <meta property="og:image" content="https://s2.loli.net/2023/01/11/8IAYbga5cJrKDey.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/11/H4vQGZbNcLpEPVK.png">
 <meta property="article:published_time" content="2023-01-04T07:47:47.000Z">
-<meta property="article:modified_time" content="2023-01-11T15:50:29.532Z">
+<meta property="article:modified_time" content="2023-01-29T13:10:15.766Z">
 <meta property="article:author" content="cy">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2023/01/10/7dHPFQfpusAtmSk.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/01/04/WZHM1DObSBePoXx.png">
   
   <!-- 站点验证相关 -->
   
@@ -157,7 +176,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~6.60K
+                        ~5.27K
                     
                     字
                 </li>
@@ -168,7 +187,7 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1673452229532"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1674997815766"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
@@ -189,171 +208,123 @@
 <p>首先我们先介绍一个概念，<font color='red'>临界资源</font></p>
 <p>我们把一个时间段内只允许一个进程使用的资源称为临界资源。（特别是物理设备，如摄像头、打印机）</p>
 <p>对临界资源的访问一定要互斥的执行，还是拿打印机举个例子，你不能打印三国演义打着打着打西游记了吧，这下就真成四大名著合订本了。</p>
-<font color='red'>对临界资源的互斥访问</font>的<font color='red'>代码</font>可以分以下四块：
-
-- 进入区：负责检查是否可以使用资源，如果可以则要设置<font color='red'>有进程正在访问的标志</font>
-- 临界区：访问临界资源的那段代码
-- 退出区：负责解除<font color='red'>有进程正在访问的标志</font>
-- 剩余区：做其他处理
-
-未来实现对临界资源的互斥访问，保证系统整体性能，需遵循四条规则：
-
-- 空闲让进：临界区空闲时，可以允许一个请求进入临界区
-- 忙则等待：当已有进程进入临界区是，其他试图进入临界区的进程必须等待
-- 有限等待：对亲求访问的进程，应保证能在有限时间内进入临界区
-- 让权等待：当进程不能进入临界区是，应立即释放处理机，防止忙等待（占着茅坑不拉屎）
-
-### 5.2 软件实现互斥的方法
-
-这块我自己讲不清楚，就把别人文章中的截图粘贴过来了，图片均来自https://blog.csdn.net/weixin_43914604/article/details/104943004
-
-- 单标志法：
-![](https://s2.loli.net/2023/01/04/WZHM1DObSBePoXx.png)
-
-![](https://s2.loli.net/2023/01/04/DY6NKd8xjkeaT4O.png)
-
-
-
-- 双标志先检查：
-
-
-![](https://s2.loli.net/2023/01/04/yU67XpsZgwimQSW.png)
-
-- 双标志后检查：
-
-![](https://s2.loli.net/2023/01/04/9edIMwRyWZqb3mo.png)
-
-- Peterson算法（<font color='red'>重要</font>）
-
-![](https://s2.loli.net/2023/01/04/DIKnGZQ9gOLVvJS.png)
-
-这个算法看似解决了前面算法的所有问题，但是同时也出现了新问题，我们会发现当进程进不去临界区时，一直在while循环里面空耗CPU，这就<font color='red'>违反了让权等待</font>的原则，虽然相较于其他三个算法已经是最好的了，但依然不够好，接下来我们通过硬件来实现。
-
-### 5.3 硬件实现互斥的方法
-
-这块同上，图片均来自：https://blog.csdn.net/weixin_43914604/article/details/104944962
-
-- #### 开关中断
-
-  ![](https://s2.loli.net/2023/01/04/s1QYvLt6a3HWuf8.png)
-
-- #### Test-and-Set指令实现
-
-  硬件版单标志法，但是由于硬件可以直接在资源上面动刀子，这可比软件带劲。
-
-  假设lock现在为false，代表临界资源A空闲，那么我就可以访问这个资源，同时将lock=true，提醒别的进程，这个临界资源A我正在使用，让他们等等
-
-  假设lock为true，代表临界资源正在有人使用，所以我必须等待，并且将lock=true，并不影响什么，所以没关系，只是为了让lock为false时可以上锁，将上锁与检查在一个TSL指令完成。
-
-  ![](https://s2.loli.net/2023/01/04/AldfWkLJTZiMDGh.png)
-
-- #### Swap指令
-
-  和TestAndSet指令有一曲同工之妙，甚至连问题都是一样的
-
-  ![](https://s2.loli.net/2023/01/04/p7fUPIsZdOy1g8t.png)
-
-我们发现这几个算法虽然各有千秋，但是都有些的问题：
-
-1. 在双标志法中，进入区的“检查”，“上锁”操作无法一起呵成，从而导致同时进临界区或同时进不去的问题。、
-2. 所有的解决发难都无法实现“让权等待”
-
-这个时候我们隆重介绍我们的重量级选手：信号量机制
-
-### 5.4 信号量机制
-
-信号量机制的重点就是wait、signal原语。常称为P、V操作。
-
-接下来看看信号量机制的流程：
-
-- #### 整型信号量（<font color='red'>不重要</font>）
-
-![](https://s2.loli.net/2023/01/04/ZiRtLB1FISMmzYo.png)
-
-整型信号量还是不行，依然解决不了让权等待，再来看看记录型信号量
-
-- #### 记录型信号量
-
-  ![](https://s2.loli.net/2023/01/04/24VIRFjcCMeGvYD.png)
-
-![](https://s2.loli.net/2023/01/04/TyZfjb3hCmvzlaP.png)
-
-### 5.5 信号量机制实现进程互斥和同步
-
-我们了解了信号量机制的原理，那我们就大概明白了如何实现进程的互斥。
-
-这也是做题和解决问题最基础的方法。
-
-- 实现进程互斥
-  1. 确定临界区
-  2. 设置互斥信号量，设置处值为1
-  3. 临界区之前对信号量执行P操作
-  4. 临界区之后为信号量执行V操作
-
-- 实现进程同步
-  1. 首先找出“一前一后”的关系
-  2. 设置同步信号量，初始值为0
-  3. 在“后操作”之后执行V操作
-  4. 在“前操作”之后执行P操作
-
-- 实现前驱关系
-  1. 画出前驱图，讲每一对前驱关系看成一个同步问题
-  2. 为每一对前驱关系设置同步信号量
-  3. 在每个“后操作”之前执行P操作
-  4. 在每个“前操作”之后执行V操作
-
-前驱关系可能不太好理解，前驱关系其实就是一个有向图
-
-![](https://s2.loli.net/2023/01/09/C8hQdRY4UL7eigr.png)
-
-### 5.6 进程同步互斥经典问题
-
-#### (1)生产者-消费者问题
-
-- 系统中有`一组生产者进程`和`一组消费者进程`，生产者进程每次`生产一个`产品放入缓冲区，消费者进程每次从缓冲区中`取出一个`产品并使用。(注: 这里的“产品”理解为某种数据)
-- 生产者、消费者`共享`一个初始为空、大小为n的`缓冲区`。
-- 只有缓冲区`没满`时，`生产者`才能把产品`放入`缓冲区，否则必须等待。
-- 只有缓冲区`不空`时，`消费者`才能从中`取出`产品，否则必须等待。
-- 缓冲区是临界资源，各进程必须`互斥`地访问。
-
-分析：生产者和消费者对缓冲区互斥访问是`互斥关系`，同时生产者和消费者又有前后关系，所以他们也是同步关系，而且还是两个同步关系。分别是有空才能放，不空才能取。那么我们就需要三个信号量。
-
-![](https://s2.loli.net/2023/01/09/WoVeiuNvMw7d38Q.png)
-
-<font color='red'>重点</font>：实现互斥的P操作一定要在实现同步的P操作之后，否则会造成死锁。V操作则不受限制。
-
-理由：假设我们缓冲区满了，这个时候生产者决定写入进程，于是先将通过P操作进入临界区，结果在临界区发现缓冲区满了，于是进行阻塞，切换到消费者，因为生产者并没有通过V操作释放缓冲区，所以消费者也没法进入缓冲区进行消费，此时两个进程均处于阻塞，均需要对方的资源，导致死锁。
-
-#### (1.1)多生产者-多消费者问题
-
-![](https://s2.loli.net/2023/01/09/TB4f6OmlFDVN2de.png)
-
-问题分析：首先可以确定的是对于盘子这个缓冲区的访问一定是互斥的，只有父亲放苹果儿子才能吃，所以这是一对同步关系，只有母亲放橘子女儿才能吃，这又是一对同步关系，只有盘子为空时，父亲或者母亲才能放水果，这又是一对同步关系，与是我们可以定义四个信号量。
-
-![](https://s2.loli.net/2023/01/09/P4HjFV7JWiwD9BE.png)
-
-其实本题是个特殊案例，因为缓冲区只有1，所以即使没有mutex实现互斥，apple，orange，plate之中也只会有一个是1，从而进入临界区，一旦缓冲区变成2，那么就必须要mutex实现互斥了，否则可能会造成覆盖。
-
-#### (2)读者写者问题
-
-![](https://s2.loli.net/2023/01/10/xqMaI8vho67Ufcy.png)
-
-问题分析：写者与写者之间一定是互斥关系，写者与读者之间也一定是互斥关系。但是如果我们直接使用一个信号量处理读者和写者之间的互斥关系就会造成读者和读者之间发生互斥，这不是我们想看到的，所以我们需要一个特殊处理。
-
-首先未来解决读者与读者不互斥，而读者和写者互斥，我们引入一个count变量，这个变量用于记录正在读取的变量，如国count等于0，则说明本进程是第一个访问的变量，这个时候给临界区使用P操作，然后使count++，最后退出的时候再次检测count，若count=0则自己是最后一个读进程，使用V操作进行解锁。这样就可以保证写进程和读进程的互斥，又能保证读进程之间不影响。
-
-![](https://s2.loli.net/2023/01/10/9vuaDQBlNnobxYf.png)
-
-但是这有一个潜藏的隐患，假设写者1在运行到P(rw)的时候，突然遭遇进程切换，切换到了写者2，由于写者1还未运行到count++，所以count现在依旧是0，所以写者2执行P(rw)，由于写者1未执行V(rw)所以阻塞，这样的话就不满足读者与读者之间互相不干扰的条件，引起这种情况的原因主要是对于count的检测与操作并不能确保互斥，那怎样保证互斥呢？没错，我们使用信号量就是为了保证互斥性，所以我们引入一个信号量用于保证互斥性
-
-![](https://s2.loli.net/2023/01/10/nckNgCZfO7IJAe4.png)
-
-正如图中所说，只要一直有读进程进入，那么rw一直不被释放，那么就会导致写进程一直阻塞等待，可能会导致“饿死”，这是我们不想看到的，所以我们希望当写进程要开始写的时候就不要让count继续增加了，所以我们需要让count增加的代码和写进程的写代码互斥。我们再次引入一个信号量进行互斥控制
-
-![20200326221227585](https://s2.loli.net/2023/01/10/PdFxtjOT2ArKGas.png)
-
-这个问题的核心思想设置了一个计数器<font color='red'>count用来记录当前正在访问共享文件的读进程数</font>以及用<font color='red'>互斥信号量解决无法“一气呵成”的代码</font>
-
+<p>对<font color='red'>临界资源的互斥访问</font>的<font color='red'>代码</font>可以分以下四块：</p>
+<ul>
+<li>进入区：负责检查是否可以使用资源，如果可以则要设置<font color='red'>有进程正在访问的标志</font></li>
+<li>临界区：访问临界资源的那段代码</li>
+<li>退出区：负责解除<font color='red'>有进程正在访问的标志</font></li>
+<li>剩余区：做其他处理</li>
+</ul>
+<p>未来实现对临界资源的互斥访问，保证系统整体性能，需遵循四条规则：</p>
+<ul>
+<li>空闲让进：临界区空闲时，可以允许一个请求进入临界区</li>
+<li>忙则等待：当已有进程进入临界区是，其他试图进入临界区的进程必须等待</li>
+<li>有限等待：对亲求访问的进程，应保证能在有限时间内进入临界区</li>
+<li>让权等待：当进程不能进入临界区是，应立即释放处理机，防止忙等待（占着茅坑不拉屎）</li>
+</ul>
+<h3 id="5-2-软件实现互斥的方法"><a href="#5-2-软件实现互斥的方法" class="headerlink" title="5.2 软件实现互斥的方法"></a>5.2 软件实现互斥的方法</h3><p>这块我自己讲不清楚，就把别人文章中的截图粘贴过来了，图片均来自<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43914604/article/details/104943004">https://blog.csdn.net/weixin_43914604/article/details/104943004</a></p>
+<ul>
+<li>单标志法：<br><img src="https://s2.loli.net/2023/01/04/WZHM1DObSBePoXx.png" alt=""></li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/DY6NKd8xjkeaT4O.png" alt=""></p>
+<ul>
+<li>双标志先检查：</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/yU67XpsZgwimQSW.png" alt=""></p>
+<ul>
+<li>双标志后检查：</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/9edIMwRyWZqb3mo.png" alt=""></p>
+<ul>
+<li>Peterson算法（<font color='red'>重要</font>）</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/DIKnGZQ9gOLVvJS.png" alt=""></p>
+<p>这个算法看似解决了前面算法的所有问题，但是同时也出现了新问题，我们会发现当进程进不去临界区时，一直在while循环里面空耗CPU，这就<font color='red'>违反了让权等待</font>的原则，虽然相较于其他三个算法已经是最好的了，但依然不够好，接下来我们通过硬件来实现。</p>
+<h3 id="5-3-硬件实现互斥的方法"><a href="#5-3-硬件实现互斥的方法" class="headerlink" title="5.3 硬件实现互斥的方法"></a>5.3 硬件实现互斥的方法</h3><p>这块同上，图片均来自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43914604/article/details/104944962">https://blog.csdn.net/weixin_43914604/article/details/104944962</a></p>
+<ul>
+<li><h4 id="开关中断"><a href="#开关中断" class="headerlink" title="开关中断"></a>开关中断</h4><p><img src="https://s2.loli.net/2023/01/04/s1QYvLt6a3HWuf8.png" alt=""></p>
+</li>
+<li><h4 id="Test-and-Set指令实现"><a href="#Test-and-Set指令实现" class="headerlink" title="Test-and-Set指令实现"></a>Test-and-Set指令实现</h4><p>硬件版单标志法，但是由于硬件可以直接在资源上面动刀子，这可比软件带劲。</p>
+<p>假设lock现在为false，代表临界资源A空闲，那么我就可以访问这个资源，同时将lock=true，提醒别的进程，这个临界资源A我正在使用，让他们等等</p>
+<p>假设lock为true，代表临界资源正在有人使用，所以我必须等待，并且将lock=true，并不影响什么，所以没关系，只是为了让lock为false时可以上锁，将上锁与检查在一个TSL指令完成。</p>
+<p><img src="https://s2.loli.net/2023/01/04/AldfWkLJTZiMDGh.png" alt=""></p>
+</li>
+<li><h4 id="Swap指令"><a href="#Swap指令" class="headerlink" title="Swap指令"></a>Swap指令</h4><p>和TestAndSet指令有一曲同工之妙，甚至连问题都是一样的</p>
+<p><img src="https://s2.loli.net/2023/01/04/p7fUPIsZdOy1g8t.png" alt=""></p>
+</li>
+</ul>
+<p>我们发现这几个算法虽然各有千秋，但是都有些的问题：</p>
+<ol>
+<li>在双标志法中，进入区的“检查”，“上锁”操作无法一起呵成，从而导致同时进临界区或同时进不去的问题。、</li>
+<li>所有的解决发难都无法实现“让权等待”</li>
+</ol>
+<p>这个时候我们隆重介绍我们的重量级选手：信号量机制</p>
+<h3 id="5-4-信号量机制"><a href="#5-4-信号量机制" class="headerlink" title="5.4 信号量机制"></a>5.4 信号量机制</h3><p>信号量机制的重点就是wait、signal原语。常称为P、V操作。</p>
+<p>接下来看看信号量机制的流程：</p>
+<ul>
+<li><h4 id="整型信号量（不重要）"><a href="#整型信号量（不重要）" class="headerlink" title="整型信号量（不重要）"></a>整型信号量（<font color='red'>不重要</font>）</h4></li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/ZiRtLB1FISMmzYo.png" alt=""></p>
+<p>整型信号量还是不行，依然解决不了让权等待，再来看看记录型信号量</p>
+<ul>
+<li><h4 id="记录型信号量"><a href="#记录型信号量" class="headerlink" title="记录型信号量"></a>记录型信号量</h4><p><img src="https://s2.loli.net/2023/01/04/24VIRFjcCMeGvYD.png" alt=""></p>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/04/TyZfjb3hCmvzlaP.png" alt=""></p>
+<h3 id="5-5-信号量机制实现进程互斥和同步"><a href="#5-5-信号量机制实现进程互斥和同步" class="headerlink" title="5.5 信号量机制实现进程互斥和同步"></a>5.5 信号量机制实现进程互斥和同步</h3><p>我们了解了信号量机制的原理，那我们就大概明白了如何实现进程的互斥。</p>
+<p>这也是做题和解决问题最基础的方法。</p>
+<ul>
+<li><p>实现进程互斥</p>
+<ol>
+<li>确定临界区</li>
+<li>设置互斥信号量，设置处值为1</li>
+<li>临界区之前对信号量执行P操作</li>
+<li>临界区之后为信号量执行V操作</li>
+</ol>
+</li>
+<li><p>实现进程同步</p>
+<ol>
+<li>首先找出“一前一后”的关系</li>
+<li>设置同步信号量，初始值为0</li>
+<li>在“后操作”之后执行V操作</li>
+<li>在“前操作”之后执行P操作</li>
+</ol>
+</li>
+<li><p>实现前驱关系</p>
+<ol>
+<li>画出前驱图，讲每一对前驱关系看成一个同步问题</li>
+<li>为每一对前驱关系设置同步信号量</li>
+<li>在每个“后操作”之前执行P操作</li>
+<li>在每个“前操作”之后执行V操作</li>
+</ol>
+</li>
+</ul>
+<p>前驱关系可能不太好理解，前驱关系其实就是一个有向图</p>
+<p><img src="https://s2.loli.net/2023/01/09/C8hQdRY4UL7eigr.png" alt=""></p>
+<h3 id="5-6-进程同步互斥经典问题"><a href="#5-6-进程同步互斥经典问题" class="headerlink" title="5.6 进程同步互斥经典问题"></a>5.6 进程同步互斥经典问题</h3><h4 id="1-生产者-消费者问题"><a href="#1-生产者-消费者问题" class="headerlink" title="(1)生产者-消费者问题"></a>(1)生产者-消费者问题</h4><ul>
+<li>系统中有<code>一组生产者进程</code>和<code>一组消费者进程</code>，生产者进程每次<code>生产一个</code>产品放入缓冲区，消费者进程每次从缓冲区中<code>取出一个</code>产品并使用。(注: 这里的“产品”理解为某种数据)</li>
+<li>生产者、消费者<code>共享</code>一个初始为空、大小为n的<code>缓冲区</code>。</li>
+<li>只有缓冲区<code>没满</code>时，<code>生产者</code>才能把产品<code>放入</code>缓冲区，否则必须等待。</li>
+<li>只有缓冲区<code>不空</code>时，<code>消费者</code>才能从中<code>取出</code>产品，否则必须等待。</li>
+<li>缓冲区是临界资源，各进程必须<code>互斥</code>地访问。</li>
+</ul>
+<p>分析：生产者和消费者对缓冲区互斥访问是<code>互斥关系</code>，同时生产者和消费者又有前后关系，所以他们也是同步关系，而且还是两个同步关系。分别是有空才能放，不空才能取。那么我们就需要三个信号量。</p>
+<p><img src="https://s2.loli.net/2023/01/09/WoVeiuNvMw7d38Q.png" alt=""></p>
+<p><strong>重点</strong>：实现互斥的P操作一定要在实现同步的P操作之后，否则会造成死锁。V操作则不受限制。</p>
+<p>理由：假设我们缓冲区满了，这个时候生产者决定写入进程，于是先将通过P操作进入临界区，结果在临界区发现缓冲区满了，于是进行阻塞，切换到消费者，因为生产者并没有通过V操作释放缓冲区，所以消费者也没法进入缓冲区进行消费，此时两个进程均处于阻塞，均需要对方的资源，导致死锁。</p>
+<h4 id="1-1-多生产者-多消费者问题"><a href="#1-1-多生产者-多消费者问题" class="headerlink" title="(1.1)多生产者-多消费者问题"></a>(1.1)多生产者-多消费者问题</h4><p><img src="https://s2.loli.net/2023/01/09/TB4f6OmlFDVN2de.png" alt=""></p>
+<p>问题分析：首先可以确定的是对于盘子这个缓冲区的访问一定是互斥的，只有父亲放苹果儿子才能吃，所以这是一对同步关系，只有母亲放橘子女儿才能吃，这又是一对同步关系，只有盘子为空时，父亲或者母亲才能放水果，这又是一对同步关系，与是我们可以定义四个信号量。</p>
+<p><img src="https://s2.loli.net/2023/01/09/P4HjFV7JWiwD9BE.png" alt=""></p>
+<p>其实本题是个特殊案例，因为缓冲区只有1，所以即使没有mutex实现互斥，apple，orange，plate之中也只会有一个是1，从而进入临界区，一旦缓冲区变成2，那么就必须要mutex实现互斥了，否则可能会造成覆盖。</p>
+<h4 id="2-读者写者问题"><a href="#2-读者写者问题" class="headerlink" title="(2)读者写者问题"></a>(2)读者写者问题</h4><p><img src="https://s2.loli.net/2023/01/10/xqMaI8vho67Ufcy.png" alt=""></p>
+<p>问题分析：写者与写者之间一定是互斥关系，写者与读者之间也一定是互斥关系。但是如果我们直接使用一个信号量处理读者和写者之间的互斥关系就会造成读者和读者之间发生互斥，这不是我们想看到的，所以我们需要一个特殊处理。</p>
+<p>首先未来解决读者与读者不互斥，而读者和写者互斥，我们引入一个count变量，这个变量用于记录正在读取的变量，如国count等于0，则说明本进程是第一个访问的变量，这个时候给临界区使用P操作，然后使count++，最后退出的时候再次检测count，若count=0则自己是最后一个读进程，使用V操作进行解锁。这样就可以保证写进程和读进程的互斥，又能保证读进程之间不影响。</p>
+<p><img src="https://s2.loli.net/2023/01/10/9vuaDQBlNnobxYf.png" alt=""></p>
+<p>但是这有一个潜藏的隐患，假设写者1在运行到P(rw)的时候，突然遭遇进程切换，切换到了写者2，由于写者1还未运行到count++，所以count现在依旧是0，所以写者2执行P(rw)，由于写者1未执行V(rw)所以阻塞，这样的话就不满足读者与读者之间互相不干扰的条件，引起这种情况的原因主要是对于count的检测与操作并不能确保互斥，那怎样保证互斥呢？没错，我们使用信号量就是为了保证互斥性，所以我们引入一个信号量用于保证互斥性</p>
+<p><img src="https://s2.loli.net/2023/01/10/nckNgCZfO7IJAe4.png" alt=""></p>
+<p>正如图中所说，只要一直有读进程进入，那么rw一直不被释放，那么就会导致写进程一直阻塞等待，可能会导致“饿死”，这是我们不想看到的，所以我们希望当写进程要开始写的时候就不要让count继续增加了，所以我们需要让count增加的代码和写进程的写代码互斥。我们再次引入一个信号量进行互斥控制</p>
+<p><img src="https://s2.loli.net/2023/01/10/PdFxtjOT2ArKGas.png" alt="20200326221227585"></p>
+<p>这个问题的核心思想设置了一个计数器<font color='red'>count用来记录当前正在访问共享文件的读进程数</font>以及用<font color='red'>互斥信号量解决无法“一气呵成”的代码</font></p>
 <h4 id="3-吸烟者问题"><a href="#3-吸烟者问题" class="headerlink" title="(3)吸烟者问题"></a>(3)吸烟者问题</h4><p><img src="https://s2.loli.net/2023/01/10/7dHPFQfpusAtmSk.png" alt=""></p>
 <p>问题分析：所有这种问题，第一步都是找关系，首先对于桌子的访问一定互斥的，然后只有供应者提供抽烟者1需要的素材，抽烟者1才能取走东西，这是一个同步关系，以此类推，可以推出三个同步关系，第三点就是吸烟者发出信号告诉供应者供应者才能将下一个组合放到桌上。</p>
 <p>当然对于这个题，我们的桌子只有1，所以也没必要设置一个专门的互斥信号量进行互斥操作。</p>
@@ -509,7 +480,7 @@
                     <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2023-01-11T15:50:29.532Z" itemprop="dateModified">最后编辑：2023-01-11</time>
+                    <time datetime="2023-01-29T13:10:15.766Z" itemprop="dateModified">最后编辑：2023-01-29</time>
                 </div>
             </div>
         </footer>
