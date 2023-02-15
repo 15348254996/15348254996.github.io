@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/01/03/vmk8YdcqHfz4x67.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/03/Fn1VBZupXlPcg7r.png">
 <meta property="article:published_time" content="2023-01-02T14:17:47.000Z">
-<meta property="article:modified_time" content="2023-02-03T11:06:48.902Z">
+<meta property="article:modified_time" content="2023-02-13T09:08:42.765Z">
 <meta property="article:author" content="cy">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
@@ -160,7 +160,7 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1675422408902"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1676279322765"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
@@ -235,8 +235,8 @@ CPU利用率=\frac{忙碌的时间}{总时间}</script></li>
 </li>
 <li><h4 id="等待时间"><a href="#等待时间" class="headerlink" title="等待时间"></a>等待时间</h4><script type="math/tex; mode=display">
 等待时间=处于等待处理机状态时间之和</script></li>
-<li><h4 id="相应时间"><a href="#相应时间" class="headerlink" title="相应时间"></a>相应时间</h4><script type="math/tex; mode=display">
-相应时间=用户提交的时间点-首次相应的时间点</script></li>
+<li><h4 id="响应时间"><a href="#响应时间" class="headerlink" title="响应时间"></a>响应时间</h4><script type="math/tex; mode=display">
+响应时间=用户提交的时间点-首次响应的时间点</script></li>
 </ul>
 <h3 id="4-6-进程调度算法"><a href="#4-6-进程调度算法" class="headerlink" title="4.6 进程调度算法"></a>4.6 进程调度算法</h3><p>这一块涉及非常非常多的题，无论期末还是考研都是重中之重。</p>
 <ol>
@@ -425,7 +425,7 @@ CPU利用率=\frac{忙碌的时间}{总时间}</script></li>
                     <a class="tag-none-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2023-02-03T11:06:48.902Z" itemprop="dateModified">最后编辑：2023-02-03</time>
+                    <time datetime="2023-02-13T09:08:42.765Z" itemprop="dateModified">最后编辑：2023-02-13</time>
                 </div>
             </div>
         </footer>
@@ -690,5 +690,21 @@ CPU利用率=\frac{忙碌的时间}{总时间}</script></li>
 <!-- Extra support for third-party plguins  -->
 
 
-    </body>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
 </html>
