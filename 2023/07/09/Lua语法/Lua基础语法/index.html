@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  
+  
+  <title>Lua基础语法 | 舛羽的笔记小站</title>
+  <meta name="author" content="cy" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="Lua" />
+  
+  <meta name="description" content="游戏热更新作为能提升玩家体验的重要技术，还是非常有学习的必要的，而目前流行的各种热更新技术的核心都是使用Lua语言驱动的，所以学习Lua的语法非常的重要。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lua基础语法">
+<meta property="og:url" content="http://example.com/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="舛羽的笔记小站">
+<meta property="og:description" content="游戏热更新作为能提升玩家体验的重要技术，还是非常有学习的必要的，而目前流行的各种热更新技术的核心都是使用Lua语言驱动的，所以学习Lua的语法非常的重要。">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/Qwn78t913qhojcr.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/Qnole6Mw4UCs3fK.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/1ajZIvCTm4n7DKM.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/h9D2srCjGOwIi7W.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/OP5TCZRKe4yqL73.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/bxUyhKaQqlMVoBv.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/N9vUskOV6otP3fn.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/mPDiUfTsWrjbu4F.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/Ecb4zYouLrltWaj.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/4bHzfAl1GNEqvu6.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/LntsSg4CqrpDhxB.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/TsPQEnYdj9WfXqb.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/Z5yXznh7fP1NAvt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/7xs62KQGNjbV1kp.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/1XFj3P56kuCO9Ro.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/b2R6QhqlCjOGUE1.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/UQH4ezPc3RMvWod.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/p8uY2LdoUkVbCQ3.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/39dzAhLvNy8TcRE.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/KePzs8SZXRMTgd3.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/09/nQ7WhKbELc36weG.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/10/smFRX5jbDo8Q1qf.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/10/SqNrJMYmz4pOwve.png">
+<meta property="article:published_time" content="2023-07-09T02:21:27.000Z">
+<meta property="article:modified_time" content="2023-07-10T12:51:41.440Z">
+<meta property="article:author" content="cy">
+<meta property="article:tag" content="Lua">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/07/09/Qwn78t913qhojcr.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('/images/banner.webp');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('/images/bg.webp');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">舛羽的笔记小站</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>舛羽的笔记小站</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Lua基础语法</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2023-07-09T02:21:27.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-07-09</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~5.27K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1688993501440"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><p>游戏热更新作为能提升玩家体验的重要技术，还是非常有学习的必要的，而目前流行的各种热更新技术的核心都是使用Lua语言驱动的，所以学习Lua的语法非常的重要。</p>
+<span id="more"></span>
+<p>这个系列主要用于对Lua基础语法以及实现Lua面向对象进行学习。(Lua语言不需要在每句后面加;，个人习惯所以加上了，去掉不会影响运行)</p>
+<h2 id="第一章-Lua简单基础变量"><a href="#第一章-Lua简单基础变量" class="headerlink" title="第一章 Lua简单基础变量"></a>第一章 Lua简单基础变量</h2><p>Lua作为一个解释型语言，在编程方面提供了大量的便利，但便利越多，越让这门语言不那么规范且难以理解。</p>
+<p>我将Lua的变量分为两种大类，分别是<strong>简单基础变量</strong>，<strong>复杂变量</strong>。</p>
+<p>所以相较于我们所了解的C、C#之类的语言，Lua的基础变量分类非常简单。分别是以下几种：</p>
+<h3 id="1-1-nil"><a href="#1-1-nil" class="headerlink" title="1.1 nil"></a>1.1 nil</h3><p>类似于C++、C#中的null，当一个变量没有赋值，定义的是后，Lua默认这个变量为nil。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------nil--------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a);</span><br></pre></td></tr></table></figure>
+<p>比如这样，输出就会为nil。</p>
+<p>同时也可以把已经定义的变量定义为nil，其实就等同于将这个变量删除。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义a--------------&quot;</span>);</span><br><span class="line">a=<span class="number">1</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------a为nil--------------&quot;</span>);</span><br><span class="line">a=<span class="literal">nil</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br></pre></td></tr></table></figure>
+<p>输出结果为下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/Qwn78t913qhojcr.png" alt=""></p>
+<h3 id="1-2-number"><a href="#1-2-number" class="headerlink" title="1.2 number"></a>1.2 number</h3><p>lua语言中的所有数值都是number变量，无论是整型还是浮点数，作为解释型语言不再将各种数值进行细分。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义a为整数--------------&quot;</span>);</span><br><span class="line">a=<span class="number">1</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义b为小数--------------&quot;</span>);</span><br><span class="line">b=<span class="number">1.2</span>;</span><br><span class="line"><span class="built_in">print</span>(b);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(b));</span><br></pre></td></tr></table></figure>
+<p>输出结果为下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/Qnole6Mw4UCs3fK.png" alt=""></p>
+<p>这里使用了一个type方法，这个方法可以得到变量的属性，它的返回值是一个String类型，我们接下来就介绍String类型。</p>
+<h3 id="1-3-string"><a href="#1-3-string" class="headerlink" title="1.3 string"></a>1.3 string</h3><p>字符串，在lua中通过双引号（””）或者单引号（’’）包裹，需要提醒一下的是lua中是没有char类型的。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义a为字符串--------------&quot;</span>);</span><br><span class="line">a=<span class="string">&quot;jkl123&quot;</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(<span class="built_in">type</span>(a)));</span><br></pre></td></tr></table></figure>
+<p>输出结果为下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/1ajZIvCTm4n7DKM.png" alt=""></p>
+<p>可以看到，type的返回值也是string类型。</p>
+<h3 id="1-4-boolean"><a href="#1-4-boolean" class="headerlink" title="1.4 boolean"></a>1.4 boolean</h3><p>布尔类型，和C++或C#中的布尔类型一样，只有两个值，true或false。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义a为boolean--------------&quot;</span>);</span><br><span class="line">a=<span class="literal">true</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------定义b为boolean--------------&quot;</span>);</span><br><span class="line">b=<span class="literal">false</span>;</span><br><span class="line"><span class="built_in">print</span>(b);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(b));</span><br></pre></td></tr></table></figure>
+<p>输出结果为下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/h9D2srCjGOwIi7W.png" alt=""></p>
+<p>这就是Lua的简单基本变量。</p>
+<h2 id="第二章-字符串操作"><a href="#第二章-字符串操作" class="headerlink" title="第二章 字符串操作"></a>第二章 字符串操作</h2><p>接下来将介绍字符串的相关操作。</p>
+<h3 id="2-1-获取字符串的长度"><a href="#2-1-获取字符串的长度" class="headerlink" title="2.1 获取字符串的长度"></a>2.1 获取字符串的长度</h3><p>直接在字符串变量加#号就可以获取了。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------获取字符串的长度--------------&quot;</span>);</span><br><span class="line">a=<span class="string">&quot;快来玩Ptcg&quot;</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(#a);</span><br><span class="line"><span class="built_in">print</span>(#<span class="string">&quot;想知道我最喜欢的PokeMon吗？&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>输出结果为下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/OP5TCZRKe4yqL73.png" alt=""></p>
+<p>这里可以看到，无论是使用变量还是直接双引号现场定义的一个字符串都可以用#获取长度。</p>
+<p>这里有个<strong>重点</strong>，此处我们可以看到中文字符是占三个字符的，但这其实并不是固定三个字符，这和编码方式有关。</p>
+<p>比如上面的这个实例是在UTF-8的编码环境下进行运行的结果，UTF-8中的中文字符就是三个字节。假设我们换成GBK编码汉字只占两个字节，那么输出的值也会改变。</p>
+<p>这里做个实验，代码完全不变，而是将代码改为GBK编码。</p>
+<p><img src="https://s2.loli.net/2023/07/09/bxUyhKaQqlMVoBv.png" alt=""></p>
+<h3 id="2-2-多行打印"><a href="#2-2-多行打印" class="headerlink" title="2.2 多行打印"></a>2.2 多行打印</h3><p>lua中的多行打印主要使用两种方式，第一种是我们非常熟悉的转义字符。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串多行打印1--------------&quot;</span>);</span><br><span class="line">a=<span class="string">&quot;快来玩\nPtcg&quot;</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/N9vUskOV6otP3fn.png" alt=""></p>
+<p>第二种方式是使用[[]]对字符串进行包裹，在这里面的字符串打印时会严格按照输入的方式打印。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串多行打印1--------------&quot;</span>);</span><br><span class="line">a=<span class="string">[[我爱玩</span></span><br><span class="line"><span class="string">蹭蹭脸颊]]</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/mPDiUfTsWrjbu4F.png" alt=""></p>
+<h3 id="2-3-字符串拼接"><a href="#2-3-字符串拼接" class="headerlink" title="2.3 字符串拼接"></a>2.3 字符串拼接</h3><p>lua的字符串并不能使用+进行直接拼接，而是使用..来对字符串进行拼接。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串拼接--------------&quot;</span>);</span><br><span class="line">a=<span class="string">&quot;我爱玩&quot;</span>;</span><br><span class="line">b=<span class="string">&quot;蹭蹭脸颊&quot;</span>;</span><br><span class="line"><span class="built_in">print</span>(a..b);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/Ecb4zYouLrltWaj.png" alt=""></p>
+<p>同时也可以使用C语言的格式说明+格式字符来进行拼接</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串拼接--------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">format</span>(<span class="string">&quot;雷丘使用%s招式&quot;</span>,<span class="string">&quot;强力电光&quot;</span>));</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/4bHzfAl1GNEqvu6.png" alt=""></p>
+<h3 id="2-4-其他类型转字符串"><a href="#2-4-其他类型转字符串" class="headerlink" title="2.4 其他类型转字符串"></a>2.4 其他类型转字符串</h3><p>其他类型转字符串可以直接使用tostring函数进行转换。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------其他类型转字符串--------------&quot;</span>);</span><br><span class="line">a=<span class="literal">true</span>;</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">tostring</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(<span class="built_in">tostring</span>(a)));</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/LntsSg4CqrpDhxB.png" alt=""></p>
+<h3 id="2-5-字符串其他常规操作"><a href="#2-5-字符串其他常规操作" class="headerlink" title="2.5 字符串其他常规操作"></a>2.5 字符串其他常规操作</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------大小写转换--------------&quot;</span>);</span><br><span class="line">a=<span class="string">&quot;PtcG&quot;</span>;</span><br><span class="line"><span class="built_in">print</span>(a);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">upper</span>(a));</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">lower</span>(a));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------翻转字符串--------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">reverse</span>(a));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串索引查找--------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">find</span>(a,<span class="string">&quot;tc&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------获取子串--------------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">sub</span>(a,<span class="number">2</span>));</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">sub</span>(a,<span class="number">2</span>,<span class="number">3</span>));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串重复--------------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">rep</span>(a,<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------字符串修改--------------&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">gsub</span>(a,<span class="string">&quot;tc&quot;</span>,<span class="string">&quot;TC&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;--------------ASCII码与字符互相转换--------------&quot;</span>)</span><br><span class="line">b=<span class="built_in">string</span>.<span class="built_in">byte</span>(a,<span class="number">1</span>);</span><br><span class="line"><span class="built_in">print</span>(b);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">string</span>.<span class="built_in">char</span>(b));</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/TsPQEnYdj9WfXqb.png" alt=""></p>
+<h2 id="第三章-运算符"><a href="#第三章-运算符" class="headerlink" title="第三章 运算符"></a>第三章 运算符</h2><p>lua中主要拥有三种运算符，包括算术运算符，条件运算符，逻辑运算符，需要<strong>重点</strong>提醒的是：<font color='red'>lua中没有位运算符和三目运算符</font>。</p>
+<h3 id="3-1-算术运算符"><a href="#3-1-算术运算符" class="headerlink" title="3.1 算术运算符"></a>3.1 算术运算符</h3><p>lua中的算数运算符与C++，C#的运算符差不多，包括以下几种：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">13</span>;</span><br><span class="line">b=<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------加法------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a+b);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------减法------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a-b);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------乘法------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a*b);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------除法------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a/b);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------取余------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(a%b);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/Z5yXznh7fP1NAvt.png" alt=""></p>
+<p>这里有个<strong>重点</strong>，需要注意的是字符串如果能转化为number也可以直接参与运算。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-----------字符串参与运算------------&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;运算结果为：&quot;</span>..<span class="string">&quot;121.5&quot;</span>*<span class="string">&quot;2&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/7xs62KQGNjbV1kp.png" alt=""></p>
+<h3 id="3-2-条件运算符"><a href="#3-2-条件运算符" class="headerlink" title="3.2 条件运算符"></a>3.2 条件运算符</h3><p>这也与C#之类的语言没什么差距，唯一的区别是不等于从!=变为了~=。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">13</span>;</span><br><span class="line">b=<span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a&gt;b);</span><br><span class="line"><span class="built_in">print</span>(a&lt;b);</span><br><span class="line"><span class="built_in">print</span>(a&gt;=b);</span><br><span class="line"><span class="built_in">print</span>(a&lt;=b);</span><br><span class="line"><span class="built_in">print</span>(a==b);</span><br><span class="line"><span class="built_in">print</span>(a~=b);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/1XFj3P56kuCO9Ro.png" alt=""></p>
+<h3 id="3-3-逻辑运算符"><a href="#3-3-逻辑运算符" class="headerlink" title="3.3 逻辑运算符"></a>3.3 逻辑运算符</h3><p>主要的逻辑运算为与、或、非，lua中都包含这几种运算符，但是与C#不同，与运算为and，或运算为or，非运算为not</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="literal">true</span> <span class="keyword">and</span> <span class="literal">false</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="literal">true</span> <span class="keyword">and</span> <span class="literal">true</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="literal">false</span> <span class="keyword">and</span> <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="literal">true</span> <span class="keyword">or</span> <span class="literal">false</span>);</span><br><span class="line"><span class="built_in">print</span>(<span class="literal">false</span> <span class="keyword">or</span> <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="keyword">not</span> <span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/b2R6QhqlCjOGUE1.png" alt="image-20230709211137407"></p>
+<h2 id="第四章-条件分支语句"><a href="#第四章-条件分支语句" class="headerlink" title="第四章 条件分支语句"></a>第四章 条件分支语句</h2><p>条件分支语句其实就是if或switch语句，lua在结构上与C#等语言略有不同。且<font color='red'>lua中没有switch语法</font>。</p>
+<h3 id="4-1-单分支语句"><a href="#4-1-单分支语句" class="headerlink" title="4.1 单分支语句"></a>4.1 单分支语句</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">6</span>;</span><br><span class="line"><span class="keyword">if</span> a&gt;<span class="number">5</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Ptcg太好玩了&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/UQH4ezPc3RMvWod.png" alt="image-20230709212504038"></p>
+<h3 id="4-2-双分支语句"><a href="#4-2-双分支语句" class="headerlink" title="4.2 双分支语句"></a>4.2 双分支语句</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">6</span>;</span><br><span class="line"><span class="keyword">if</span> a&lt;<span class="number">5</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Ptcg太好玩了&quot;</span>);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;还是宝可梦朱紫好玩&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/p8uY2LdoUkVbCQ3.png" alt="image-20230709212631858"></p>
+<h3 id="4-3-多分支语句"><a href="#4-3-多分支语句" class="headerlink" title="4.3 多分支语句"></a>4.3 多分支语句</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">6</span>;</span><br><span class="line"><span class="keyword">if</span> a==<span class="number">2</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Ptcg太好玩了&quot;</span>);</span><br><span class="line"><span class="keyword">elseif</span> a==<span class="number">3</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;还是宝可梦朱紫好玩&quot;</span>);</span><br><span class="line"><span class="keyword">elseif</span> a==<span class="number">5</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;两个都很好玩&quot;</span>);</span><br><span class="line"><span class="keyword">elseif</span> a==<span class="number">6</span> <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;宝可梦是神&quot;</span>);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我永远喜欢伊布&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/39dzAhLvNy8TcRE.png" alt="image-20230709212928335"></p>
+<h2 id="第五章-循环语句"><a href="#第五章-循环语句" class="headerlink" title="第五章 循环语句"></a>第五章 循环语句</h2><p>循环语句就是使用for或者while进行循环操作。</p>
+<h3 id="5-1-while语句"><a href="#5-1-while语句" class="headerlink" title="5.1 while语句"></a>5.1 while语句</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">num=<span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> num&lt;=<span class="number">2</span> <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;伊布使用高速星星&quot;</span>);</span><br><span class="line">    num=num+<span class="number">1</span>;</span><br><span class="line"><span class="keyword">end</span> </span><br></pre></td></tr></table></figure>
+<p>运行结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/KePzs8SZXRMTgd3.png" alt="image-20230709213931561"></p>
+<h3 id="5-2-do-while语句"><a href="#5-2-do-while语句" class="headerlink" title="5.2 do while语句"></a>5.2 do while语句</h3><p>lua中的do while方法并不是用do while这两个关键词来实现，而是使用repeat until</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">num=<span class="number">2</span>;</span><br><span class="line"><span class="keyword">repeat</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用巨声&quot;</span>);</span><br><span class="line">    num=num+<span class="number">1</span>;</span><br><span class="line"><span class="keyword">until</span> num&gt;<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>运行结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/09/nQ7WhKbELc36weG.png" alt="image-20230709214258958"></p>
+<h3 id="5-3-for语句"><a href="#5-3-for语句" class="headerlink" title="5.3 for语句"></a>5.3 for语句</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> num=<span class="number">0</span>,<span class="number">5</span> <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">print</span>(num);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/10/smFRX5jbDo8Q1qf.png" alt="image-20230710204917268"></p>
+<p>使用这种方式默认num每轮循环结束加1，但其实也可以指定每轮循环加任意数，使用方法如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> num=<span class="number">0</span>,<span class="number">5</span>,<span class="number">2</span> <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">print</span>(num);</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/10/SqNrJMYmz4pOwve.png" alt="image-20230710205127296"></p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "http://example.com/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "http://example.com/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/";
+            const title         = "「Lua基础语法」";
+            const excerpt       = `游戏热更新作为能提升玩家体验的重要技术，还是非常有学习的必要的，而目前流行的各种热更新技术的核心都是使用Lua语言驱动的，所以学习Lua的语法非常的重要。`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/Lua/" rel="tag">Lua</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2023-07-10T12:51:41.440Z" itemprop="dateModified">最后编辑：2023-07-10</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" I/O管理（操作系统笔记10）" href="/2023/01/25/操作系统笔记/操作系统笔记-10/">&lt; 上一篇</a>
+            </div>
+            
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                24
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                5
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                7
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-%E7%9F%A5%E8%AF%86/">C#知识</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Lua/">Lua</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Unity网络游戏开发</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/">操作系统笔记</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">数据结构笔记</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/C/" style="font-size: 0.73em;">C#</a> <a href="/tags/Lua/" style="font-size: 0.6em;">Lua</a> <a href="/tags/unity/" style="font-size: 0.67em;">unity</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 0.8em;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.6em;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.6em;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" style="font-size: 0.67em;">网络游戏</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/"><i class="fa  fa-book"></i> Lua基础语法</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/"><i class="fa  fa-book"></i> I/O管理（操作系统笔记10）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-9/"><i class="fa  fa-book"></i> 磁盘组织与管理（操作系统笔记9）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/22/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-8/"><i class="fa  fa-book"></i> 文件系统（操作系统笔记8）</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-7/"><i class="fa  fa-book"></i> 虚拟内存（操作系统笔记7）</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2023 舛羽的笔记小站 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by cy.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
+</html>
