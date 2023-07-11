@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+  <!-- 元数据 -->
+  <meta charset="utf-8">
+  
+  
+  <title>Lua表实现类及表的公共操作 | 舛羽的笔记小站</title>
+  <meta name="author" content="cy" />
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="robots" content="index,follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="format-detection" content="telphone=no, email=no" />
+  
+    <meta name="keywords" content="Lua" />
+  
+  <meta name="description" content="Lua中的表中可以放入任何的变量，而Lua中方法也是一种变量，所以可以在表中添加方法，同时也可以添加其他变量，这样数据成员和成员函数都可以实现，所以用表来实现类是完全可行的。同时表还有一些公共操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lua表实现类及表的公共操作">
+<meta property="og:url" content="http://example.com/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%8F%8A%E8%A1%A8%E7%9A%84%E5%85%AC%E5%85%B1%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="舛羽的笔记小站">
+<meta property="og:description" content="Lua中的表中可以放入任何的变量，而Lua中方法也是一种变量，所以可以在表中添加方法，同时也可以添加其他变量，这样数据成员和成员函数都可以实现，所以用表来实现类是完全可行的。同时表还有一些公共操作">
+<meta property="og:locale">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/XV5TKlbPqGSUc7H.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/WKItzXl3Nh6b2xP.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/MhaXIVAHsB9FW5T.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/kmUYyc1rKEd5tiZ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/ZNGP95oM2HiED6T.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/Mont1SRlmDzAsiZ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/YDOlHQxob9ACysh.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/11/oVA6Ipmzx3UjGZD.png">
+<meta property="article:published_time" content="2023-07-10T18:18:04.000Z">
+<meta property="article:modified_time" content="2023-07-11T15:23:14.101Z">
+<meta property="article:author" content="cy">
+<meta property="article:tag" content="Lua">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/07/11/XV5TKlbPqGSUc7H.png">
+  
+  <!-- 站点验证相关 -->
+  
+    
+    
+    
+  
+  <!-- 样式表文件 -->
+  <link rel="stylesheet" id="kratos-css" href="/css/kratosr.min.css" media="all"></script>
+  
+    <link rel="stylesheet" id="darkmode-css" href="/css/kr-color-dark.min.css" media="(prefers-color-scheme: dark)"></script>
+    <script src="/js/kr-dark.min.js"></script>
+  
+  
+    <link rel="stylesheet" id="highlight-css" href="/css/highlight/night-eighties.min.css" media="all"></script>
+  
+  
+  <link rel="stylesheet" id="fontawe-css" href="/vendors/font-awesome@4.7.0/css/font-awesome.min.css" media="all"></script>
+  <link rel="stylesheet" id="nprogress-css" href="/vendors/nprogress@0.2.0/nprogress.css" media="all"></script>
+  
+  
+  
+    <link rel="stylesheet" href="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"></script>
+  
+  <!-- 不得不预先加载的一些JS文件 -->
+  <script src="/vendors/jquery@3.6.0/dist/jquery.min.js"></script>
+  
+    <script src="/vendors/qrcode_js@1.0.0/qrcode.min.js"></script>
+  
+  
+  <style>
+    
+      .kratos-cover.kratos-cover-2 {
+        background-image: url('/images/banner.webp');
+      }
+    
+    
+      @media(min-width:768px) {
+        body.custom-background {
+          background-image: url('/images/bg.webp');
+        }
+      }
+    
+  </style>
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+    <body class="custom-background">
+        <div id="kratos-wrapper">
+    <div id="kratos-page">
+        <div id="kratos-header">
+            <header id="kratos-desktop-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="nav-header">
+                        <nav id="kratos-menu-wrap">
+                            <ul id="kratos-primary-menu" class="sf-menu">
+                                
+                                    
+                                    
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+            <header id="kratos-mobile-topnav" class="kratos-topnav">
+                <div class="container">
+                    <div class="color-logo"><a href="/">舛羽的笔记小站</a></div>
+                    <div class="nav-toggle">
+                        <a class="kratos-nav-toggle js-kratos-nav-toggle">
+                            <i></i>
+                        </a>
+                    </div>
+                </div>
+            </header>
+        </div>
+        <div class="kratos-start kratos-hero-2">
+            <!-- <div class="kratos-overlay"></div> -->
+            <div class="kratos-cover kratos-cover-2 text-center">
+                <div class="desc desc2 animate-box">
+                    <a href="/">
+                        <h2>舛羽的笔记小站</h2> <br />
+                        <span></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="kratos-blog-post">
+            <div class="container">
+                <div id="main" class="row">
+                    
+
+        
+
+            <section class="col-md-8">
+
+        
+
+            <article itemscope itemtype="https://schema.org/Article">
+    
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%8F%8A%E8%A1%A8%E7%9A%84%E5%85%AC%E5%85%B1%E6%93%8D%E4%BD%9C/">
+    <div class="kratos-hentry kratos-post-inner clearfix">
+        <header class="kratos-entry-header">
+            
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Lua表实现类及表的公共操作</h1>
+            
+            
+            <ul class="kratos-post-meta text-center">
+                <li><time datetime="2023-07-10T18:18:04.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-07-11</time></li>
+                <li itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
+                </li>
+                <li>
+                    <i class="fa fa-edit"></i> 
+                    
+                    
+                        ~3.57K
+                    
+                    字
+                </li>
+                
+            </ul>
+        </header>
+        <div class="kratos-post-content">
+            
+            <div id="expire-alert" class="alert alert-warning hidden" role="alert">
+                <div class="icon"><i class="fa fa-warning"></i></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1689088994101"></time> 前，其中的内容可能需要更新。</p></div>
+            </div>
+            
+            
+            
+            <hr />
+            <div itemprop="articleBody"><p>Lua中的表中可以放入任何的变量，而Lua中方法也是一种变量，所以可以在表中添加方法，同时也可以添加其他变量，这样数据成员和成员函数都可以实现，所以用表来实现类是完全可行的。同时表还有一些公共操作</p>
+<span id="more"></span>
+<h2 id="第四章-表实现类及表的公共操作"><a href="#第四章-表实现类及表的公共操作" class="headerlink" title="第四章 表实现类及表的公共操作"></a>第四章 表实现类及表的公共操作</h2><h3 id="3-1-表实现类"><a href="#3-1-表实现类" class="headerlink" title="3.1 表实现类"></a>3.1 表实现类</h3><p>表实现的类其实更像是直接生成一个类实例，然后在其中包含成员变量和成员函数。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">Sylveon=&#123;</span><br><span class="line">    <span class="comment">--编号</span></span><br><span class="line">    Id=<span class="number">700</span>;</span><br><span class="line">    <span class="comment">--属性</span></span><br><span class="line">    Type=<span class="string">&quot;Fairy&quot;</span>;</span><br><span class="line">    <span class="comment">--等级</span></span><br><span class="line">    Level=<span class="number">1</span>;</span><br><span class="line">    <span class="comment">--升级</span></span><br><span class="line">    LevelUp=<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">        Sylveon.Level=Sylveon.Level+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">--类外定义成员变量</span></span><br><span class="line">Sylveon.Ability=<span class="string">&quot;CuteCharm&quot;</span>;</span><br><span class="line"><span class="comment">--类外定义成员函数</span></span><br><span class="line">Sylveon.UseHyperVoice=<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用巨声&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Sylveon:UseMoonblast</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用月亮之力&quot;</span>);</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">self</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--获取成员变量的值</span></span><br><span class="line"><span class="built_in">print</span>(Sylveon.Type);</span><br><span class="line"><span class="comment">--使用点运行成员函数</span></span><br><span class="line">Sylveon.LevelUp();</span><br><span class="line"><span class="built_in">print</span>(Sylveon.Level);</span><br><span class="line"></span><br><span class="line"><span class="comment">--使用冒号运行成员函数</span></span><br><span class="line">Sylveon.UseHyperVoice();</span><br><span class="line">Sylveon:UseMoonblast();</span><br><span class="line">Sylveon.UseMoonblast(<span class="string">&quot;仙子伊布很可爱&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>运行结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/XV5TKlbPqGSUc7H.png" alt=""></p>
+<p>类的定义方法其实就是简单的在表中定义变量和方法，当然变量和方法可以在表外进行定义，类外定义方法也有两种方式，分别是点定义，冒号定义，这两个是有区别的。</p>
+<h4 id="3-1-1-点定义方法"><a href="#3-1-1-点定义方法" class="headerlink" title="3.1.1 点定义方法"></a>3.1.1 点定义方法</h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Sylveon=&#123;</span><br><span class="line">    <span class="comment">--编号</span></span><br><span class="line">    Id=<span class="number">700</span>;</span><br><span class="line">    <span class="comment">--属性</span></span><br><span class="line">    Type=<span class="string">&quot;Fairy&quot;</span>;</span><br><span class="line">    <span class="comment">--等级</span></span><br><span class="line">    Level=<span class="number">1</span>;</span><br><span class="line">    <span class="comment">--升级</span></span><br><span class="line">    LevelUp=<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">        Sylveon.Level=Sylveon.Level+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">--类外定义成员函数</span></span><br><span class="line">Sylveon.UseHyperVoice=<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用巨声&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Sylveon.UseMoonBlast</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用月亮之力&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">Sylveon.UseHyperVoice();</span><br><span class="line">Sylveon.UseMoonBlast();</span><br><span class="line">Sylveon:UseHyperVoice();</span><br><span class="line">Sylveon:UseMoonBlast();</span><br></pre></td></tr></table></figure>
+<p>运行结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/WKItzXl3Nh6b2xP.png" alt=""></p>
+<p>可以看到两种点定义方法都在调用的时候都可以使用点调用和冒号调用。</p>
+<h4 id="3-1-2-冒号定义方法"><a href="#3-1-2-冒号定义方法" class="headerlink" title="3.1.2 冒号定义方法"></a>3.1.2 冒号定义方法</h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Sylveon=&#123;</span><br><span class="line">    <span class="comment">--编号</span></span><br><span class="line">    Id=<span class="number">700</span>;</span><br><span class="line">    <span class="comment">--属性</span></span><br><span class="line">    Type=<span class="string">&quot;Fairy&quot;</span>;</span><br><span class="line">    <span class="comment">--等级</span></span><br><span class="line">    Level=<span class="number">1</span>;</span><br><span class="line">    <span class="comment">--升级</span></span><br><span class="line">    LevelUp=<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">        Sylveon.Level=Sylveon.Level+<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">--类外定义成员函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Sylveon:UseMoonBlast</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;仙子伊布使用月亮之力&quot;</span>);</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">self</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">Sylveon.UseMoonBlast(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">Sylveon:UseMoonBlast();</span><br></pre></td></tr></table></figure>
+<p>运行结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/MhaXIVAHsB9FW5T.png" alt=""></p>
+<p><strong>重点</strong>：通过冒号定义的方法拥有一个默认参数self，self会自动作为整个函数的第一个参数，当点调用的时候会将传入的第一个参数作为self的值，而冒号调用时则会将自身作为第一个参数传给self。而点定义的函数并没有默认的self参数，所以无法使用self。</p>
+<h3 id="3-2-表的公共操作"><a href="#3-2-表的公共操作" class="headerlink" title="3.2 表的公共操作"></a>3.2 表的公共操作</h3><h4 id="3-2-1-插入"><a href="#3-2-1-插入" class="headerlink" title="3.2.1 插入"></a>3.2.1 插入</h4><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Pokemon=&#123;<span class="string">&quot;伊布&quot;</span>,<span class="string">&quot;叶伊布&quot;</span>,<span class="string">&quot;水伊布&quot;</span>&#125;;</span><br><span class="line">Sylveon=&#123;</span><br><span class="line">    id=<span class="number">700</span>;</span><br><span class="line">    name=<span class="string">&quot;仙子伊布&quot;</span>;</span><br><span class="line">    level=<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(#Pokemon);</span><br><span class="line"><span class="built_in">table</span>.<span class="built_in">insert</span>(Pokemon,Sylveon);</span><br><span class="line"><span class="built_in">print</span>(#Pokemon);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">1</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">2</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">3</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>].level);</span><br><span class="line"><span class="built_in">print</span>(Sylveon);</span><br><span class="line">Sylveon.level=<span class="number">50</span>;</span><br><span class="line"><span class="built_in">print</span>(Sylveon.level);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>].level);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/kmUYyc1rKEd5tiZ.png" alt=""></p>
+<p>将变量插入变中，用法很简单，这里重点注意的是，插入的时候应该只是将指针存入了表中，而原本变量的存储位置应该是不变的，所以在修改原本变量的成员变量时，插入表中的变量也会改变。</p>
+<h4 id="3-2-2-删除"><a href="#3-2-2-删除" class="headerlink" title="3.2.2 删除"></a>3.2.2 删除</h4><p>删除使用remove方法，remove方法可以传递一个或两个参数。</p>
+<p>传递一个参数的用法如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Pokemon=&#123;<span class="string">&quot;伊布&quot;</span>,<span class="string">&quot;叶伊布&quot;</span>,<span class="string">&quot;水伊布&quot;</span>,<span class="string">&quot;仙子伊布&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">print</span>(#Pokemon);</span><br><span class="line"><span class="built_in">table</span>.<span class="built_in">remove</span>(Pokemon);</span><br><span class="line"><span class="built_in">print</span>(#Pokemon);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">1</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">2</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">3</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>]);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<p><img src="https://s2.loli.net/2023/07/11/ZNGP95oM2HiED6T.png" alt=""></p>
+<p>可以看到当只传递一个参数时，会默认删除最后一个元素。</p>
+<p>传递两个参数时，则会删除第二个参数指定索引的元素。并且删除之后，会将后面的参数往前移动。</p>
+<h4 id="3-2-3-排序"><a href="#3-2-3-排序" class="headerlink" title="3.2.3 排序"></a>3.2.3 排序</h4><p>排序使用sort方法进行排序，传入两个参数，第一个是要排序的表，第二个是排序规则，若不传入第二个参数默认降序排列</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Pokemon=&#123;<span class="string">&quot;伊布&quot;</span>,<span class="string">&quot;叶伊布&quot;</span>,<span class="string">&quot;水伊布&quot;</span>,<span class="string">&quot;仙子伊布&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">table</span>.<span class="built_in">sort</span>(Pokemon);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">1</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">2</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">3</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>]);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/Mont1SRlmDzAsiZ.png" alt=""></p>
+<p>传入第二个参数：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Pokemon=&#123;<span class="string">&quot;伊布&quot;</span>,<span class="string">&quot;叶伊布&quot;</span>,<span class="string">&quot;水伊布&quot;</span>,<span class="string">&quot;仙子伊布&quot;</span>&#125;;</span><br><span class="line"><span class="built_in">table</span>.<span class="built_in">sort</span>(Pokemon,<span class="function"><span class="keyword">function</span><span class="params">(a,b)</span></span></span><br><span class="line">    <span class="keyword">if</span> a&gt;b <span class="keyword">then</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span>);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">1</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">2</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">3</span>]);</span><br><span class="line"><span class="built_in">print</span>(Pokemon[<span class="number">4</span>]);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/YDOlHQxob9ACysh.png" alt=""></p>
+<p>如果元素之间无法通过排序规则比较，则会报错。</p>
+<h4 id="3-2-4-拼接"><a href="#3-2-4-拼接" class="headerlink" title="3.2.4 拼接"></a>3.2.4 拼接</h4><p>使用concat方法将表中所有元素合为一个字符串，返回值也是一个字符串。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Pokemon=&#123;<span class="string">&quot;伊布&quot;</span>,<span class="string">&quot;叶伊布&quot;</span>,<span class="string">&quot;水伊布&quot;</span>,<span class="string">&quot;仙子伊布&quot;</span>&#125;;</span><br><span class="line">str1=<span class="built_in">table</span>.<span class="built_in">concat</span>(Pokemon);</span><br><span class="line"><span class="built_in">print</span>(str);</span><br><span class="line">str2=<span class="built_in">table</span>.<span class="built_in">concat</span>(Pokemon,<span class="string">&quot;,&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(str2);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/11/oVA6Ipmzx3UjGZD.png" alt=""></p>
+<p>同样是两个参数，第一个参数为表，第二个参数为元素间分割符，如果为设置该参数则不分割。</p>
+</div>
+        </div>
+        
+            <div class="kratos-copyright text-center clearfix">
+                <h5 itemprop="copyrightNotice">本作品采用 <a rel="license nofollow" target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/">知识共享署名-相同方式共享 4.0 国际许可协议</a> 进行许可</h5>
+            </div>
+        
+        <footer class="kratos-entry-footer clearfix">
+            
+                <div class="post-like-donate text-center clearfix" id="post-like-donate">
+                
+                
+                    <a class="share" href="javascript:;"><i class="fa fa-share-alt"></i> 分享</a>
+                    <div class="share-wrap" style="display: none;">
+    <div class="share-group">
+        <a href="javascript:;" class="share-plain qq" onclick="share('qq');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-qq"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain qzone" onclick="share('qzone');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-star"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weixin"></i>
+            </div>
+            <div class="share-int">
+                <div class="qrcode" id="wechat-qr"></div>
+                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain weibo" onclick="share('weibo');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-weibo"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain facebook style-plain" onclick="share('facebook');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-facebook"></i>
+            </div>
+        </a>
+        <a href="javascript:;" class="share-plain twitter style-plain" onclick="share('twitter');" rel="nofollow">
+            <div class="icon-wrap">
+                <i class="fa fa-twitter"></i>
+            </div>
+        </a>
+    </div>
+    <script type="text/javascript">
+        $(()=>{
+            new QRCode("wechat-qr", {
+                text: "http://example.com/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%8F%8A%E8%A1%A8%E7%9A%84%E5%85%AC%E5%85%B1%E6%93%8D%E4%BD%9C/",
+                width: 150,
+                height: 150,
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+        function share(dest) {
+            const qqBase        = "https://connect.qq.com/widget/shareqq/index.html?";
+            const weiboBase     = "https://service.weibo.com/share/share.php?";
+            const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
+            const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
+            const twitterBase   = "https://twitter.com/intent/tweet?";
+            const hostUrl       = "http://example.com/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%8F%8A%E8%A1%A8%E7%9A%84%E5%85%AC%E5%85%B1%E6%93%8D%E4%BD%9C/";
+            const title         = "「Lua表实现类及表的公共操作」";
+            const excerpt       = `Lua中的表中可以放入任何的变量，而Lua中方法也是一种变量，所以可以在表中添加方法，同时也可以添加其他变量，这样数据成员和成员函数都可以实现，所以用表来实现类是完全可行的。同时表还有一些公共操作`;
+            let _URL;
+            switch (dest) {
+                case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
+                case "weibo"    : _URL = weiboBase+"url="+hostUrl+"&title="+title+excerpt;                                 break;
+                case "qzone"    : _URL = qzoneBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";  break;
+                case "facebook" : _URL = facebookBase+"u="+hostUrl;                                                        break;
+                case "twitter"  : _URL = twitterBase+"text="+title+excerpt+"&url="+hostUrl;                                break;
+            }
+            window.open(_URL);
+        };
+    </script>
+</div>
+                
+                </div>
+            
+            <div class="footer-tag clearfix">
+                <div class="pull-left">
+                <i class="fa fa-tags"></i>
+                    <a class="tag-none-link" href="/tags/Lua/" rel="tag">Lua</a>
+                </div>
+                <div class="pull-date">
+                    <time datetime="2023-07-11T15:23:14.101Z" itemprop="dateModified">最后编辑：2023-07-11</time>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+        <nav class="navigation post-navigation clearfix" role="navigation">
+            
+            <div class="nav-previous clearfix">
+                <a title=" Lua函数" href="/2023/07/10/Lua语法/Lua函数/">&lt; 上一篇</a>
+            </div>
+            
+            
+            <div class="nav-next clearfix">
+                <a title=" Lua表" href="/2023/07/11/Lua语法/Lua表/">下一篇 &gt;</a>
+            </div>
+            
+        </nav>
+    
+    
+</article>
+
+        
+
+            </section>
+
+        
+
+                
+            
+
+<section id="kratos-widget-area" class="col-md-4 hidden-xs hidden-sm">
+    <!-- 文章和页面根据splitter来分割，没有的话就从头开始设置为sticky -->
+    
+    
+                <aside id="krw-about" class="widget widget-kratos-about clearfix">
+    <div class="photo-background"></div>
+    <div class="photo-wrapper clearfix">
+        <div class="photo-wrapper-tip text-center">
+            <img class="about-photo" src="/images/avatar.webp" loading="lazy" decoding="auto" />
+        </div>
+    </div>
+    <div class="textwidget">
+        <p class="text-center"></p>
+    </div>
+    <div class="site-meta">
+        <a class="meta-item" href="/archives/">
+            <span class="title">
+                文章
+            </span>
+            <span class="count">
+                27
+            </span>
+        </a>
+        <a class="meta-item" href="/categories/">
+            <span class="title">
+                分类
+            </span>
+            <span class="count">
+                5
+            </span>
+        </a>
+        <a class="meta-item" href="/tags/">
+            <span class="title">
+                标签
+            </span>
+            <span class="count">
+                7
+            </span>
+        </a>
+    </div>
+</aside>
+            
+                    <div class="sticky-area">
+                
+                
+  <aside id="krw-categories" class="widget widget-kratos-categories clearfix">
+    <h4 class="widget-title"><i class="fa fa-folder"></i>分类目录</h4>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-%E7%9F%A5%E8%AF%86/">C#知识</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Lua/">Lua</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unity%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">Unity网络游戏开发</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/">操作系统笔记</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%AC%94%E8%AE%B0/">数据结构笔记</a><span class="category-list-count">1</span></li></ul>
+  </aside>
+
+
+            
+                
+  <aside id="krw-tags" class="widget widget-kratos-tags clearfix">
+    <h4 class="widget-title"><i class="fa fa-tags"></i>标签聚合</h4>
+      <div class="tag-clouds">
+        <a href="/tags/C/" style="font-size: 0.75em;">C#</a> <a href="/tags/Lua/" style="font-size: 0.7em;">Lua</a> <a href="/tags/unity/" style="font-size: 0.65em;">unity</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 0.8em;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 0.6em;">数据结构</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 0.6em;">算法</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E6%B8%B8%E6%88%8F/" style="font-size: 0.65em;">网络游戏</a>
+      </div>
+  </aside>
+
+            
+                
+  <aside id="krw-posts" class="widget widget-kratos-posts">
+  <h4 class="widget-title"><i class="fa fa-file"></i>最新文章</h4>
+  <div class="tab-content">
+      <ul class="list-group">
+        
+        
+          
+          
+            <a class="list-group-item" href="/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8/"><i class="fa  fa-book"></i> Lua表</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/07/11/Lua%E8%AF%AD%E6%B3%95/Lua%E8%A1%A8%E5%AE%9E%E7%8E%B0%E7%B1%BB%E5%8F%8A%E8%A1%A8%E7%9A%84%E5%85%AC%E5%85%B1%E6%93%8D%E4%BD%9C/"><i class="fa  fa-book"></i> Lua表实现类及表的公共操作</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/07/10/Lua%E8%AF%AD%E6%B3%95/Lua%E5%87%BD%E6%95%B0/"><i class="fa  fa-book"></i> Lua函数</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/07/09/Lua%E8%AF%AD%E6%B3%95/Lua%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/"><i class="fa  fa-book"></i> Lua基础语法</a>
+            
+          
+        
+          
+          
+            <a class="list-group-item" href="/2023/01/25/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AC%94%E8%AE%B0-10/"><i class="fa  fa-book"></i> I/O管理（操作系统笔记10）</a>
+            
+          
+        
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+      </ul>
+  </div>
+  </aside>
+
+            
+    </div>
+</section>
+        
+        </div>
+    </div>
+</div>
+<footer>
+    <div id="footer"  >
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 footer-list text-center">
+                    <ul class="kratos-social-icons">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </ul>
+                    <ul class="kratos-copyright">
+                        <div>
+                            <li>&copy; 2023 舛羽的笔记小站 版权所有.</li>
+                            <li>本站已运行<span id="span_dt">Loading...</span></li>
+                        </div>
+                        <div>
+                            <li>Theme <a href="https://github.com/Candinya/Kratos-Rebirth" target="_blank">Kratos:Rebirth</a></li>
+                            <li>Site built with&nbsp;<i class="fa fa-heart throb" style="color:#d43f57"></i>&nbsp;by cy.</li>
+                        </div>
+                        <div>
+                            <li>Powered by <a href="https://hexo.io" target="_blank" rel="nofollow">Hexo</a></li>
+                            <li>Hosted on <a href="https://github.io" target="_blank">Github Pages</a></li>
+                        </div>
+                        <div>
+                            
+                            
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="kr-tool text-center">
+            <div class="tool">
+                
+                    <div class="box search-box">
+                        <a href="/search/">
+                            <span class="fa fa-search"></span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="box theme-box" id="darkmode-switch">
+                        <span class="fa fa-adjust"></span>
+                    </div>
+                
+                
+            </div>
+            <div class="box gotop-box">
+                <span class="fa fa-chevron-up"></span>
+            </div>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+
+        <script defer src="/vendors/bootstrap@3.3.4/dist/js/bootstrap.min.js"></script>
+<script defer src="/vendors/nprogress@0.2.0/nprogress.js"></script>
+<script>
+    if (!window.kr) {
+        window.kr = {};
+    }
+    window.kr.notMobile = (!(navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)));
+    window.kr.siteRoot = "/";
+</script>
+
+
+    <script async src="/js/candy.min.js"></script>
+
+
+
+
+    <script defer src="/vendors/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+
+<script defer src="/vendors/clipboard@2.0.6/dist/clipboard.min.js"></script>
+<script defer src="/js/kratosr.min.js"></script>
+<script defer src="/js/pjax.min.js"></script>
+
+
+
+<!-- Extra support for third-party plguins  -->
+
+
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML
+"></script>
+</body>
+</html>
