@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>C#知识(3) | 舛羽的笔记小站</title>
+  <title>Lua元表 | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,20 +14,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="C#" />
+    <meta name="keywords" content="Lua" />
   
-  <meta name="description" content="本节主要内容：属性、成员和字段的区别，接口相关知识">
+  <meta name="description" content="Lua中拥有一个不同于其他语言的特性叫元表，元表拥有一些类似于面向对象的特点，一个表可以将另外一个表作为自己的元表，同时提供了一些方法用于处理表与表之间的关系，这会为我们实现面向对象提供基础。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C#知识(3)">
-<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/index.html">
+<meta property="og:title" content="Lua元表">
+<meta property="og:url" content="http://example.com/2023/07/13/Lua%E8%AF%AD%E6%B3%95/Lua%E5%85%83%E8%A1%A8/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本节主要内容：属性、成员和字段的区别，接口相关知识">
+<meta property="og:description" content="Lua中拥有一个不同于其他语言的特性叫元表，元表拥有一些类似于面向对象的特点，一个表可以将另外一个表作为自己的元表，同时提供了一些方法用于处理表与表之间的关系，这会为我们实现面向对象提供基础。">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-12-24T15:27:43.000Z">
-<meta property="article:modified_time" content="2022-12-24T15:32:47.088Z">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/Ndqi5uICYwEDszc.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/qeKVB5RJUWSOkN8.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/yiUgsPtZbdeKY7q.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/v8xoecVNB5XJE6Z.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/xZj5Y4Ka3TrUkXt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/rsXM3naK45hc8xV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/5WyTvLEQkGrY2zn.png">
+<meta property="article:published_time" content="2023-07-13T06:36:04.000Z">
+<meta property="article:modified_time" content="2023-07-13T09:39:11.457Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="Lua">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/07/13/Ndqi5uICYwEDszc.png">
   
   <!-- 站点验证相关 -->
   
@@ -130,15 +138,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/13/Lua%E8%AF%AD%E6%B3%95/Lua%E5%85%83%E8%A1%A8/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(3)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Lua元表</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-24T15:27:43.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
+                <li><time datetime="2023-07-13T06:36:04.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-07-13</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -146,7 +154,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~1.57K
+                        ~2.80K
                     
                     字
                 </li>
@@ -157,34 +165,51 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1671895967088"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1689241151457"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：属性、成员和字段的区别，接口相关知识<br><span id="more"></span></p>
-<h2 id="1-属性、成员和字段的区别"><a href="#1-属性、成员和字段的区别" class="headerlink" title="1.属性、成员和字段的区别"></a>1.属性、成员和字段的区别</h2><p>字段一般在类内部使用，所以一般是private属性。</p>
-<p>属性一般是供外部访问，所以一般是public属性。</p>
-<p>成员则是包括属性，字段，方法，事件等。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">B</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> b;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> d;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> a &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> c &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()                        <span class="comment">//方法，成员</span></span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;我也是成员&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="2-接口"><a href="#2-接口" class="headerlink" title="2.接口"></a>2.接口</h2><p>接口与其叫接口不如叫约束，他规定了一个东西<strong>是什么</strong>，而派生类则定义了<strong>怎么做</strong></p>
-<p>接口中可以声明属性（是属性，不是成员，也不是字段），方法和事件，接口只负责声明，定义由派生类实现。</p>
-<p>接口的实现有两种方式，分别是隐式实现和显式实现</p>
-<h3 id="1-隐式实现"><a href="#1-隐式实现" class="headerlink" title="1.隐式实现"></a>1.隐式实现</h3><p>接口的大部分实现都是靠隐式实现</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()</span>     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;隐式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<h3 id="2-显示实现"><a href="#2-显示实现" class="headerlink" title="2.显示实现"></a>2.显示实现</h3><p>显式实现是为了解决实现多个接口时有可能出现的重名问题。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IB</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span>,<span class="title">IB</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="keyword">void</span> IA.show()     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;显式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">void</span> IB.show()</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;B显式实现&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<p>为了解决重名的问题，需要使用到向上转型</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> f = <span class="keyword">new</span> A();</span><br><span class="line">    (f <span class="keyword">as</span> IA).show();</span><br><span class="line">    (f <span class="keyword">as</span> IB).show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-接口其他细节"><a href="#3-接口其他细节" class="headerlink" title="3.接口其他细节"></a>3.接口其他细节</h3><ul>
-<li>实现接口的任何类型或结构都必须实现器所有的成员</li>
-<li>接口类似于只有抽象成员的抽象基类。 实现接口的任何类或结构都必须实现其所有成员。</li>
-<li>接口无法直接进行实例化。 其成员由实现接口的任何类或结构来实现。</li>
-<li>接口可以包含事件、索引器、方法和属性。</li>
-<li>接口不包含方法的实现。</li>
-<li>一个类或结构可以实现多个接口。 一个类可以继承一个基类，还可实现一个或多个接口。</li>
-</ul>
+            <div itemprop="articleBody"><p>Lua中拥有一个不同于其他语言的特性叫元表，元表拥有一些类似于面向对象的特点，一个表可以将另外一个表作为自己的元表，同时提供了一些方法用于处理表与表之间的关系，这会为我们实现面向对象提供基础。</p>
+<span id="more"></span>
+<h2 id="第七章-Lua元表"><a href="#第七章-Lua元表" class="headerlink" title="第七章 Lua元表"></a>第七章 Lua元表</h2><h3 id="7-1-元表概念"><a href="#7-1-元表概念" class="headerlink" title="7.1 元表概念"></a>7.1 元表概念</h3><p>我们可以对其他的变量进行操作，但是无法对两个table进行操作。所以Lua提供了元表，允许我们改变table行为，每个行为关联了对应的元方法。</p>
+<p>任何表变量都可以有自己的元表。</p>
+<p>当我们子表进行一些特定操作时，会执行元表的内容。</p>
+<h3 id="7-2-设置元表"><a href="#7-2-设置元表" class="headerlink" title="7.2 设置元表"></a>7.2 设置元表</h3><p>元表的设置有一个固定的方法，为setmetatable，用法如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;&#125;;</span><br><span class="line">Eevee=&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br></pre></td></tr></table></figure>
+<h3 id="7-3-tostring"><a href="#7-3-tostring" class="headerlink" title="7.3 tostring"></a>7.3 tostring</h3><p>在元表中我们可以设计tostring方法用于规定子表的输出行为。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__tostring</span>=<span class="function"><span class="keyword">function</span><span class="params">(t)</span></span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;这个宝可梦叫做&quot;</span>..t.name;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;Eevee&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Eevee);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/Ndqi5uICYwEDszc.png" alt=""></p>
+<p>可以看到，子表输出的时候会用父表的tostring方法去输出。</p>
+<p>同时这个函数传入的第一个参数一定是子表本身，如果需要再传参数，需要再另加参数。</p>
+<p><strong>重点：</strong>只是在直接输出的时候会进行替换，不能使用..直接去连接table，会报错。</p>
+<h3 id="7-4-call"><a href="#7-4-call" class="headerlink" title="7.4 call"></a>7.4 call</h3><p>在Lua中将表作为一个方法进行调用时会使用父表的该方法进行替换。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__call</span>=<span class="function"><span class="keyword">function</span><span class="params">(t)</span></span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;就决定是你了&quot;</span>..t.name);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;Eevee&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br><span class="line">Eevee();</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/qeKVB5RJUWSOkN8.png" alt=""></p>
+<p>和tostring一样第一个参数是子表自身，如果需要另传参数，需要再加参数。</p>
+<h3 id="7-5-运算符重载"><a href="#7-5-运算符重载" class="headerlink" title="7.5 运算符重载"></a>7.5 运算符重载</h3><p>Lua的运算符重载也是基于元表而进行的。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__add</span>=<span class="function"><span class="keyword">function</span><span class="params">(t1,t2)</span></span></span><br><span class="line">        t1.level=t1.level+t2.num;</span><br><span class="line">        <span class="keyword">return</span> t1;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;伊布&quot;</span>;</span><br><span class="line">    level=<span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line">RareCandy=&#123;</span><br><span class="line">    num=<span class="number">10</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br><span class="line">Eevee=Eevee+RareCandy;</span><br><span class="line"><span class="built_in">print</span>(Eevee.name..<span class="string">&quot;升到了&quot;</span>..Eevee.level..<span class="string">&quot;级&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/yiUgsPtZbdeKY7q.png" alt=""></p>
+<p>可以看到，首先运算符重载的函数需要传入两个参数，这两个参数就是需要运算的表，同时这两个运算的表至少有一个是以有运算符重载的表为元表的。</p>
+<p>还有的运算符重载函数包括：</p>
+<p><img src="https://s2.loli.net/2023/07/13/v8xoecVNB5XJE6Z.png" alt=""></p>
+<h3 id="7-6-index"><a href="#7-6-index" class="headerlink" title="7.6 index"></a>7.6 index</h3><p>一般情况下我们访问一个表中不存在的键时，会返回一个nil，index方法的作用是，如果在当前表中没有这个键，就会把这个去元表的这个方法里寻找这个键，如果找到了就返回元表中的值，否则返回nil。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__index</span>=&#123;isPokemon=<span class="literal">true</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;伊布&quot;</span>;</span><br><span class="line">    level=<span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;伊布是宝可梦吗？&quot;</span>);</span><br><span class="line"><span class="built_in">print</span>(Eevee.isPokemon);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/xZj5Y4Ka3TrUkXt.png" alt=""></p>
+<h3 id="7-7-newindex"><a href="#7-7-newindex" class="headerlink" title="7.7 newindex"></a>7.7 newindex</h3><p>index方法是用于找表中为定义的键，newindex是用来对表更新。</p>
+<p>当你给表的一个缺少的索引赋值，解释器就会查找__newindex 元方法：如果存在则调用这个函数而不进行赋值操作。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__newindex</span>=<span class="function"><span class="keyword">function</span><span class="params">(t,key)</span></span></span><br><span class="line">        <span class="keyword">if</span> key==<span class="string">&quot;isPokemon&quot;</span> <span class="keyword">then</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;已经有这个值了&quot;</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;伊布&quot;</span>;</span><br><span class="line">    level=<span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;不定义元表直接赋值&quot;</span>);</span><br><span class="line">Eevee.isPokemon=<span class="literal">true</span>;</span><br><span class="line"><span class="built_in">print</span>(Eevee.isPokemon);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;删除Eevee中的isPokemon值&quot;</span>);</span><br><span class="line">Eevee.isPokemon=<span class="literal">nil</span>;</span><br><span class="line"><span class="built_in">print</span>(Eevee.isPokemon);</span><br><span class="line"></span><br><span class="line"><span class="built_in">setmetatable</span>(Eevee,PokeMon);</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;重新赋值isPokemon&quot;</span>);</span><br><span class="line">Eevee.isPokemon=<span class="literal">true</span>;</span><br><span class="line"><span class="built_in">print</span>(Eevee.isPokemon);</span><br></pre></td></tr></table></figure>
+<p>输出的结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/rsXM3naK45hc8xV.png" alt=""></p>
+<p>如果我们想绕开index或者newindex方法可以使用rawget和rawset方法。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">PokeMon=&#123;</span><br><span class="line">    <span class="built_in">__newindex</span>=<span class="function"><span class="keyword">function</span><span class="params">(t,key)</span></span></span><br><span class="line">        <span class="keyword">if</span> key==<span class="string">&quot;isPokemon&quot;</span> <span class="keyword">then</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;已经有这个值了&quot;</span>);</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span>;</span><br><span class="line">    <span class="built_in">__index</span>=&#123;isCute=<span class="literal">true</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line">Eevee=&#123;</span><br><span class="line">    name=<span class="string">&quot;伊布&quot;</span>;</span><br><span class="line">    level=<span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">rawget</span>(Eevee,isCute));</span><br><span class="line"><span class="built_in">rawset</span>(Eevee,<span class="string">&quot;isPokemon&quot;</span>,<span class="literal">true</span>);</span><br><span class="line"><span class="built_in">print</span>(Eevee.isPokemon);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/5WyTvLEQkGrY2zn.png" alt=""></p>
 </div>
         </div>
         
@@ -238,7 +263,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/",
+                text: "http://example.com/2023/07/13/Lua%E8%AF%AD%E6%B3%95/Lua%E5%85%83%E8%A1%A8/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -250,9 +275,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/";
-            const title         = "「C#知识(3)」";
-            const excerpt       = `本节主要内容：属性、成员和字段的区别，接口相关知识`;
+            const hostUrl       = "http://example.com/2023/07/13/Lua%E8%AF%AD%E6%B3%95/Lua%E5%85%83%E8%A1%A8/";
+            const title         = "「Lua元表」";
+            const excerpt       = `Lua中拥有一个不同于其他语言的特性叫元表，元表拥有一些类似于面向对象的特点，一个表可以将另外一个表作为自己的元表，同时提供了一些方法用于处理表与表之间的关系，这会为我们实现面向对象提供基础。`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -271,10 +296,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
+                    <a class="tag-none-link" href="/tags/Lua/" rel="tag">Lua</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-12-24T15:32:47.088Z" itemprop="dateModified">最后编辑：2022-12-24</time>
+                    <time datetime="2023-07-13T09:39:11.457Z" itemprop="dateModified">最后编辑：2023-07-13</time>
                 </div>
             </div>
         </footer>
@@ -283,13 +308,9 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" C#知识(2)" href="/2022/12/24/CS知识/CS知识-2/">&lt; 上一篇</a>
+                <a title=" Lua多脚本执行" href="/2023/07/12/Lua语法/Lua多脚本执行/">&lt; 上一篇</a>
             </div>
             
-            
-            <div class="nav-next clearfix">
-                <a title=" C#知识(4)" href="/2022/12/24/CS知识/CS知识-4/">下一篇 &gt;</a>
-            </div>
             
         </nav>
     
