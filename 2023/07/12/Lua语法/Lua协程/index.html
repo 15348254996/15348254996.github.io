@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   
   
-  <title>C#知识(3) | 舛羽的笔记小站</title>
+  <title>Lua协同程序 | 舛羽的笔记小站</title>
   <meta name="author" content="cy" />
   <meta http-equiv="Cache-Control" content="no-transform" />
   <meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -14,20 +14,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta name="format-detection" content="telphone=no, email=no" />
   
-    <meta name="keywords" content="C#" />
+    <meta name="keywords" content="Lua" />
   
-  <meta name="description" content="本节主要内容：属性、成员和字段的区别，接口相关知识">
+  <meta name="description" content="Lua中也有多线程的处理方法，就是lua的协同程序。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C#知识(3)">
-<meta property="og:url" content="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/index.html">
+<meta property="og:title" content="Lua协同程序">
+<meta property="og:url" content="http://example.com/2023/07/12/Lua%E8%AF%AD%E6%B3%95/Lua%E5%8D%8F%E7%A8%8B/index.html">
 <meta property="og:site_name" content="舛羽的笔记小站">
-<meta property="og:description" content="本节主要内容：属性、成员和字段的区别，接口相关知识">
+<meta property="og:description" content="Lua中也有多线程的处理方法，就是lua的协同程序。">
 <meta property="og:locale">
-<meta property="article:published_time" content="2022-12-24T15:27:43.000Z">
-<meta property="article:modified_time" content="2022-12-24T15:32:47.088Z">
+<meta property="og:image" content="https://s2.loli.net/2023/07/12/MIR86BWm1UFLl32.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/12/CSvm3XKZ2utlBIM.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/12/GOK3IvNHoEUYdlt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/2eLhpNkv3yT6FQA.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/PDoLzsYrUpgElTN.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/xbmk9zJOKN2jsir.png">
+<meta property="article:published_time" content="2023-07-12T03:33:04.000Z">
+<meta property="article:modified_time" content="2023-07-13T05:27:38.803Z">
 <meta property="article:author" content="cy">
-<meta property="article:tag" content="C#">
+<meta property="article:tag" content="Lua">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/07/12/MIR86BWm1UFLl32.png">
   
   <!-- 站点验证相关 -->
   
@@ -130,15 +137,15 @@
 
             <article itemscope itemtype="https://schema.org/Article">
     
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/12/Lua%E8%AF%AD%E6%B3%95/Lua%E5%8D%8F%E7%A8%8B/">
     <div class="kratos-hentry kratos-post-inner clearfix">
         <header class="kratos-entry-header">
             
-                <h1 class="kratos-entry-title text-center" itemprop="name headline">C#知识(3)</h1>
+                <h1 class="kratos-entry-title text-center" itemprop="name headline">Lua协同程序</h1>
             
             
             <ul class="kratos-post-meta text-center">
-                <li><time datetime="2022-12-24T15:27:43.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2022-12-24</time></li>
+                <li><time datetime="2023-07-12T03:33:04.000Z" itemprop="datePublished"><i class="fa fa-calendar"></i> 2023-07-12</time></li>
                 <li itemprop="author" itemscope itemtype="https://schema.org/Person">
                     <i class="fa fa-user"></i> 作者 <span itemprop="name">cy</span>
                 </li>
@@ -146,7 +153,7 @@
                     <i class="fa fa-edit"></i> 
                     
                     
-                        ~1.57K
+                        ~2.29K
                     
                     字
                 </li>
@@ -157,34 +164,47 @@
             
             <div id="expire-alert" class="alert alert-warning hidden" role="alert">
                 <div class="icon"><i class="fa fa-warning"></i></div>
-                <div class="text"><p>本文最后编辑于 <time datetime="1671895967088"></time> 前，其中的内容可能需要更新。</p></div>
+                <div class="text"><p>本文最后编辑于 <time datetime="1689226058803"></time> 前，其中的内容可能需要更新。</p></div>
             </div>
             
             
             
             <hr />
-            <div itemprop="articleBody"><p>本节主要内容：属性、成员和字段的区别，接口相关知识<br><span id="more"></span></p>
-<h2 id="1-属性、成员和字段的区别"><a href="#1-属性、成员和字段的区别" class="headerlink" title="1.属性、成员和字段的区别"></a>1.属性、成员和字段的区别</h2><p>字段一般在类内部使用，所以一般是private属性。</p>
-<p>属性一般是供外部访问，所以一般是public属性。</p>
-<p>成员则是包括属性，字段，方法，事件等。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">B</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> b;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> d;                            <span class="comment">//字段，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> a &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> c &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;                <span class="comment">//属性，成员</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()                        <span class="comment">//方法，成员</span></span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;我也是成员&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="2-接口"><a href="#2-接口" class="headerlink" title="2.接口"></a>2.接口</h2><p>接口与其叫接口不如叫约束，他规定了一个东西<strong>是什么</strong>，而派生类则定义了<strong>怎么做</strong></p>
-<p>接口中可以声明属性（是属性，不是成员，也不是字段），方法和事件，接口只负责声明，定义由派生类实现。</p>
-<p>接口的实现有两种方式，分别是隐式实现和显式实现</p>
-<h3 id="1-隐式实现"><a href="#1-隐式实现" class="headerlink" title="1.隐式实现"></a>1.隐式实现</h3><p>接口的大部分实现都是靠隐式实现</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span>()</span>     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;隐式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<h3 id="2-显示实现"><a href="#2-显示实现" class="headerlink" title="2.显示实现"></a>2.显示实现</h3><p>显式实现是为了解决实现多个接口时有可能出现的重名问题。</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IA</span>  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>; </span><br><span class="line">&#125;  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IB</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">show</span>()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">A</span> : <span class="title">IA</span>,<span class="title">IB</span></span><br><span class="line">&#123;      </span><br><span class="line">    <span class="keyword">void</span> IA.show()     </span><br><span class="line">    &#123;         </span><br><span class="line">        Console.WriteLine(<span class="string">&quot;显式实现&quot;</span>);     </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">void</span> IB.show()</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;B显式实现&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-<p>为了解决重名的问题，需要使用到向上转型</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="built_in">string</span>[] argv</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> f = <span class="keyword">new</span> A();</span><br><span class="line">    (f <span class="keyword">as</span> IA).show();</span><br><span class="line">    (f <span class="keyword">as</span> IB).show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="3-接口其他细节"><a href="#3-接口其他细节" class="headerlink" title="3.接口其他细节"></a>3.接口其他细节</h3><ul>
-<li>实现接口的任何类型或结构都必须实现器所有的成员</li>
-<li>接口类似于只有抽象成员的抽象基类。 实现接口的任何类或结构都必须实现其所有成员。</li>
-<li>接口无法直接进行实例化。 其成员由实现接口的任何类或结构来实现。</li>
-<li>接口可以包含事件、索引器、方法和属性。</li>
-<li>接口不包含方法的实现。</li>
-<li>一个类或结构可以实现多个接口。 一个类可以继承一个基类，还可实现一个或多个接口。</li>
-</ul>
+            <div itemprop="articleBody"><p>Lua中也有多线程的处理方法，就是lua的协同程序。</p>
+<span id="more"></span>
+<h2 id="第六章-Lua协同程序"><a href="#第六章-Lua协同程序" class="headerlink" title="第六章 Lua协同程序"></a>第六章 Lua协同程序</h2><h3 id="6-1-协程的创建"><a href="#6-1-协程的创建" class="headerlink" title="6.1 协程的创建"></a>6.1 协程的创建</h3><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程创建----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line"><span class="built_in">print</span>(co1);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(co1));</span><br><span class="line"></span><br><span class="line">co2=<span class="built_in">coroutine</span>.<span class="built_in">wrap</span>(F1);</span><br><span class="line"><span class="built_in">print</span>(co2);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(co2));</span><br></pre></td></tr></table></figure>
+<p>输出的结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/12/MIR86BWm1UFLl32.png" alt=""></p>
+<p>可以看到通过create创建的协程返回的是一个线程，而wrap返回的是一个函数。</p>
+<h3 id="6-2-协程的运行"><a href="#6-2-协程的运行" class="headerlink" title="6.2 协程的运行"></a>6.2 协程的运行</h3><p>协程的运行是直接使用resume进行运行，当然通过wrap方法创建的由于返回的是个函数，所以可以直接使用函数调用的方法进行调用。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程调用----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line">co2=<span class="built_in">coroutine</span>.<span class="built_in">wrap</span>(F1);</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line">co2();</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/12/CSvm3XKZ2utlBIM.png" alt=""></p>
+<h3 id="6-3-协程的挂起"><a href="#6-3-协程的挂起" class="headerlink" title="6.3 协程的挂起"></a>6.3 协程的挂起</h3><p>协程的挂起用yield方法进行挂起，这也是协程区别于普通函数的重要特征。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程挂起----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">true</span> <span class="keyword">do</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line">        <span class="built_in">coroutine</span>.<span class="built_in">yield</span>();</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;其次喜欢的是美月&quot;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/12/GOK3IvNHoEUYdlt.png" alt=""></p>
+<p>可以看到，暂时挂起的协程再次被调用的时候，会继续执行。</p>
+<p>另外要注意的使，yield是可以传回返回值的。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程挂起----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">true</span> <span class="keyword">do</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line">        <span class="built_in">coroutine</span>.<span class="built_in">yield</span>(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;其次喜欢的是美月&quot;</span>);</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line">co2=<span class="built_in">coroutine</span>.<span class="built_in">wrap</span>(F1);</span><br><span class="line"></span><br><span class="line">isOk1,tem1=<span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line">isOk2,tem2=co2();</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(isOk1,tem1);</span><br><span class="line"><span class="built_in">print</span>(isOk2,tem2);</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/2eLhpNkv3yT6FQA.png" alt=""></p>
+<p>可以看到通过create创建的协程传回了两个值，第一个值表示协程是否启动正常，第二个值表示协程挂起yield里面的值。</p>
+<p>而通过wrap创建的协程则只返回一个值，那就是协程挂起yield里的值。</p>
+<h3 id="6-4-协程的状态"><a href="#6-4-协程的状态" class="headerlink" title="6.4 协程的状态"></a>6.4 协程的状态</h3><p>协程的状态可以通过status来获取到。主要分为以下三种：</p>
+<ol>
+<li>dead 协程结束</li>
+<li>suspended 协程暂停</li>
+<li>running 协程正在运行</li>
+</ol>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程状态----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">coroutine</span>.<span class="built_in">status</span>(co1));</span><br><span class="line">    <span class="built_in">coroutine</span>.<span class="built_in">yield</span>(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;其次喜欢的是美月&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">coroutine</span>.<span class="built_in">status</span>(co1));</span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">coroutine</span>.<span class="built_in">status</span>(co1));</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/PDoLzsYrUpgElTN.png" alt=""></p>
+<h3 id="6-5-正在运行的协程"><a href="#6-5-正在运行的协程" class="headerlink" title="6.5 正在运行的协程"></a>6.5 正在运行的协程</h3><p>lua提供了方法用于获取现在正在运行的协程，使用running方法就可以得到现在获取的协程了。</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;----------------协程状态----------------&quot;</span>)</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">F1</span><span class="params">()</span></span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;我最喜欢的宝可梦角色是莉莉艾&quot;</span>);</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">coroutine</span>.<span class="built_in">running</span>());</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;其次喜欢的是美月&quot;</span>);</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">co1=<span class="built_in">coroutine</span>.<span class="built_in">create</span>(F1);</span><br><span class="line">co2=<span class="built_in">coroutine</span>.<span class="built_in">wrap</span>(F1);</span><br><span class="line"></span><br><span class="line"><span class="built_in">coroutine</span>.<span class="built_in">resume</span>(co1);</span><br><span class="line">co2();</span><br></pre></td></tr></table></figure>
+<p>输出结果如下图：</p>
+<p><img src="https://s2.loli.net/2023/07/13/xbmk9zJOKN2jsir.png" alt=""></p>
+<p>可以看到，不同的协程的编号是不同的。</p>
 </div>
         </div>
         
@@ -238,7 +258,7 @@
     <script type="text/javascript">
         $(()=>{
             new QRCode("wechat-qr", {
-                text: "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/",
+                text: "http://example.com/2023/07/12/Lua%E8%AF%AD%E6%B3%95/Lua%E5%8D%8F%E7%A8%8B/",
                 width: 150,
                 height: 150,
                 correctLevel : QRCode.CorrectLevel.H
@@ -250,9 +270,9 @@
             const qzoneBase     = "https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
             const facebookBase  = "https://www.facebook.com/sharer/sharer.php?";
             const twitterBase   = "https://twitter.com/intent/tweet?";
-            const hostUrl       = "http://example.com/2022/12/24/CS%E7%9F%A5%E8%AF%86/CS%E7%9F%A5%E8%AF%86-3/";
-            const title         = "「C#知识(3)」";
-            const excerpt       = `本节主要内容：属性、成员和字段的区别，接口相关知识`;
+            const hostUrl       = "http://example.com/2023/07/12/Lua%E8%AF%AD%E6%B3%95/Lua%E5%8D%8F%E7%A8%8B/";
+            const title         = "「Lua协同程序」";
+            const excerpt       = `Lua中也有多线程的处理方法，就是lua的协同程序。`;
             let _URL;
             switch (dest) {
                 case "qq"       : _URL = qqBase+"url="+hostUrl+"&title="+title+"&desc=&summary="+excerpt+"&site=cxpy";     break;
@@ -271,10 +291,10 @@
             <div class="footer-tag clearfix">
                 <div class="pull-left">
                 <i class="fa fa-tags"></i>
-                    <a class="tag-none-link" href="/tags/C/" rel="tag">C#</a>
+                    <a class="tag-none-link" href="/tags/Lua/" rel="tag">Lua</a>
                 </div>
                 <div class="pull-date">
-                    <time datetime="2022-12-24T15:32:47.088Z" itemprop="dateModified">最后编辑：2022-12-24</time>
+                    <time datetime="2023-07-13T05:27:38.803Z" itemprop="dateModified">最后编辑：2023-07-13</time>
                 </div>
             </div>
         </footer>
@@ -283,13 +303,9 @@
         <nav class="navigation post-navigation clearfix" role="navigation">
             
             <div class="nav-previous clearfix">
-                <a title=" C#知识(2)" href="/2022/12/24/CS知识/CS知识-2/">&lt; 上一篇</a>
+                <a title=" Lua表实现类及表的公共操作" href="/2023/07/12/Lua语法/Lua多脚本执行/">&lt; 上一篇</a>
             </div>
             
-            
-            <div class="nav-next clearfix">
-                <a title=" C#知识(4)" href="/2022/12/24/CS知识/CS知识-4/">下一篇 &gt;</a>
-            </div>
             
         </nav>
     
